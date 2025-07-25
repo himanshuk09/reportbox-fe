@@ -89,7 +89,9 @@ export default function WaveHeaderScreen() {
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 			>
 				<ScrollView
-					contentContainerStyle={styles.container}
+					contentContainerStyle={{
+						marginBottom: 20,
+					}}
 					keyboardShouldPersistTaps="handled"
 				>
 					{/* Header with Image and wave */}

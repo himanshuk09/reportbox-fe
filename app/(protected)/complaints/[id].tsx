@@ -2,29 +2,8 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { PostCard } from "../(tabs)/dashboard";
-
-const posts = [
-	{
-		timeline: [
-			"15 Feb 2025, 9:00 AM",
-			"15 Feb 2025, 10:30 AM",
-			"15 Feb 2025, 3:00 PM",
-		],
-		id: "1",
-		user: "MKKN08",
-		avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-		time: "32 minutes ago",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		message:
-			"Garbage cleared successfully by Zone 4 volunteers.\nComplaint resolved in 6 hours. 🙌",
-		tag: "#QuickAction",
-		feedback: "Quick and clean response. Thank you!",
-	},
-];
+import { posts } from "../(tabs)/dashboard";
+import { PostCard } from "@/components/complaints/PostCard";
 
 export default function PostDetailsScreen() {
 	const { id } = useLocalSearchParams();
@@ -53,48 +32,7 @@ export default function PostDetailsScreen() {
 					paddingVertical: 20,
 				}}
 			>
-				<PostCard {...post} />
-				{/* {post.timeline.map((entry, index) => (
-					<View
-						key={index}
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "center",
-							marginBottom: 20,
-						}}
-					>
-						<View
-							style={{
-								width: 40,
-								height: 40,
-								borderRadius: 30,
-								backgroundColor: "#333",
-								alignItems: "center",
-								justifyContent: "center",
-								marginRight: 12,
-							}}
-						>
-							
-							<View
-								style={{
-									// backgroundColor: "#1e1e1e",
-									height: 30,
-									width: 30,
-									// borderRadius: 15,
-									alignItems: "center",
-									justifyContent: "center",
-									// marginRight: 12,
-								}}
-							>
-								<Text style={{ color: "#fff", fontSize: 12 }}>
-									{index + 1}
-								</Text>
-							</View>
-						</View>
-						<Text style={{ color: "#fff" }}>{entry}</Text>
-					</View>
-				))} */}
+				<PostCard {...post} showviewMore={false} />
 
 				{post.timeline.map((entry, index) => (
 					<View key={index} style={styles.timelineItem}>
@@ -131,14 +69,6 @@ export default function PostDetailsScreen() {
 										color="#C0C0C0"
 									/>
 								)}
-								{/* Fallback if you want to show index number as in your original snippet */}
-								{/*
-                            {!(index === 0 || index === 1 || index === 2) && (
-                                <Text style={{ color: "#fff", fontSize: 12 }}>
-                                    {index + 1}
-                                </Text>
-                            )}
-                            */}
 							</View>
 						</View>
 

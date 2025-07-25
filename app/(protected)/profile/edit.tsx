@@ -195,7 +195,7 @@ export default function ProfileFormScreen() {
 					>
 						<Entypo
 							name="help-with-circle"
-							size={30}
+							size={35}
 							color="#00EEFF"
 						/>
 					</TouchableOpacity>
