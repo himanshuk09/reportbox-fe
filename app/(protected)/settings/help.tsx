@@ -1,0 +1,215 @@
+import React from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+
+// --- Data Definition (as above, or import from a constants file) ---
+interface ComplaintStep {
+	id: number;
+	text: string;
+}
+
+const complaintSteps: ComplaintStep[] = [
+	{ id: 1, text: 'Tap on the "Add" icon on the home screen.' },
+	{ id: 2, text: "Choose the issue category you want to report." },
+	{
+		id: 3,
+		text: "Select whether it's a Single Complaint or a Group Complaint.",
+	},
+	{
+		id: 4,
+		text: "(If Group Complaint) Choose the number of members involved.",
+	},
+	{
+		id: 5,
+		text: "Type your complaint or tap the mic icon to speak it aloud.",
+	},
+	{
+		id: 6,
+		text: 'Tap "Attach File" —\n• Use the camera to snap the issue with location.\n• Or select from gallery to upload a photo.',
+	},
+	{ id: 7, text: "Review all entered details carefully." },
+	{
+		id: 8,
+		text: "Type your complaint or tap the mic icon to speak it aloud.",
+	},
+	{
+		id: 9,
+		text: "Select whether it's a Single Complaint or a Group Complaint.",
+	},
+	{ id: 10, text: "Review all entered details carefully." },
+];
+// --- End Data Definition ---
+
+// Determine the height of the circle/number container for line positioning
+const CIRCLE_SIZE = 48; // Based on the image, slightly larger than previous
+const LINE_WIDTH = 2; // Thickness of the vertical line
+const ITEM_MARGIN_BOTTOM = 20; // Space between each step item
+const ComplaintStepsTimeline = () => {
+	return (
+		<ScrollView
+			style={{
+				padding: 16,
+				backgroundColor: "#343232",
+				marginTop: 100,
+			}}
+			contentContainerStyle={{
+				paddingBottom: 100,
+			}}
+		>
+			<View style={{ flex: 1, paddingBottom: 20 }}>
+				<Text style={styles.title}>Steps to Raise a Complaint:</Text>
+				<Image
+					source={{
+						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+					}}
+					style={{ height: 200, width: "100%", borderRadius: 15 }}
+					resizeMode="cover"
+				/>
+			</View>
+			<View style={styles.container}>
+				<Text style={styles.title}>How to Raise Complaint?</Text>
+
+				{/* Initial top circle (turquoise dot) */}
+				<View style={styles.firstStepContainer}>
+					<View style={styles.firstStepDot} />
+					{/* Vertical line from dot to first numbered step */}
+					<View
+						style={[
+							styles.verticalLine,
+							{
+								height: ITEM_MARGIN_BOTTOM + CIRCLE_SIZE / 2, // Half circle height + item margin
+								top: CIRCLE_SIZE / 2, // Start below the dot's center
+								left: CIRCLE_SIZE / 2 - LINE_WIDTH / 2, // Center under the dot
+							},
+						]}
+					/>
+				</View>
+
+				{/* Map through the complaint steps */}
+				{complaintSteps.map((step, index) => (
+					<View key={step.id} style={styles.stepItem}>
+						{/* Circle and Number Container */}
+						<View style={styles.circleWrapper}>
+							<View style={styles.circle}>
+								<Text style={styles.circleText}>
+									{step.id < 10 ? `0${step.id}` : step.id}
+								</Text>
+							</View>
+
+							{/* Vertical line connecting to the next circle */}
+							{index < complaintSteps.length - 1 && (
+								<View
+									style={[
+										styles.verticalLine,
+										{
+											height:
+												ITEM_MARGIN_BOTTOM +
+												CIRCLE_SIZE, // Height of the line is item margin + full circle height
+											top: CIRCLE_SIZE - LINE_WIDTH / 2, // Position at bottom of current circle
+											left:
+												CIRCLE_SIZE / 2 -
+												LINE_WIDTH / 2, // Center it
+										},
+									]}
+								/>
+							)}
+						</View>
+
+						{/* Step Description Text */}
+						<Text style={styles.stepText}>{step.text}</Text>
+					</View>
+				))}
+				<View style={styles.firstStepContainer}>
+					{/* Vertical line from dot to first numbered step */}
+					<View
+						style={[
+							styles.verticalLine,
+							{
+								height: ITEM_MARGIN_BOTTOM + CIRCLE_SIZE / 2, // Half circle height + item margin
+								bottom: CIRCLE_SIZE / 2, // Start below the dot's center
+								left: CIRCLE_SIZE / 2 - LINE_WIDTH / 2, // Center under the dot
+							},
+						]}
+					/>
+					<View style={styles.firstStepDot} />
+				</View>
+			</View>
+		</ScrollView>
+	);
+};
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		// backgroundColor: "#1e1e1e", // Dark background
+		paddingHorizontal: 20, // Overall horizontal padding
+		paddingVertical: 30, // Overall vertical padding
+		borderRadius: 20,
+	},
+	title: {
+		fontSize: 22,
+		fontWeight: "bold",
+		color: "#fff", // White text
+		marginBottom: 20,
+	},
+	firstStepContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: ITEM_MARGIN_BOTTOM, // Space below the dot
+		paddingLeft: 0, // Ensure it aligns with the numbered steps
+		position: "relative", // For absolute positioning of line
+		height: CIRCLE_SIZE, // Give it height to ensure line calculation works
+	},
+	firstStepDot: {
+		width: CIRCLE_SIZE,
+		height: CIRCLE_SIZE,
+		borderRadius: CIRCLE_SIZE / 2,
+		backgroundColor: "#00BCD4", // Turquoise color from image
+		marginRight: 15, // Space between dot and title if there was one
+		zIndex: 2, // Ensure dot is above the line
+	},
+	stepItem: {
+		flexDirection: "row",
+		alignItems: "flex-start", // Align text to the top if it's multi-line
+		marginBottom: ITEM_MARGIN_BOTTOM,
+		position: "relative", // For absolute positioning of internal lines
+	},
+	circleWrapper: {
+		width: CIRCLE_SIZE,
+		height: CIRCLE_SIZE,
+		marginRight: 15, // Space between circle and text
+		alignItems: "center",
+		justifyContent: "center",
+		position: "relative", // For absolute positioning of vertical line
+	},
+	circle: {
+		width: CIRCLE_SIZE,
+		height: CIRCLE_SIZE,
+		borderRadius: CIRCLE_SIZE / 2,
+		backgroundColor: "#333333", // Dark background for circles
+		alignItems: "center",
+		justifyContent: "center",
+		borderWidth: 1, // Slight border for definition
+		borderColor: "#555", // Grey border
+		zIndex: 2, // Ensure circle is above the line
+	},
+	circleText: {
+		color: "#fff", // White text for numbers
+		fontSize: 18,
+		fontWeight: "bold",
+	},
+	verticalLine: {
+		position: "absolute",
+		width: LINE_WIDTH,
+		backgroundColor: "#555", // Grey line color
+		left: CIRCLE_SIZE / 2 - LINE_WIDTH / 2, // Center under the circle
+		zIndex: 1, // Below the circles
+	},
+	stepText: {
+		flex: 1, // Allows text to take up remaining space and wrap
+		color: "#fff", // White text
+		fontSize: 16,
+		lineHeight: 24, // Improve readability for multi-line text
+	},
+});
+
+export default ComplaintStepsTimeline;
