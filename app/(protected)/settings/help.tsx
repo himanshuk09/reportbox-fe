@@ -37,12 +37,10 @@ const complaintSteps: ComplaintStep[] = [
 	},
 	{ id: 10, text: "Review all entered details carefully." },
 ];
-// --- End Data Definition ---
 
-// Determine the height of the circle/number container for line positioning
-const CIRCLE_SIZE = 48; // Based on the image, slightly larger than previous
-const LINE_WIDTH = 2; // Thickness of the vertical line
-const ITEM_MARGIN_BOTTOM = 20; // Space between each step item
+const CIRCLE_SIZE = 48;
+const LINE_WIDTH = 2;
+const ITEM_MARGIN_BOTTOM = 20;
 const ComplaintStepsTimeline = () => {
 	return (
 		<ScrollView
@@ -140,9 +138,8 @@ const ComplaintStepsTimeline = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// backgroundColor: "#1e1e1e", // Dark background
-		paddingHorizontal: 20, // Overall horizontal padding
-		paddingVertical: 30, // Overall vertical padding
+		paddingHorizontal: 20,
+		paddingVertical: 30,
 		borderRadius: 20,
 	},
 	title: {
@@ -154,61 +151,61 @@ const styles = StyleSheet.create({
 	firstStepContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginBottom: ITEM_MARGIN_BOTTOM, // Space below the dot
-		paddingLeft: 0, // Ensure it aligns with the numbered steps
-		position: "relative", // For absolute positioning of line
-		height: CIRCLE_SIZE, // Give it height to ensure line calculation works
+		marginBottom: ITEM_MARGIN_BOTTOM,
+		paddingLeft: 0,
+		position: "relative",
+		height: CIRCLE_SIZE,
 	},
 	firstStepDot: {
 		width: CIRCLE_SIZE,
 		height: CIRCLE_SIZE,
 		borderRadius: CIRCLE_SIZE / 2,
-		backgroundColor: "#00BCD4", // Turquoise color from image
-		marginRight: 15, // Space between dot and title if there was one
-		zIndex: 2, // Ensure dot is above the line
+		backgroundColor: "#00BCD4",
+		marginRight: 15,
+		zIndex: 2,
 	},
 	stepItem: {
 		flexDirection: "row",
-		alignItems: "flex-start", // Align text to the top if it's multi-line
+		alignItems: "flex-start",
 		marginBottom: ITEM_MARGIN_BOTTOM,
-		position: "relative", // For absolute positioning of internal lines
+		position: "relative",
 	},
 	circleWrapper: {
 		width: CIRCLE_SIZE,
 		height: CIRCLE_SIZE,
-		marginRight: 15, // Space between circle and text
+		marginRight: 15,
 		alignItems: "center",
 		justifyContent: "center",
-		position: "relative", // For absolute positioning of vertical line
+		position: "relative",
 	},
 	circle: {
 		width: CIRCLE_SIZE,
 		height: CIRCLE_SIZE,
 		borderRadius: CIRCLE_SIZE / 2,
-		backgroundColor: "#333333", // Dark background for circles
+		backgroundColor: "#333333",
 		alignItems: "center",
 		justifyContent: "center",
-		borderWidth: 1, // Slight border for definition
-		borderColor: "#555", // Grey border
-		zIndex: 2, // Ensure circle is above the line
+		borderWidth: 1,
+		borderColor: "#555",
+		zIndex: 2,
 	},
 	circleText: {
-		color: "#fff", // White text for numbers
+		color: "#fff",
 		fontSize: 18,
 		fontWeight: "bold",
 	},
 	verticalLine: {
 		position: "absolute",
 		width: LINE_WIDTH,
-		backgroundColor: "#555", // Grey line color
-		left: CIRCLE_SIZE / 2 - LINE_WIDTH / 2, // Center under the circle
-		zIndex: 1, // Below the circles
+		backgroundColor: "#555",
+		left: CIRCLE_SIZE / 2 - LINE_WIDTH / 2,
+		zIndex: 1,
 	},
 	stepText: {
-		flex: 1, // Allows text to take up remaining space and wrap
-		color: "#fff", // White text
+		flex: 1,
+		color: "#fff",
 		fontSize: 16,
-		lineHeight: 24, // Improve readability for multi-line text
+		lineHeight: 24,
 	},
 });
 

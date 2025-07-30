@@ -69,7 +69,7 @@ const TabLayout = () => {
 				name="dashboard"
 				options={{
 					title: "",
-					headerShown: true,
+					headerShown: false,
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons name="home" color={color} size={size} />
 					),
@@ -171,13 +171,6 @@ const TabLayout = () => {
 				options={{
 					title: "",
 					tabBarLabel: "",
-					// tabBarIcon: ({ color, size }) => (
-					// 	<AntDesign
-					// 		name="plussquare"
-					// 		color={color}
-					// 		size={size}
-					// 	/>
-					// ),
 					tabBarButton: SpecialTabButton,
 				}}
 			/>
@@ -189,12 +182,9 @@ const TabLayout = () => {
 							// e.preventDefault();
 							// navigation.dispatch(DrawerActions.openDrawer());
 							// route.push("/");
-							console.log("Tab pressed");
 						},
 
-						tabLongPress: () => {
-							console.log("Tab long pressed");
-						},
+						tabLongPress: () => {},
 					}}
 					options={{
 						title: "",

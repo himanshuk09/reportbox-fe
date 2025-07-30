@@ -22,7 +22,7 @@ export default function RootLayout() {
 		// >
 		<Stack>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Protected guard={false}>
+			<Stack.Protected guard={true}>
 				<Stack.Screen
 					name="(public)"
 					options={{ headerShown: false }}

@@ -1,5 +1,5 @@
 // app/(tabs)/ComplaintCategoriesScreen.tsx
-
+import Swiper from "react-native-swiper";
 import React from "react";
 import {
 	View,
@@ -7,6 +7,8 @@ import {
 	ScrollView,
 	TouchableOpacity,
 	FlatList,
+	Image,
+	Dimensions,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import {
@@ -19,6 +21,7 @@ import {
 	FontAwesome6,
 	MaterialIcons,
 } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const categories = [
 	{
@@ -204,7 +207,11 @@ const categories = [
 	{
 		label: "Home Composting Kit",
 		icon: (
-			<MaterialCommunityIcons name="compass-rose" size={28} color="#00F0FF" />
+			<MaterialCommunityIcons
+				name="compass-rose"
+				size={28}
+				color="#00F0FF"
+			/>
 		),
 	},
 	{
@@ -307,9 +314,24 @@ const categories = [
 	},
 ];
 
+const imageUrls = [
+	"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+	"https://images.unsplash.com/photo-1606787366850-de6330128bfc",
+	"https://images.unsplash.com/photo-1519681393784-d120267933ba",
+];
+
 const ComplaintCategoriesScreen = () => {
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
+			{/* <View style={{ paddingBottom: 20 }}>
+				<Image
+					source={{
+						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+					}}
+					style={{ height: 200, width: "100%", borderRadius: 15 }}
+					resizeMode="cover"
+				/>
+			</View> */}
 			<FlatList
 				data={categories}
 				keyExtractor={(_, index) => index.toString()}
@@ -319,11 +341,36 @@ const ComplaintCategoriesScreen = () => {
 						<Text style={styles.label}>{item.label}</Text>
 					</TouchableOpacity>
 				)}
+				ListHeaderComponent={
+					<View style={{ height: 200, marginBottom: 20 }}>
+						<Swiper
+							showsPagination
+							autoplay
+							autoplayTimeout={3}
+							dotColor="#ccc"
+							activeDotColor="#fff"
+							style={{ borderRadius: 15 }}
+						>
+							{imageUrls.map((uri, index) => (
+								<Image
+									key={index}
+									source={{ uri }}
+									style={{
+										width: "100%",
+										height: 200,
+										borderRadius: 15,
+									}}
+									resizeMode="cover"
+								/>
+							))}
+						</Swiper>
+					</View>
+				}
 				showsVerticalScrollIndicator={false}
 				numColumns={3}
 				contentContainerStyle={styles.listContent}
 			/>
-		</View>
+		</SafeAreaView>
 	);
 };
 
@@ -333,9 +380,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#343232",
-		paddingHorizontal: 6,
+		// paddingHorizontal: 6,
 		paddingVertical: 6,
-		paddingTop: 120, 
+		// paddingTop: 120,
 	},
 	listContent: {
 		paddingBottom: 100,

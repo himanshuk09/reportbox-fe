@@ -1,10 +1,12 @@
 import { AntDesign } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export const SpecialTabButton = () => {
 	const handlePress = () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		router.push("/(protected)/complaints")
+		// Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 	};
 
 	return (

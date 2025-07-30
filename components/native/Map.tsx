@@ -1,12 +1,6 @@
 import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
-import {
-	Platform,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Alert, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 const htmlcontent = /*html*/ `
     <!DOCTYPE html>
@@ -108,7 +102,7 @@ const htmlcontent = /*html*/ `
 
                     // ✅ Add new marker
                     const marker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup(address)
+                        //.bindPopup(address)
                         .openPopup();
 
                     markers.push(marker);
@@ -138,16 +132,62 @@ const htmlcontent = /*html*/ `
         </body>
         </html>
     `;
+/* -------------------------------------------------------------------------- */
 const markers = [
 	{ lat: 19.076, lon: 72.8777, title: "Mumbai Police", type: "police" },
 	{ lat: 28.6139, lon: 77.209, title: "Delhi Hospital", type: "hospital" },
 	{ lat: 13.0827, lon: 80.2707, title: "Chennai Hotel", type: "hotel" },
 ];
+/* -------------------------------------------------------------------------- */
+export const getLocationDetails = async () => {
+	// let { status } = await Location.requestForegroundPermissionsAsync();
+	// if (status !== "granted") {
+	// 	console.warn("Permission to access location was denied");
+	// 	return;
+	// }
+	const { status, canAskAgain } =
+		await Location.requestForegroundPermissionsAsync();
 
-export default function LeafletMapWebView() {
-	const [fullLocation, SetFullLocation] =
-		useState<Location.LocationObjectCoords | null>(null);
-	const [address, setAddress] = useState<string>("");
+	if (status !== "granted") {
+		if (!canAskAgain) {
+			// User denied permanently, open settings
+			Alert.alert(
+				"Location Permission",
+				"Location access is denied and cannot be requested again. Please enable it manually in settings.",
+				[
+					{ text: "Cancel", style: "cancel" },
+					{
+						text: "Open Settings",
+						onPress: () => Linking.openSettings(),
+					},
+				]
+			);
+		} else {
+			console.warn("Permission to access location was denied");
+		}
+		return;
+	}
+	let loc: any = await Location.getCurrentPositionAsync({
+		accuracy: 5,
+	});
+	let geo: any;
+	if (Platform.OS === "web") {
+		try {
+			const response = await fetch(
+				`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc?.coords?.latitude}&lon=${loc?.coords?.longitude}`
+			);
+			geo = await response.json();
+		} catch (error) {
+			console.warn("Reverse geocode failed on web:", error);
+			return "Unknown location";
+		}
+	} else {
+		geo = await Location.reverseGeocodeAsync(loc.coords);
+	}
+	return { geo, loc };
+};
+/* -------------------------------------------------------------------------- */
+export default function LeafletMapWebView({ location, setLocation }: any) {
 	const [locationReady, setLocationReady] = useState(false);
 	const webviewRef = useRef<any>(null);
 	const addMultipleMarkers = () => {
@@ -181,28 +221,16 @@ export default function LeafletMapWebView() {
 					);
 					geo = await response.json();
 					console.log(geo);
-
-					setAddress(
-						geo?.display_name ||
-							`${geo?.name || ""}, ${geo?.address?.city || ""}, ${
-								geo?.address?.state || ""
-							}`
-					);
 				} catch (error) {
 					console.warn("Reverse geocode failed on web:", error);
 					return "Unknown location";
 				}
 			} else {
 				geo = await Location.reverseGeocodeAsync(loc.coords);
-				if (geo.length > 0) {
-					setAddress(
-						`${geo[0].name || ""}, ${geo[0].city || ""}, ${
-							geo[0].region || ""
-						}`
-					);
-				}
 			}
 
+			setLocation(geo[0]?.formattedAddress);
+			/* ---------------------------- Update on Webview --------------------------- */
 			const jsCode = `setLocationFromApp(${loc?.coords?.latitude},${
 				loc?.coords?.longitude
 			},"${geo[0]?.formattedAddress || "Hello"}");true;`;
@@ -216,14 +244,13 @@ export default function LeafletMapWebView() {
 			} else {
 				webviewRef.current?.injectJavaScript(jsCode);
 			}
-			SetFullLocation(loc.coords);
 		})();
-	}, [locationReady]);
+	}, [locationReady, location]);
 
 	const onMessage = async (event: any) => {
 		const message = JSON.parse(event.nativeEvent.data);
 		const { action, values, reason, isZoomed } = message;
-		console.log(action, values);
+		// console.log(action, values);
 	};
 	return (
 		<View style={styles.container}>
@@ -264,6 +291,7 @@ export default function LeafletMapWebView() {
 						height: "90%",
 						marginVertical: 0,
 						padding: 2,
+						borderRadius: 10,
 					}}
 					overScrollMode="content"
 					gestureHandling="auto"
@@ -280,15 +308,12 @@ export default function LeafletMapWebView() {
 					setBuiltInZoomControls={false}
 					allowsInlineMediaPlayback={true}
 					bounces={false}
-					// zoomEnabled={false}
-					// nestedScrollEnabled={true}
-					// renderToHardwareTextureAndroid
+					zoomEnabled={false}
+					nestedScrollEnabled={true}
+					renderToHardwareTextureAndroid
 					startInLoadingState
 				/>
 			)}
-			<TouchableOpacity onPress={addMultipleMarkers}>
-				<Text>Press</Text>
-			</TouchableOpacity>
 		</View>
 	);
 }
@@ -296,7 +321,6 @@ export default function LeafletMapWebView() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "white",
 		height: "100%",
 		width: "100%",
 	},

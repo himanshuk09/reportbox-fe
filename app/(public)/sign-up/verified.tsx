@@ -19,7 +19,12 @@ function VerificationSuccessScreen() {
 					the issue, adding photos, and choosing a location.
 				</Text>
 
-				<TouchableOpacity className="flex-row items-center space-x-2" onPress={()=>router.push("/(public)/sign-up/profile-form")}>
+				<TouchableOpacity
+					className="flex-row items-center space-x-2"
+					onPress={() =>
+						router.push("/(public)/sign-up/profile-form")
+					}
+				>
 					<Text className="text-white  text-2xl font-semibold">
 						Let’s complete your profile
 					</Text>
@@ -39,12 +44,12 @@ const Verified = () => {
 				You’ve been verified
 			</Text>
 			<Image
-				source={{
-					uri: "https://media.istockphoto.com/id/2150831290/vector/3d-handshake-hold-hands-with-blue-sleeve-vector-icon-cartoon-partnership-arm-gesture.jpg?s=612x612&w=0&k=20&c=_M9LSLypat10SHh_h6hpPQOzjmnotUq43hL0Lww1Q5g=",
-				}}
-				
-				height={100}
-				width={150}
+				// source={{
+				// 	uri: "https://media.istockphoto.com/id/2150831290/vector/3d-handshake-hold-hands-with-blue-sleeve-vector-icon-cartoon-partnership-arm-gesture.jpg?s=612x612&w=0&k=20&c=_M9LSLypat10SHh_h6hpPQOzjmnotUq43hL0Lww1Q5g=",
+				// }}
+				source={require("@/assets/Handshake.gif")}
+				height={80}
+				width={200}
 				resizeMode="stretch"
 			/>
 		</View>

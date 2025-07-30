@@ -1,12 +1,12 @@
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { router, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import {
 	Alert,
 	Image,
 	ImageBackground,
 	KeyboardAvoidingView,
+	Modal,
 	Platform,
 	Pressable,
 	ScrollView,
@@ -17,15 +17,13 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Camera, CameraType, CameraView } from "expo-camera";
-import CameraScreen from "../native/CameraScreen";
+import CameraScreen, { handleImageChoice } from "../native/CameraScreen";
 
 interface UserFormProps {
 	editable?: boolean;
 	onlyForm?: boolean;
 	onPressContinue?: any;
 }
-
 
 const UserForm = ({
 	editable = true,
@@ -42,57 +40,8 @@ const UserForm = ({
 		city: "Madurai 625011",
 		doorNo: "5008",
 		street: "Villapuram Housing Board",
-		userID:"MTNHB30"
+		userID: "MTNHB30",
 	});
-	
-
-	// Ask permissions for camera and media library
-	const requestPermissions = async () => {
-		const cameraStatus = await Camera.requestCameraPermissionsAsync();
-		const mediaStatus =
-			await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-		if (!cameraStatus.granted || !mediaStatus.granted) {
-			Alert.alert(
-				"Permission required",
-				"Camera and gallery access is needed."
-			);
-			return false;
-		}
-		return true;
-	};
-
-	// Handle Action Sheet Selection
-	const handleImageChoice = async () => {
-		const granted = await requestPermissions();
-		if (!granted) return;
-
-		Alert.alert("Choose Image", "Select source", [
-			{ text: "Camera", onPress: () => setShowCamera(true) },
-			{ text: "Gallery", onPress: pickImageFromGallery },
-			{ text: "Cancel", style: "cancel" },
-		]);
-	};
-
-	// Open gallery
-	const pickImageFromGallery = async () => {
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images"],
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
-
-		if (!result.canceled) {
-			setImage(result.assets[0].uri);
-		}
-	};
-
-	
-	
-	if (showCamera) {
-		return (<CameraScreen setShowCamera={setShowCamera} setImage={setImage} />)
-	}
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: "#343232" }}>
@@ -100,7 +49,7 @@ const UserForm = ({
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 			>
 				<ScrollView
-					   contentContainerStyle={{ flexGrow: 1 }}
+					contentContainerStyle={{ flexGrow: 1 }}
 					keyboardShouldPersistTaps="handled"
 				>
 					{/* Background Header */}
@@ -172,8 +121,12 @@ const UserForm = ({
 							{(edit || onlyForm) && (
 								<TouchableOpacity
 									style={styles.addIcon}
-									// onPress={pickImage}
-									onPress={handleImageChoice}
+									onPress={() =>
+										handleImageChoice(
+											setShowCamera,
+											setImage
+										)
+									}
 								>
 									<Ionicons
 										name="add"
@@ -344,9 +297,11 @@ const UserForm = ({
 							</View>
 
 							<View style={styles.addressContainer}>
-								<Text style={styles.addressText}>{formData.name}</Text>
 								<Text style={styles.addressText}>
-									{formData.street},{" "}{formData.doorNo}
+									{formData.name}
+								</Text>
+								<Text style={styles.addressText}>
+									{formData.street}, {formData.doorNo}
 								</Text>
 								<Text style={styles.addressText}>
 									{formData.city}
@@ -393,6 +348,16 @@ const UserForm = ({
 						</TouchableOpacity>
 					)}
 				</ScrollView>
+				<Modal
+					visible={showCamera}
+					animationType="fade"
+					presentationStyle="fullScreen"
+				>
+					<CameraScreen
+						setShowCamera={setShowCamera}
+						setImage={setImage}
+					/>
+				</Modal>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
@@ -522,5 +487,4 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontSize: 16,
 	},
-	
 });
