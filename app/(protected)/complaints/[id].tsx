@@ -2,8 +2,9 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { posts } from "../(tabs)/dashboard";
+
 import { PostCard } from "@/components/complaints/PostCard";
+import { posts } from "../(tabs)/feed";
 
 export default function PostDetailsScreen() {
 	const { id } = useLocalSearchParams();
@@ -32,7 +33,7 @@ export default function PostDetailsScreen() {
 					paddingVertical: 20,
 				}}
 			>
-				<PostCard {...post} showviewMore={false} />
+				<PostCard item={post} showviewMore={false} />
 
 				{post.timeline.map((entry, index) => (
 					<View key={index} style={styles.timelineItem}>

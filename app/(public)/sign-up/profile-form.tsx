@@ -1,12 +1,11 @@
+
 import React from "react";
-import { Text, View } from "react-native";
-
-const ProfileForm = () => {
+import UserForm from "@/components/profile/UserForm";
+import { router } from "expo-router";
+export default function ProfileFormScreen() {	
 	return (
-		<View>
-			<Text>ProfileForm</Text>
-		</View>
+		<UserForm onlyForm={true} editable={false} onPressContinue={()=>router.replace("/(protected)/(tabs)/dashboard") } />
 	);
-};
+}
 
-export default ProfileForm;
+

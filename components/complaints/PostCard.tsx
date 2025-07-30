@@ -12,26 +12,33 @@ import {
 	View,
 } from "react-native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+
+import {  TouchableWithoutFeedback, Easing } from "react-native";
+
+
+
+
 export function PostCard({
-	avatar,
-	user,
-	time,
-	beforeImage,
-	afterImage,
-	message,
-	tag,
-	comments,
+	item,
 	showviewMore = true,
 }: {
-	avatar: string;
-	user: string;
-	time: string;
-	beforeImage: string;
-	afterImage: string;
-	message: string;
-	tag: string;
+	item: {
+		avatar: string;
+		user: string;
+		time: string;
+		beforeImage: string;
+		afterImage: string;
+		message: string;
+		tag: string;
+		like: any;
+		comments: {
+			id: string;
+			avatar: string;
+			user: string;
+			comment: string;
+		}[];
+	}
 	showviewMore?: boolean;
-	comments: { id: string; avatar: string; user: string; comment: string }[];
 }) {
 	const [showComments, setShowComments] = useState(false);
 	const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -41,7 +48,7 @@ export function PostCard({
 		setShowComments(!showComments);
 		Animated.timing(animatedHeight, {
 			toValue: showComments ? 0 : 1,
-			duration: 300,
+			duration: 500,
 			useNativeDriver: false,
 		}).start();
 	};
@@ -61,15 +68,20 @@ export function PostCard({
 		setShowImageViewer(false);
 		setCurrentImageUri("");
 	};
+
+	
 	return (
 		<View style={styles.card}>
 			{/* Header */}
 			<View style={styles.header}>
 				<View style={styles.userInfo}>
-					<Image source={{ uri: avatar }} style={styles.avatar} />
+					<Image
+						source={{ uri: item.avatar }}
+						style={styles.avatar}
+					/>
 					<View>
-						<Text style={styles.username}>{user}</Text>
-						<Text style={styles.time}>{time}</Text>
+						<Text style={styles.username}>{item.user}</Text>
+						<Text style={styles.time}>{item.time}</Text>
 					</View>
 				</View>
 				<Feather name="more-horizontal" size={20} color="white" />
@@ -79,22 +91,22 @@ export function PostCard({
 			<View style={styles.imageRow}>
 				<TouchableOpacity
 					style={styles.imageHalfTouchable}
-					onPress={() => openImageViewer(beforeImage)}
+					onPress={() => openImageViewer(item.beforeImage)}
 					activeOpacity={0.7}
 				>
 					<Image
-						source={{ uri: beforeImage }}
+						source={{ uri: item.beforeImage }}
 						style={styles.imageHalf}
 						resizeMode="cover"
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={styles.imageHalfTouchable}
-					onPress={() => openImageViewer(afterImage)}
+					onPress={() => openImageViewer(item.afterImage)}
 					activeOpacity={0.7}
 				>
 					<Image
-						source={{ uri: afterImage }}
+						source={{ uri: item.afterImage }}
 						style={styles.imageHalf}
 						resizeMode="cover"
 					/>
@@ -102,20 +114,20 @@ export function PostCard({
 			</View>
 
 			{/* Message */}
-			<Text style={styles.message}>{message}</Text>
-			<Text style={styles.tag}>{tag}</Text>
+			<Text style={styles.message}>{item.message}</Text>
+			<Text style={styles.tag}>{item.tag}</Text>
 
 			{/* Actions */}
 			<View style={styles.actions}>
 				<View style={styles.actionIcons}>
 					<TouchableOpacity
 						style={styles.actionButton}
-						onPress={() => openImageViewer(beforeImage)}
+						
 					>
 						<Ionicons
-							name="thumbs-up-outline"
+							name={item.like ? "thumbs-up" : "thumbs-up-outline"}
 							size={20}
-							color="#ccc"
+							color={item.like ? "#00eeff" : "#ccc"}
 						/>
 						<Text style={styles.likeCount}>{1000}</Text>
 					</TouchableOpacity>
@@ -161,7 +173,7 @@ export function PostCard({
 				{showComments && (
 					<View>
 						{/* Use the comments prop instead of dummyComments */}
-						{comments.map((comment) => (
+						{item.comments.map((comment) => (
 							<CommentItem key={comment.id} {...comment} />
 						))}
 					</View>
@@ -188,6 +200,7 @@ export function PostCard({
 					</TouchableOpacity>
 				</View>
 			</Modal>
+			
 		</View>
 	);
 }
@@ -211,6 +224,7 @@ const CommentItem = ({
 );
 
 const styles = StyleSheet.create({
+	
 	card: {
 		backgroundColor: "#1e1e1e",
 		padding: 16,

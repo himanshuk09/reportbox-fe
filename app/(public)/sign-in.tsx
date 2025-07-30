@@ -1,33 +1,34 @@
 import React from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	StyleSheet,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
-// Adjust path as needed
-// You might have a specific SVG for login, e.g., LoginIconSvg
-// import LoginIconSvg from "./LoginIconSvg";
 
-// Content for the Login Screen
-function LoginContent() {
+function SignInScreen() {
 	return (
-		<View style={loginStyles.contentContainer}>
-			<Text style={loginStyles.title}>Sign In</Text>
-			<TextInput
-				style={loginStyles.input}
-				placeholder="Phone number"
-				placeholderTextColor="#ccc"
-				keyboardType="phone-pad"
-			/>
+		<View className="px-2 pt-6">
+			{/* Title */}
+			<Text className="text-white text-2xl font-bold mb-8">Sign in</Text>
+
+			{/* Label */}
+			<Text className="text-white text-sm mb-2">Phone number</Text>
+
+			{/* Input Row with +91 */}
+			<View className="flex-row items-center border-b border-white pb-1 mb-8">
+				<Text className="text-white text-lg mr-2">+91</Text>
+				<TextInput
+					placeholder="Enter phone number"
+					placeholderTextColor="#ccc"
+					keyboardType="phone-pad"
+					className="flex-1 text-white text-base"
+				/>
+			</View>
+
+			{/* Button */}
 			<TouchableOpacity
-				style={loginStyles.button}
-				onPress={() => router.push("/(protected)/(tabs)/dashboard")}
+				className="bg-[#00eeff] rounded-full p-3 mb-1 items-center"
+				onPress={() => router.push("/(public)/sign-up/verify-otp")}
 			>
-				<Text style={loginStyles.buttonText}>Get OTP</Text>
+				<Text className="text-black font-semibold">Get OTP</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -40,45 +41,7 @@ export default function LoginScreen() {
 			imageContainerHeight={0.6}
 			svgStyle={{ opacity: 1 }}
 		>
-			<LoginContent />
+			<SignInScreen />
 		</WaveHeaderScreen>
 	);
 }
-
-const loginStyles = StyleSheet.create({
-	contentContainer: {},
-	title: {
-		fontSize: 22,
-		color: "#fff",
-		fontWeight: "bold",
-		marginBottom: 16,
-		textAlign: "left",
-	},
-	input: {
-		borderBottomColor: "#555",
-		borderBottomWidth: 1,
-		color: "#fff",
-		marginBottom: 20,
-		paddingVertical: 8,
-	},
-	button: {
-		backgroundColor: "#00EEFF",
-		paddingVertical: 12,
-		alignItems: "center",
-		borderRadius: 8,
-		marginTop: 20,
-	},
-	buttonText: {
-		color: "#000",
-		fontWeight: "bold",
-		fontSize: 16,
-	},
-	forgotPassword: {
-		marginTop: 15,
-		alignSelf: "center",
-	},
-	forgotPasswordText: {
-		color: "#007AFF",
-		fontSize: 14,
-	},
-});

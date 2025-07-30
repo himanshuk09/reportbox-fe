@@ -20,6 +20,7 @@ interface WaveHeaderScreenProps {
 	svgStyle?: object;
 	bottomContentStyle?: object;
 	imageOverlayContent?: React.ReactNode;
+	floatingOverlay?: React.ReactNode;
 }
 
 export default function WaveHeaderScreen({
@@ -29,10 +30,23 @@ export default function WaveHeaderScreen({
 	svgStyle,
 	bottomContentStyle,
 	imageOverlayContent,
+	floatingOverlay,
 }: WaveHeaderScreenProps) {
 	const defaultImageHeight = screenHeight * imageContainerHeight;
 	return (
 		<SafeAreaView style={styles.safeArea}>
+			{floatingOverlay && (
+				<View
+					style={{
+						position: "absolute",
+						top: screenHeight / 2 - 120,
+						left: screenWidth / 2 - 130,
+						zIndex: 20,
+					}}
+				>
+					{floatingOverlay}
+				</View>
+			)}
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 			>
@@ -75,7 +89,7 @@ const styles = StyleSheet.create({
 	},
 	scrollViewContent: {
 		flexGrow: 1,
-		marginBottom: 50,
+		// marginBottom: 65,
 	},
 	headerWrapper: {
 		width: "100%",
@@ -89,6 +103,7 @@ const styles = StyleSheet.create({
 	},
 	bottomContent: {
 		flex: 1,
+		position: "relative",
 		backgroundColor: "#343232",
 		paddingHorizontal: 20,
 	},

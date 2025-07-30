@@ -1,409 +1,363 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+// app/(tabs)/ComplaintCategoriesScreen.tsx
+
+import React from "react";
 import {
-	Animated,
-	Image,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
 	View,
+	Text,
+	ScrollView,
+	TouchableOpacity,
+	FlatList,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-// Dummy comment data for demonstration
-const dummyComments = [
+import { StyleSheet } from "react-native";
+import {
+	MaterialCommunityIcons,
+	FontAwesome5,
+	Ionicons,
+	Entypo,
+	Feather,
+	FontAwesome,
+	FontAwesome6,
+	MaterialIcons,
+} from "@expo/vector-icons";
+
+const categories = [
 	{
-		id: "1",
-		avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-		user: "John Doe",
-		comment: "Great progress! Looks amazing.",
+		label: "Sewage Leak",
+		icon: (
+			<MaterialCommunityIcons
+				name="pipe-leak"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
 	},
 	{
-		id: "2",
-		avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-		user: "Jane Smith",
-		comment: "Wow, what a transformation!",
+		label: "Garbage Clean",
+		icon: <FontAwesome5 name="trash" size={28} color="#00F0FF" />,
 	},
 	{
-		id: "3",
-		avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-		user: "Peter Jones",
-		comment: "Inspiring work!",
-	},
-];
-export const posts = [
-	{
-		id: "1",
-		user: "MKKN08",
-		avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-		time: "32 minutes ago",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		message:
-			"Garbage cleared successfully by Zone 4 volunteers.\nComplaint resolved in 6 hours. 🙌",
-		tag: "#QuickAction",
-		comments: dummyComments,
-		timeline: [
-			"15 Feb 2025, 9:00 AM",
-			"15 Feb 2025, 10:30 AM",
-			"15 Feb 2025, 3:00 PM",
-		],
-		feedback: "Quick and clean response. Thank you!",
+		label: "Garbage van",
+		icon: <MaterialCommunityIcons name="truck" size={28} color="#00F0FF" />,
 	},
 	{
-		id: "2",
-		user: "AABB12",
-		avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-		time: "1 hour ago",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		message: "Cleaning operation completed in Zone 3 by volunteers.",
-		tag: "#CleanupDrive",
-		comments: dummyComments,
-		timeline: [
-			"15 Feb 2025, 9:00 AM",
-			"15 Feb 2025, 10:30 AM",
-			"15 Feb 2025, 3:00 PM",
-		],
-		feedback: "Quick and clean response. Thank you!",
+		label: "Storm Water Drains",
+		icon: <Feather name="cloud-rain" size={28} color="#00F0FF" />,
 	},
 	{
-		id: "3",
-		user: "MKKN08",
-		avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-		time: "32 minutes ago",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		message:
-			"Garbage cleared successfully by Zone 4 volunteers.\nComplaint resolved in 6 hours. 🙌",
-		tag: "#QuickAction",
-		comments: dummyComments,
-		timeline: [
-			"15 Feb 2025, 9:00 AM",
-			"15 Feb 2025, 10:30 AM",
-			"15 Feb 2025, 3:00 PM",
-		],
-		feedback: "Quick and clean response. Thank you!",
+		label: "Pothole",
+		icon: <Ionicons name="warning-outline" size={28} color="#00F0FF" />,
 	},
 	{
-		id: "4",
-		user: "AABB12",
-		avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-		time: "1 hour ago",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		message: "Cleaning operation completed in Zone 3 by volunteers.",
-		tag: "#CleanupDrive",
-		comments: dummyComments,
-		timeline: [
-			"15 Feb 2025, 9:00 AM",
-			"15 Feb 2025, 10:30 AM",
-			"15 Feb 2025, 3:00 PM",
-		],
-		feedback: "Quick and clean response. Thank you!",
+		label: "Mosquito Menace",
+		icon: <FontAwesome6 name="mosquito" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Public Toilet",
+		icon: <Ionicons name="people-outline" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Street Dogs",
+		icon: (
+			<MaterialCommunityIcons name="dog-side" size={28} color="#00F0FF" />
+		),
+	},
+	{
+		label: "Water Stagnation",
+		icon: <FontAwesome5 name="water" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Street light",
+		icon: (
+			<MaterialCommunityIcons
+				name="light-flood-up"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Tree Fallen",
+		// icon: <MaterialCommunityIcons name="tree" size={28} color="#00F0FF" />,
+		icon: <Entypo name="tree" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Others",
+		icon: <Entypo name="dots-three-horizontal" size={28} color="#00F0FF" />,
+	},
+	// New
+	{
+		label: "Lighting Dept",
+		icon: <Feather name="zap" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Health Dept",
+		icon: (
+			<MaterialCommunityIcons
+				name="hospital-box-outline"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Sewerage & Drainage",
+		icon: (
+			<MaterialCommunityIcons
+				name="water-pump"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Stray Animals",
+		icon: <MaterialCommunityIcons name="cow" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Horticulture",
+		icon: (
+			<MaterialCommunityIcons name="flower" size={28} color="#00F0FF" />
+		),
+	},
+	{
+		label: "Water Dept",
+		icon: <FontAwesome5 name="tint" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Consumer Complaints",
+		icon: <FontAwesome name="rupee" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Paan, Gutkha, Spitting",
+		icon: <MaterialIcons name="smoking-rooms" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "PM Awas Yojana",
+		icon: <FontAwesome5 name="home" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Paid Sanitization",
+		icon: (
+			<MaterialCommunityIcons
+				name="spray-bottle"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Public Works Dept",
+		icon: (
+			<MaterialCommunityIcons
+				name="hammer-screwdriver"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "C&D Waste",
+		icon: (
+			<MaterialCommunityIcons
+				name="dump-truck"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Green Waste",
+		icon: <MaterialCommunityIcons name="leaf" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Food Safety",
+		icon: (
+			<MaterialCommunityIcons
+				name="food-fork-drink"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "IBUS Transport",
+		icon: (
+			<MaterialCommunityIcons name="bus-side" size={28} color="#00F0FF" />
+		),
+	},
+	{
+		label: "Noise Pollution",
+		icon: (
+			<MaterialCommunityIcons
+				name="volume-high"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+
+	// Requests
+	{
+		label: "Garbage Cart Request",
+		icon: <MaterialCommunityIcons name="cart" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Home Composting Kit",
+		icon: (
+			<MaterialCommunityIcons name="compass-rose" size={28} color="#00F0FF" />
+		),
+	},
+	{
+		label: "Utensil Bank Request",
+		icon: (
+			<MaterialCommunityIcons
+				name="silverware-fork-knife"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Water Harvesting Request",
+		icon: (
+			<MaterialCommunityIcons
+				name="water-outline"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Safaimitra Helpline",
+		icon: <Ionicons name="call-outline" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Yellow Spot",
+		icon: <MaterialIcons name="report" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Sanitation Report",
+		icon: (
+			<Ionicons name="document-text-outline" size={28} color="#00F0FF" />
+		),
+	},
+	{
+		label: "Know Your Kachra",
+		icon: (
+			<MaterialCommunityIcons
+				name="recycle-variant"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Reuse Treated Water",
+		icon: (
+			<MaterialCommunityIcons
+				name="water-sync"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "C&D Collection Point",
+		icon: (
+			<MaterialCommunityIcons
+				name="map-marker"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Rain Water Contractors",
+		icon: (
+			<MaterialCommunityIcons
+				name="account-group"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Rain Harvesting Cost",
+		icon: <FontAwesome name="money" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Plastic Ban Helpline",
+		icon: (
+			<MaterialCommunityIcons
+				name="smoking-off"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "PNG Gas Request",
+		icon: (
+			<MaterialCommunityIcons
+				name="gas-cylinder"
+				size={28}
+				color="#00F0FF"
+			/>
+		),
 	},
 ];
 
-const index = () => {
+const ComplaintCategoriesScreen = () => {
 	return (
-		<View
-			style={{
-				flex: 1,
-				backgroundColor: "#343232",
-				paddingHorizontal: 6,
-				paddingVertical: 6,
-				marginTop: 100,
-			}}
-		>
+		<View style={styles.container}>
 			<FlatList
-				data={posts}
-				keyExtractor={(item) => item.id}
+				data={categories}
+				keyExtractor={(_, index) => index.toString()}
 				renderItem={({ item }) => (
-					<PostCard
-						avatar={item.avatar}
-						user={item.user}
-						time={item.time}
-						beforeImage={item.beforeImage}
-						afterImage={item.afterImage}
-						message={item.message}
-						tag={item.tag}
-						comments={item.comments}
-					/>
+					<TouchableOpacity style={styles.item}>
+						<View style={styles.iconCircle}>{item.icon}</View>
+						<Text style={styles.label}>{item.label}</Text>
+					</TouchableOpacity>
 				)}
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={{
-					marginTop: 20,
-					padding: 6,
-				}}
+				numColumns={3}
+				contentContainerStyle={styles.listContent}
 			/>
 		</View>
 	);
 };
 
-export default index;
-export function PostCard({
-	avatar,
-	user,
-	time,
-	beforeImage,
-	afterImage,
-	message,
-	tag,
-	comments,
-}: {
-	avatar: string;
-	user: string;
-	time: string;
-	beforeImage: string;
-	afterImage: string;
-	message: string;
-	tag: string;
-	comments: { id: string; avatar: string; user: string; comment: string }[]; // Type for comments
-}) {
-	const [showComments, setShowComments] = useState(false);
-	const animatedHeight = useRef(new Animated.Value(0)).current;
-
-	const toggleComments = () => {
-		setShowComments(!showComments);
-		Animated.timing(animatedHeight, {
-			toValue: showComments ? 0 : 1, // Animate to 0 for hidden, 1 for visible
-			duration: 300,
-			useNativeDriver: false, // Height animation typically requires useNativeDriver: false
-		}).start();
-	};
-
-	const commentsMaxHeight = animatedHeight.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, 300], // Adjust 300 to a suitable max height for your comments
-	});
-	return (
-		<View style={styles.card}>
-			{/* Header */}
-			<View style={styles.header}>
-				<View style={styles.userInfo}>
-					<Image source={{ uri: avatar }} style={styles.avatar} />
-					<View>
-						<Text style={styles.username}>{user}</Text>
-						<Text style={styles.time}>{time}</Text>
-					</View>
-				</View>
-				<Feather name="more-horizontal" size={20} color="white" />
-			</View>
-
-			{/* Images */}
-			<View style={styles.imageRow}>
-				<Image
-					source={{ uri: beforeImage }}
-					style={styles.imageHalf}
-					resizeMode="cover"
-				/>
-				<Image
-					source={{ uri: afterImage }}
-					style={styles.imageHalf}
-					resizeMode="cover"
-				/>
-			</View>
-
-			{/* Message */}
-			<Text style={styles.message}>{message}</Text>
-			<Text style={styles.tag}>{tag}</Text>
-
-			{/* Actions */}
-			<View style={styles.actions}>
-				<View style={styles.actionIcons}>
-					<TouchableOpacity style={styles.actionButton}>
-						<Ionicons
-							name="thumbs-up-outline"
-							size={20}
-							color="#ccc"
-						/>
-						<Text style={styles.likeCount}>{1000}</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={styles.actionButton}
-						onPress={toggleComments}
-					>
-						<Ionicons
-							name="chatbubble-outline"
-							size={20}
-							color="#ccc"
-						/>
-						<Text className="text-white text-center p-1">1000</Text>
-					</TouchableOpacity>
-					<TouchableOpacity>
-						<Ionicons
-							name="share-social-outline"
-							size={20}
-							color="#ccc"
-						/>
-					</TouchableOpacity>
-				</View>
-				<TouchableOpacity
-					onPress={() =>
-						router.push({
-							pathname: "/(protected)/complaints/[id]",
-							params: { id: "1" },
-						})
-					}
-				>
-					<Text style={styles.viewMore}>View more</Text>
-				</TouchableOpacity>
-			</View>
-			{/* Comments Section */}
-			<Animated.View
-				style={[
-					styles.commentsSection,
-					{ maxHeight: commentsMaxHeight },
-				]}
-			>
-				{showComments && (
-					<View>
-						{/* Use the comments prop instead of dummyComments */}
-						{comments.map((comment) => (
-							<CommentItem key={comment.id} {...comment} />
-						))}
-					</View>
-				)}
-			</Animated.View>
-		</View>
-	);
-}
-// New component for individual comments
-const CommentItem = ({
-	avatar,
-	user,
-	comment,
-}: {
-	avatar: string;
-	user: string;
-	comment: string;
-}) => (
-	<View style={commentStyles.commentContainer}>
-		<Image source={{ uri: avatar }} style={commentStyles.commentAvatar} />
-		<View style={commentStyles.commentContent}>
-			<Text style={commentStyles.commentUser}>{user}</Text>
-			<Text style={commentStyles.commentText}>{comment}</Text>
-		</View>
-	</View>
-);
+export default ComplaintCategoriesScreen;
 
 const styles = StyleSheet.create({
-	card: {
-		backgroundColor: "#1e1e1e",
-		padding: 16,
-		borderRadius: 16,
-		marginBottom: 16,
-	},
-	header: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: 12,
-	},
-	userInfo: {
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	actionButton: {
-		flexDirection: "row", // Arrange icon and text horizontally
-		alignItems: "center", // Vertically align items in the center
-		// If you want some space between the icon and text, you can add:
-		gap: 4, // or marginHorizontal: 4 on the Text component
-	},
-	likeCount: {
-		color: "white",
-		fontSize: 14, // Adjust font size as needed
-		// If you're using `p-px` for padding, that translates to `padding: 1`
-		// but using `gap` on the parent is often cleaner for spacing between elements.
-	},
-	avatar: {
-		width: 40,
-		height: 40,
-		borderRadius: 20,
-		marginRight: 12,
-	},
-	username: {
-		color: "#fff",
-		fontWeight: "600",
-	},
-	time: {
-		color: "#aaa",
-		fontSize: 12,
-	},
-	imageRow: {
-		flexDirection: "row",
-		height: 160,
-		borderRadius: 12,
-		overflow: "hidden",
-		marginBottom: 12,
-	},
-	imageHalf: {
+	container: {
 		flex: 1,
-		height: "100%",
+		backgroundColor: "#343232",
+		paddingHorizontal: 6,
+		paddingVertical: 6,
+		paddingTop: 120, 
 	},
-	message: {
-		color: "#fff",
-		fontSize: 14,
-		marginBottom: 4,
-	},
-	tag: {
-		color: "#00bcd4",
-		fontWeight: "bold",
-		fontSize: 14,
-		marginBottom: 12,
-	},
-	actions: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	actionIcons: {
-		flexDirection: "row",
+	listContent: {
+		paddingBottom: 100,
+		paddingHorizontal: 10,
 		gap: 20,
 	},
-	viewMore: {
-		color: "#00bcd4",
-		fontSize: 14,
+	item: {
+		flex: 1 / 3,
+		alignItems: "center",
+		marginBottom: 25,
 	},
-	commentsSection: {
-		overflow: "hidden", // Crucial for `maxHeight` animation to work correctly
-		marginTop: 10,
-		borderTopWidth: 1,
-		borderTopColor: "#333",
-		paddingTop: 10,
+	iconCircle: {
+		backgroundColor: "#1c1c1c",
+		borderRadius: 50,
+		padding: 20,
+		marginBottom: 8,
+		alignItems: "center",
+		justifyContent: "center",
 	},
-});
-const commentStyles = StyleSheet.create({
-	commentContainer: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		marginBottom: 10,
-	},
-	commentAvatar: {
-		width: 30,
-		height: 30,
-		borderRadius: 15,
-		marginRight: 10,
-	},
-	commentContent: {
-		flex: 1,
-	},
-	commentUser: {
-		color: "white",
-		fontWeight: "bold",
-		fontSize: 13,
-		marginBottom: 2,
-	},
-	commentText: {
-		color: "#ccc",
-		fontSize: 13,
+	label: {
+		color: "#fff",
+		fontSize: 12,
+		textAlign: "center",
 	},
 });

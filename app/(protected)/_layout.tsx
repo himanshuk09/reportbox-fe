@@ -38,7 +38,16 @@ const CustomDrawer = (props: any) => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.customItem}
-				onPress={() => router.push("/(protected)/profile/edit")}
+				onPress={() => {
+					router.push("/(protected)/complaints");
+				}}
+			>
+				<Ionicons name="person" size={22} color={"white"} />
+				<Text style={styles.itemText}>Complaint</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => router.push("/(protected)/profile")}
 			>
 				<Ionicons
 					name="person-remove-outline"

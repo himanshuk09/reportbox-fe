@@ -20,12 +20,13 @@ const Inital = () => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				className="bg-[#00EEFF] my-3 mx-5 px-7 p-3 rounded-lg "
-				onPress={() => router.push("/(public)/sign-up")}
+				onPress={() => router.push("/(protected)/(tabs)/dashboard")}
 			>
-				<Text className="text-center "> Signup</Text>
+				<Text className="text-center "> Dashboard</Text>
 			</TouchableOpacity>
 		</View>
 	);
 };
 
 export default Inital;
+

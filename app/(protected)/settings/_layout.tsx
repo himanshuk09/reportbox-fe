@@ -28,9 +28,7 @@ const ProtectedLayout = () => {
 							>
 								<Pressable
 									onPress={() =>
-										navigation.dispatch(
-											DrawerActions.openDrawer()
-										)
+										navigation.goBack()
 									}
 									style={{
 										position: "absolute",

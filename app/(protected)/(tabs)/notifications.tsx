@@ -12,7 +12,7 @@ const Notifications = () => {
 				alignItems: "center",
 			}}
 		>
-			<Blob text={"No Notification"} iconName="notifications" />
+			<Blob text={"No Notification"} iconName={"notifications"} />
 		</View>
 	);
 };

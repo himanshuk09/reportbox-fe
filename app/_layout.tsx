@@ -22,8 +22,18 @@ export default function RootLayout() {
 		// >
 		<Stack>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Screen name="(public)" options={{ headerShown: false }} />
-			<Stack.Screen name="(protected)" options={{ headerShown: false }} />
+			<Stack.Protected guard={false}>
+				<Stack.Screen
+					name="(public)"
+					options={{ headerShown: false }}
+				/>
+			</Stack.Protected>
+			<Stack.Protected guard={true}>
+				<Stack.Screen
+					name="(protected)"
+					options={{ headerShown: false }}
+				/>
+			</Stack.Protected>
 			<Stack.Screen name="+not-found" />
 		</Stack>
 		// 	<StatusBar style="auto" />
