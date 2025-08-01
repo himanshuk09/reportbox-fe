@@ -1,18 +1,20 @@
 import ComplaintForm from "@/components/complaints/ComplaintForm";
+import ComplaintSuccessModal from "@/components/complaints/ComplaintSuccessModal";
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-	ScrollView,
-	Modal,
-	SafeAreaView,
 	KeyboardAvoidingView,
+	Modal,
 	Platform,
-	View,
-	TouchableOpacity,
+	SafeAreaView,
+	ScrollView,
+	StyleSheet,
 	Text,
+	TouchableOpacity,
+	View,
 } from "react-native";
 
 const Complaint = () => {
@@ -23,7 +25,7 @@ const Complaint = () => {
 		explaination: "",
 		location: "",
 	});
-	const [location, setLocation] = useState("");
+	const [showSuccess, setShowSuccess] = useState(false);
 
 	const handleSetImage = (newImage: string) => {
 		setComplaintData((prev) => ({
@@ -60,6 +62,7 @@ const Complaint = () => {
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}
 				>
+					<Text style={styles.title}>Raise a Complaint:</Text>
 					<ImageCard
 						image={complaintData.image}
 						setShowCamera={setShowCamera}
@@ -71,7 +74,10 @@ const Complaint = () => {
 						explanation={complaintData.explaination}
 						setExplanation={handleSetExplaination}
 					/>
-					<TouchableOpacity className="bg-[#00eeff] rounded-full my-3 p-3 mb-4 items-center">
+					<TouchableOpacity
+						className="bg-[#00eeff] rounded-full my-3 p-3 mb-4 items-center"
+						onPress={() => setShowSuccess(true)}
+					>
 						<Text className="text-black font-bold text-lg">
 							Submit
 						</Text>
@@ -88,7 +94,6 @@ const Complaint = () => {
 							setLocation={handleSetLocation}
 						/>
 					</View>
-
 					<Modal
 						visible={showCamera}
 						animationType="fade"
@@ -99,6 +104,14 @@ const Complaint = () => {
 							setImage={handleSetImage}
 						/>
 					</Modal>
+
+					<ComplaintSuccessModal
+						visible={showSuccess}
+						onClose={() => setShowSuccess(false)}
+						onTrack={() =>
+							router.push("/(protected)/complaints/progress")
+						}
+					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -106,3 +119,18 @@ const Complaint = () => {
 };
 
 export default Complaint;
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "#343232",
+		paddingHorizontal: 6,
+		paddingVertical: 6,
+		paddingTop: 120,
+	},
+	title: {
+		fontSize: 22,
+		fontWeight: "bold",
+		color: "#fff", // White text
+		marginBottom: 20,
+	},
+});

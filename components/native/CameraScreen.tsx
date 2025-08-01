@@ -1,16 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Camera, CameraType, CameraView } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import React, { useRef, useState } from "react";
 import {
-	View,
-	Text,
-	TouchableOpacity,
-	StyleSheet,
+	Alert,
 	Dimensions,
 	Image,
-	Alert,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, CameraType, CameraView } from "expo-camera";
-import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 /* -------------------------------------------------------------------------- */
 const SCALE_FACTOR = 1.5;

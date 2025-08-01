@@ -1,13 +1,13 @@
 import React from "react";
 import {
-	SafeAreaView,
+	Dimensions,
+	ImageBackground,
 	KeyboardAvoidingView,
 	Platform,
+	SafeAreaView,
 	ScrollView,
-	View,
-	ImageBackground,
 	StyleSheet,
-	Dimensions,
+	View,
 } from "react-native";
 import MobileSvg from "./MobileSvg";
 
@@ -39,7 +39,7 @@ export default function WaveHeaderScreen({
 				<View
 					style={{
 						position: "absolute",
-						top: screenHeight / 2 - 120,
+						top: screenHeight / 2 - 150,
 						left: screenWidth / 2 - 130,
 						zIndex: 20,
 					}}

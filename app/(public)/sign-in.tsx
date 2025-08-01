@@ -1,9 +1,13 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import { useAuth } from "@/contexts/AuthContext";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 function SignInScreen() {
+	const [phoneNo, setPhoneNo] = useState<any>("");
+	const { loginWithPhone } = useAuth();
+
 	return (
 		<View className="px-2 pt-6">
 			{/* Title */}
@@ -13,20 +17,27 @@ function SignInScreen() {
 			<Text className="text-white text-sm mb-2">Phone number</Text>
 
 			{/* Input Row with +91 */}
-			<View className="flex-row items-center border-b border-white pb-1 mb-8">
+			<View className="flex-row items-center border-b border-white pb-1 mb-2">
 				<Text className="text-white text-lg mr-2">+91</Text>
 				<TextInput
 					placeholder="Enter phone number"
 					placeholderTextColor="#ccc"
 					keyboardType="phone-pad"
-					className="flex-1 text-white text-base"
+					className="flex-1 text-white text-base "
+					value={phoneNo}
+					onChangeText={setPhoneNo}
+					maxLength={10}
 				/>
 			</View>
 
 			{/* Button */}
 			<TouchableOpacity
-				className="bg-[#00eeff] rounded-full p-3 mb-1 items-center"
-				onPress={() => router.push("/(public)/sign-up/verify-otp")}
+				className="bg-[#00eeff] rounded-full p-3 mt-6 items-center"
+				onPress={() => {
+					loginWithPhone(phoneNo);
+					router.push("/(public)/sign-up/verify-otp");
+				}}
+				disabled={phoneNo.length !== 10}
 			>
 				<Text className="text-black font-semibold">Get OTP</Text>
 			</TouchableOpacity>

@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import React from "react";
 
 const CustomDrawer = (props: any) => {
 	const navigation = useNavigation();
-
+	const { logout } = useAuth();
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -23,7 +24,21 @@ const CustomDrawer = (props: any) => {
 			</View>
 
 			{/* Custom Items */}
-			<TouchableOpacity style={styles.customItem}>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => {
+					router.push("/(protected)/(tabs)/dashboard");
+				}}
+			>
+				<Ionicons name="settings-outline" size={22} color={"white"} />
+				<Text style={styles.itemText}>Home</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => {
+					router.push("/(protected)/settings");
+				}}
+			>
 				<Ionicons name="settings-outline" size={22} color={"white"} />
 				<Text style={styles.itemText}>Settings</Text>
 			</TouchableOpacity>
@@ -47,6 +62,63 @@ const CustomDrawer = (props: any) => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.customItem}
+				onPress={() => router.push("/(protected)/complaints/progress")}
+			>
+				<Ionicons
+					name="person-remove-outline"
+					size={22}
+					color={"white"}
+				/>
+				<Text style={styles.itemText}>Progress</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => router.push("/(protected)/complaints/history")}
+			>
+				<Ionicons
+					name="person-remove-outline"
+					size={22}
+					color={"white"}
+				/>
+				<Text style={styles.itemText}>History</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => router.push("/(protected)/admin/users" as any)}
+			>
+				<Ionicons
+					name="person-remove-outline"
+					size={22}
+					color={"white"}
+				/>
+				<Text style={styles.itemText}>All Users</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() =>
+					router.push("/(protected)/admin/assigned" as any)
+				}
+			>
+				<Ionicons
+					name="person-remove-outline"
+					size={22}
+					color={"white"}
+				/>
+				<Text style={styles.itemText}>Assinged</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
+				onPress={() => router.push("/(protected)/admin/rights" as any)}
+			>
+				<Ionicons
+					name="person-remove-outline"
+					size={22}
+					color={"white"}
+				/>
+				<Text style={styles.itemText}>Rights</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.customItem}
 				onPress={() => router.push("/(protected)/profile")}
 			>
 				<Ionicons
@@ -61,7 +133,10 @@ const CustomDrawer = (props: any) => {
 			<View style={styles.footer}>
 				<TouchableOpacity
 					style={styles.logoutButton}
-					onPress={() => router.push("/")}
+					onPress={() => {
+						logout();
+						router.push("/");
+					}}
 				>
 					<Ionicons
 						name="log-out-outline"

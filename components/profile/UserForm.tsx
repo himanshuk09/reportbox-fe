@@ -1,8 +1,11 @@
+import { users } from "@/constants/posts";
+import { useAuth } from "@/contexts/AuthContext";
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
 	Alert,
+	Dimensions,
 	Image,
 	ImageBackground,
 	KeyboardAvoidingView,
@@ -24,6 +27,7 @@ interface UserFormProps {
 	onlyForm?: boolean;
 	onPressContinue?: any;
 }
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const UserForm = ({
 	editable = true,
@@ -31,18 +35,27 @@ const UserForm = ({
 	onPressContinue = () => {},
 }: UserFormProps) => {
 	const [edit, setEdit] = useState(onlyForm);
-	const [image, setImage] = useState<string | null | any>(null);
 	const [showCamera, setShowCamera] = useState(false);
 	const [formChanged, setFormChanged] = useState(false);
-	const [formData, setFormData] = useState({
-		name: "Rishi",
-		state: "Tamil Nadu",
-		city: "Madurai 625011",
-		doorNo: "5008",
-		street: "Villapuram Housing Board",
-		userID: "MTNHB30",
-	});
-
+	const [formData, setFormData] = useState<any>(users[0]);
+	const [showImageViewer, setShowImageViewer] = useState(false);
+	const [currentImageUri, setCurrentImageUri] = useState("");
+	const { verifyOtp, session, user, completeProfile } = useAuth();
+	const openImageViewer = (uri: string) => {
+		setCurrentImageUri(uri);
+		setShowImageViewer(true);
+	};
+	// Function to close the image viewer
+	const closeImageViewer = () => {
+		setShowImageViewer(false);
+		setCurrentImageUri("");
+	};
+	const handleSetImage = (newAvtar: string) => {
+		setFormData((prev: any) => ({
+			...prev,
+			avtar: newAvtar,
+		}));
+	};
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: "#343232" }}>
 			<KeyboardAvoidingView
@@ -103,12 +116,13 @@ const UserForm = ({
 						)}
 
 						<View style={styles.profilePicWrapper}>
-							<View style={styles.profilePic}>
+							<TouchableOpacity
+								style={styles.profilePic}
+								onPress={() => openImageViewer(formData.avtar)}
+							>
 								<Image
 									source={{
-										uri: image
-											? image
-											: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+										uri: formData.avtar,
 									}}
 									resizeMode="cover"
 									style={{
@@ -117,14 +131,14 @@ const UserForm = ({
 										borderRadius: 40,
 									}}
 								/>
-							</View>
+							</TouchableOpacity>
 							{(edit || onlyForm) && (
 								<TouchableOpacity
 									style={styles.addIcon}
 									onPress={() =>
 										handleImageChoice(
 											setShowCamera,
-											setImage
+											handleSetImage
 										)
 									}
 								>
@@ -147,7 +161,7 @@ const UserForm = ({
 									style={styles.input}
 									value={formData.name}
 									onChangeText={(text) => {
-										setFormData((prev) => ({
+										setFormData((prev: any) => ({
 											...prev,
 											name: text,
 										}));
@@ -178,7 +192,7 @@ const UserForm = ({
 											style={styles.input}
 											value={formData.state}
 											onChangeText={(text) => {
-												setFormData((prev) => ({
+												setFormData((prev: any) => ({
 													...prev,
 													state: text,
 												}));
@@ -206,7 +220,7 @@ const UserForm = ({
 											style={styles.input}
 											value={formData.city}
 											onChangeText={(text) => {
-												setFormData((prev) => ({
+												setFormData((prev: any) => ({
 													...prev,
 													city: text,
 												}));
@@ -224,7 +238,7 @@ const UserForm = ({
 									style={styles.input}
 									value={formData.doorNo}
 									onChangeText={(text) => {
-										setFormData((prev) => ({
+										setFormData((prev: any) => ({
 											...prev,
 											doorNo: text,
 										}));
@@ -240,7 +254,7 @@ const UserForm = ({
 									style={styles.input}
 									value={formData.street}
 									onChangeText={(text) => {
-										setFormData((prev) => ({
+										setFormData((prev: any) => ({
 											...prev,
 											street: text,
 										}));
@@ -264,6 +278,9 @@ const UserForm = ({
 													onPress: () => {
 														setEdit(false);
 														setFormChanged(false);
+														completeProfile(
+															formData
+														);
 														onPressContinue();
 													},
 												},
@@ -355,8 +372,33 @@ const UserForm = ({
 				>
 					<CameraScreen
 						setShowCamera={setShowCamera}
-						setImage={setImage}
+						setImage={handleSetImage}
 					/>
+				</Modal>
+				{/* Image Viewer Modal */}
+				<Modal
+					visible={showImageViewer}
+					transparent={true} // Makes the background translucent
+					onRequestClose={closeImageViewer} // For Android back button
+					animationType="fade"
+				>
+					<View style={styles.imageViewerContainer}>
+						<Image
+							source={{ uri: currentImageUri }}
+							style={styles.fullScreenImage}
+							resizeMode="contain" // Use 'contain' to ensure the whole image is visible
+						/>
+						<TouchableOpacity
+							style={styles.closeButton}
+							onPress={closeImageViewer}
+						>
+							<Ionicons
+								name="close-circle"
+								size={40}
+								color="white"
+							/>
+						</TouchableOpacity>
+					</View>
 				</Modal>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -486,5 +528,22 @@ const styles = StyleSheet.create({
 	text: {
 		color: "#fff",
 		fontSize: 16,
+	},
+	imageViewerContainer: {
+		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.9)",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	fullScreenImage: {
+		width: screenWidth * 0.9,
+		height: screenHeight * 0.8,
+	},
+	closeButton: {
+		position: "absolute",
+		top: 50,
+		right: 20,
+		zIndex: 1,
+		padding: 10,
 	},
 });

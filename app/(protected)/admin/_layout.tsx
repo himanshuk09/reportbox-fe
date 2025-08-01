@@ -3,64 +3,37 @@ import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-const ComplaintLayout = () => {
+const AdminLayout = () => {
 	const navigation = useNavigation();
 
 	return (
 		<Stack>
 			<Stack.Screen
-				name="index"
+				name="assigned"
 				options={({ route }) => ({
-					headerShown: true,
+					headerShown: false,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
-					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={false}
-								showMenuDrawer={true}
-								showThreeDots={false}
-							/>
-						</SafeAreaView>
-					),
 				})}
 			/>
 			<Stack.Screen
-				name="[id]"
+				name="users"
 				options={({ route }) => ({
-					headerShown: true,
+					headerShown: false,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
-					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={false}
-								showMenuDrawer={true}
-								showThreeDots={false}
-							/>
-						</SafeAreaView>
-					),
 				})}
 			/>
 			<Stack.Screen
-				name="progress"
+				name="rights"
 				options={({ route }) => ({
-					headerShown: true,
+					headerShown: false,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
-					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-							/>
-						</SafeAreaView>
-					),
 				})}
 			/>
 			<Stack.Screen
-				name="history"
+				name="complaints/[complaintID]"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
@@ -80,4 +53,4 @@ const ComplaintLayout = () => {
 	);
 };
 
-export default ComplaintLayout;
+export default AdminLayout;

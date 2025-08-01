@@ -3,7 +3,7 @@ import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-const ComplaintLayout = () => {
+const RightLayout = () => {
 	const navigation = useNavigation();
 
 	return (
@@ -16,62 +16,46 @@ const ComplaintLayout = () => {
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={false}
-								showMenuDrawer={true}
-								showThreeDots={false}
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
 			/>
 			<Stack.Screen
-				name="[id]"
+				name="create-groups"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={false}
-								showMenuDrawer={true}
-								showThreeDots={false}
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
 			/>
 			<Stack.Screen
-				name="progress"
+				name="assigned-users"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
 			/>
 			<Stack.Screen
-				name="history"
+				name="assigned-rights"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
@@ -80,4 +64,4 @@ const ComplaintLayout = () => {
 	);
 };
 
-export default ComplaintLayout;
+export default RightLayout;

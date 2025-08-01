@@ -1,14 +1,13 @@
+import StackHeader from "@/components/StackHeader";
 import { SpecialTabButton } from "@/components/test/SpecialTabButton";
-import { WavyHeaderBackground } from "@/components/test/WaveBanner";
 import {
 	Ionicons,
 	MaterialCommunityIcons,
 	MaterialIcons,
 } from "@expo/vector-icons";
-import { DrawerActions } from "@react-navigation/native";
-import { Tabs, useNavigation } from "expo-router";
+import { router, Tabs, useNavigation } from "expo-router";
 import React from "react";
-import { Platform, Pressable, SafeAreaView, View } from "react-native";
+import { SafeAreaView } from "react-native";
 
 const TabLayout = () => {
 	const navigation = useNavigation();
@@ -69,7 +68,7 @@ const TabLayout = () => {
 				name="dashboard"
 				options={{
 					title: "",
-					headerShown: false,
+					headerShown: true,
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons name="home" color={color} size={size} />
 					),
@@ -77,37 +76,7 @@ const TabLayout = () => {
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<View
-								style={{
-									backgroundColor: "#00EEFF",
-									height: 80,
-									marginTop: 30,
-									justifyContent: "center",
-								}}
-							>
-								{/* Menu Icon Positioned on Left */}
-								<Pressable
-									onPress={() =>
-										navigation.dispatch(
-											DrawerActions.openDrawer()
-										)
-									}
-									style={{
-										position: "absolute",
-										top: 10,
-										left: 16,
-										zIndex: 10,
-									}}
-								>
-									<Ionicons
-										name="menu"
-										size={35}
-										color="black"
-									/>
-								</Pressable>
-
-								<WavyHeaderBackground />
-							</View>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				}}
@@ -130,37 +99,7 @@ const TabLayout = () => {
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<View
-								style={{
-									backgroundColor: "#00EEFF",
-									height: 80,
-									marginTop: 30,
-									justifyContent: "center",
-								}}
-							>
-								{/* Menu Icon Positioned on Left */}
-								<Pressable
-									onPress={() =>
-										navigation.dispatch(
-											DrawerActions.openDrawer()
-										)
-									}
-									style={{
-										position: "absolute",
-										top: 10,
-										left: 16,
-										zIndex: 10,
-									}}
-								>
-									<Ionicons
-										name="menu"
-										size={35}
-										color="black"
-									/>
-								</Pressable>
-
-								<WavyHeaderBackground />
-							</View>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				}}
@@ -202,37 +141,7 @@ const TabLayout = () => {
 							<SafeAreaView
 								style={{ backgroundColor: "#00EEFF" }}
 							>
-								<View
-									style={{
-										backgroundColor: "#00EEFF",
-										height: 80,
-										marginTop: 30,
-										justifyContent: "center",
-									}}
-								>
-									{/* Menu Icon Positioned on Left */}
-									<Pressable
-										onPress={() =>
-											navigation.dispatch(
-												DrawerActions.openDrawer()
-											)
-										}
-										style={{
-											position: "absolute",
-											top: 10,
-											left: 16,
-											zIndex: 10,
-										}}
-									>
-										<Ionicons
-											name="menu"
-											size={35}
-											color="black"
-										/>
-									</Pressable>
-
-									<WavyHeaderBackground />
-								</View>
+								<StackHeader showThreeDots={false} />
 							</SafeAreaView>
 						),
 					}}
@@ -254,37 +163,13 @@ const TabLayout = () => {
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<View
-								style={{
-									backgroundColor: "#00EEFF",
-									height: 80,
-									marginTop: 30,
-									justifyContent: "center",
-								}}
-							>
-								{/* Menu Icon Positioned on Left */}
-								<Pressable
-									onPress={() =>
-										navigation.dispatch(
-											DrawerActions.openDrawer()
-										)
-									}
-									style={{
-										position: "absolute",
-										top: 10,
-										left: 16,
-										zIndex: 10,
-									}}
-								>
-									<Ionicons
-										name="menu"
-										size={35}
-										color="black"
-									/>
-								</Pressable>
-
-								<WavyHeaderBackground />
-							</View>
+							<StackHeader
+								onmenuTitlePress={() =>
+									router.push(
+										"/(protected)/complaints/history"
+									)
+								}
+							/>
 						</SafeAreaView>
 					),
 				}}

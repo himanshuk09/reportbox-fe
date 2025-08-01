@@ -2,6 +2,7 @@ import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
+import WebViewComponent from "../WebViewComponent";
 const htmlcontent = /*html*/ `
     <!DOCTYPE html>
         <html>
@@ -269,50 +270,7 @@ export default function LeafletMapWebView({ location, setLocation }: any) {
 					onLoad={() => setLocationReady(true)}
 				/>
 			) : (
-				<WebView
-					ref={webviewRef}
-					originWhitelist={["*"]}
-					source={{ html: htmlcontent }}
-					onMessage={onMessage}
-					onLoadStart={() => {}}
-					onLoad={() => {}}
-					onLoadEnd={() => setLocationReady(true)}
-					onFileDownload={({ nativeEvent }: any) => {
-						const { downloadUrl } = nativeEvent;
-					}}
-					style={styles.webview}
-					onHttpError={(syntheticEvent) => {
-						const { statusCode } = syntheticEvent.nativeEvent;
-						console.log("HTTP error status code", statusCode);
-					}}
-					containerStyle={{
-						overflow: "hidden",
-						width: "100%",
-						height: "90%",
-						marginVertical: 0,
-						padding: 2,
-						borderRadius: 10,
-					}}
-					overScrollMode="content"
-					gestureHandling="auto"
-					scrollEnabled={false}
-					javaScriptEnabled={true}
-					domStorageEnabled={true}
-					allowFileAccess={true}
-					useWebkit={true}
-					allowsFullscreenVideo={true}
-					showsHorizontalScrollIndicator={false}
-					showsVerticalScrollIndicator={false}
-					setWebContentsDebuggingEnabled={true}
-					scalesPageToFit={true}
-					setBuiltInZoomControls={false}
-					allowsInlineMediaPlayback={true}
-					bounces={false}
-					zoomEnabled={false}
-					nestedScrollEnabled={true}
-					renderToHardwareTextureAndroid
-					startInLoadingState
-				/>
+					<WebViewComponent webviewRef={webviewRef} htmlcontent={htmlcontent}  onMessage={onMessage} setLoaded={setLocationReady} />
 			)}
 		</View>
 	);

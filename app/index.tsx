@@ -1,32 +1,21 @@
-import { router } from "expo-router";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
+import { Redirect } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 
-const Inital = () => {
-	return (
-		<View
-			style={{
-				flex: 1,
-				backgroundColor: "#343232",
-				justifyContent: "center",
-				alignItems: "center",
-			}}
-		>
-			<TouchableOpacity
-				className="bg-[#00EEFF] my-3 mx-5 px-7 p-3 rounded-lg "
-				onPress={() => router.push("/(public)/sign-in")}
-			>
-				<Text className="text-center "> Signin</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				className="bg-[#00EEFF] my-3 mx-5 px-7 p-3 rounded-lg "
-				onPress={() => router.push("/(protected)/(tabs)/dashboard")}
-			>
-				<Text className="text-center "> Dashboard</Text>
-			</TouchableOpacity>
-		</View>
+const Initial = () => {
+	const { session, isLoading } = useAuth();
+	if (isLoading) {
+		return (
+			<View className="flex-1 items-center justify-center bg-[#343232]">
+				<ActivityIndicator size="large" color="#00EEFF" />
+			</View>
+		);
+	}
+	return session ? (
+		<Redirect href={"/(protected)/(tabs)/dashboard"} />
+	) : (
+		<Redirect href={"/(public)/welcome"} />
 	);
 };
 
-export default Inital;
-
+export default Initial;

@@ -1,11 +1,12 @@
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
-import React from "react";
-import { AntDesign } from "@expo/vector-icons";
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import { useAuth } from "@/contexts/AuthContext";
+import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-const { height, width } = Dimensions.get("window");
+import React from "react";
 function VerificationSuccessScreen() {
+	const { setSessionActive, user } = useAuth();
 	return (
 		<View className="flex-1 relative justify-center">
 			{/* Other content below */}
@@ -21,9 +22,13 @@ function VerificationSuccessScreen() {
 
 				<TouchableOpacity
 					className="flex-row items-center space-x-2"
-					onPress={() =>
-						router.push("/(public)/sign-up/profile-form")
-					}
+					onPress={() => {
+						if (user) {
+							setSessionActive();
+						} else {
+							router.push("/(public)/sign-up/profile-form");
+						}
+					}}
 				>
 					<Text className="text-white  text-2xl font-semibold">
 						Let’s complete your profile
@@ -39,16 +44,16 @@ function VerificationSuccessScreen() {
 
 const Verified = () => {
 	const floatingCard = (
-		<View className="bg-white rounded-3xl p-6 w-72 items-center shadow-lg">
-			<Text className="text-center text-base font-bold text-[#ccc] mb-2">
+		<View className="bg-white rounded-3xl mb-2 p-6 w-72 items-center shadow-lg">
+			<Text className="text-center text-2xl font-bold text-[#343232] mb-2">
 				You’ve been verified
 			</Text>
 			<Image
-				// source={{
-				// 	uri: "https://media.istockphoto.com/id/2150831290/vector/3d-handshake-hold-hands-with-blue-sleeve-vector-icon-cartoon-partnership-arm-gesture.jpg?s=612x612&w=0&k=20&c=_M9LSLypat10SHh_h6hpPQOzjmnotUq43hL0Lww1Q5g=",
-				// }}
-				source={require("@/assets/Handshake.gif")}
-				height={80}
+				source={{
+					uri: "https://media.istockphoto.com/id/2150831290/vector/3d-handshake-hold-hands-with-blue-sleeve-vector-icon-cartoon-partnership-arm-gesture.jpg?s=612x612&w=0&k=20&c=_M9LSLypat10SHh_h6hpPQOzjmnotUq43hL0Lww1Q5g=",
+				}}
+				// source={require("@/assets/Handshake.gif")}
+				height={150}
 				width={200}
 				resizeMode="stretch"
 			/>

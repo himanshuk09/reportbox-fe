@@ -1,9 +1,11 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import { useAuth } from "@/contexts/AuthContext";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 function VerificationScreen() {
+	const { verifyOtp, session, user } = useAuth();
 	const [code, setCode] = useState("");
 
 	const handleKeyPress = (digit: string) => {
@@ -40,17 +42,15 @@ function VerificationScreen() {
 
 	return (
 		<View className="px-6 items-center">
-			
 			<Text className="text-white text-xl font-bold mb-2">
 				VERIFICATION CODE
 			</Text>
-		
+
 			<Text className="text-gray-300  mb-6 text-center text-lg">
 				Please enter verification code sent to +91 9876543210
 			</Text>
 
 			<View className="flex-row items-center justify-between w-full px-6 mb-2">
-			
 				<View className="flex-row space-x-4 mx-auto">
 					{[...Array(4).keys()].map((_, i) => (
 						<View
@@ -64,16 +64,18 @@ function VerificationScreen() {
 					))}
 				</View>
 
-				
 				<View className="absolute -right-1">
 					{code.length === 4 && (
 						<Feather
 							name="check-circle"
 							size={28}
 							color="#00eeff"
-							onPress={() =>
-								router.push("/(public)/sign-up/verified")
-							}
+							onPress={() => {
+								if (!verifyOtp(code)) {
+									return;
+								}
+								router.push("/(public)/sign-up/verified");
+							}}
 						/>
 					)}
 				</View>

@@ -3,8 +3,9 @@ import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-const ProtectedLayout = () => {
+const AdminUserLayout = () => {
 	const navigation = useNavigation();
+
 	return (
 		<Stack>
 			<Stack.Screen
@@ -13,33 +14,22 @@ const ProtectedLayout = () => {
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
-					title: "Help",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-								backIconTitle="Settings"
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
 			/>
 			<Stack.Screen
-				name="help"
+				name="[userID]"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: "#00EEFF",
 					headerTransparent: true,
-					title: "Help",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-							/>
+							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				})}
@@ -48,4 +38,4 @@ const ProtectedLayout = () => {
 	);
 };
 
-export default ProtectedLayout;
+export default AdminUserLayout;

@@ -1,7 +1,7 @@
-import { WavyHeaderBackground } from "@/components/test/WaveBanner";
+import StackHeader from "@/components/StackHeader";
 import { Stack } from "expo-router";
 import React from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView } from "react-native";
 
 const ProtectedLayout = () => {
 	return (
@@ -14,23 +14,18 @@ const ProtectedLayout = () => {
 					headerStyle: {
 						backgroundColor: "#00EEFF", // Background color of the header
 					},
-					
+
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
-							<View
-								style={{
-									backgroundColor: "#00EEFF",
-									height: 80,
-									marginTop: 30,
-								}}
-							>
-								<WavyHeaderBackground />
-							</View>
+							<StackHeader
+								showBackIcon={false}
+								showMenuDrawer={false}
+								showThreeDots={false}
+							/>
 						</SafeAreaView>
 					),
 				}}
 			/>
-			
 		</Stack>
 	);
 };

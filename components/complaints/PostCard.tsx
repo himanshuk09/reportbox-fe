@@ -1,3 +1,4 @@
+import { getStatusStyle } from "@/constants/statuscode";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -6,17 +7,13 @@ import {
 	Dimensions,
 	Image,
 	Modal,
+	Pressable,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-import {  TouchableWithoutFeedback, Easing } from "react-native";
-
-
-
 
 export function PostCard({
 	item,
@@ -31,15 +28,17 @@ export function PostCard({
 		message: string;
 		tag: string;
 		like: any;
+		status: string;
 		comments: {
 			id: string;
 			avatar: string;
 			user: string;
 			comment: string;
 		}[];
-	}
+	};
 	showviewMore?: boolean;
 }) {
+	const [menuVisible, setMenuVisible] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const animatedHeight = useRef(new Animated.Value(0)).current;
 	const [showImageViewer, setShowImageViewer] = useState(false);
@@ -69,14 +68,26 @@ export function PostCard({
 		setCurrentImageUri("");
 	};
 
-	
 	return (
-		<View style={styles.card}>
+		<Pressable
+			style={styles.card}
+			onPress={() => {
+				if (!showviewMore) return;
+				router.push({
+					pathname: "/(protected)/complaints/[id]",
+					params: { id: "1" },
+				});
+			}}
+		>
 			{/* Header */}
 			<View style={styles.header}>
 				<View style={styles.userInfo}>
 					<Image
-						source={{ uri: item.avatar }}
+						// source={{ uri: item.avatar }}
+						source={{
+							uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+						}}
+						resizeMode="cover"
 						style={styles.avatar}
 					/>
 					<View>
@@ -84,46 +95,70 @@ export function PostCard({
 						<Text style={styles.time}>{item.time}</Text>
 					</View>
 				</View>
-				<Feather name="more-horizontal" size={20} color="white" />
+				<Feather
+					name="more-vertical"
+					size={25}
+					color="white"
+					// onPress={() => setMenuVisible(!menuVisible)}
+				/>
+				{/* {menuVisible && (
+					<View className="absolute  bg-slate-300 rounded-lg right-5 top-3 shadow p-2">
+						<Pressable
+							onPress={() => {
+								setMenuVisible(!menuVisible);
+								console.log("Complaint History pressed");
+							}}
+							className="p-1"
+						>
+							<Text className="text-black text-sm font-semibold">
+								Complaint History
+							</Text>
+						</Pressable>
+					</View>
+				)} */}
 			</View>
 
 			{/* Images */}
 			<View style={styles.imageRow}>
-				<TouchableOpacity
-					style={styles.imageHalfTouchable}
-					onPress={() => openImageViewer(item.beforeImage)}
-					activeOpacity={0.7}
-				>
-					<Image
-						source={{ uri: item.beforeImage }}
-						style={styles.imageHalf}
-						resizeMode="cover"
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.imageHalfTouchable}
-					onPress={() => openImageViewer(item.afterImage)}
-					activeOpacity={0.7}
-				>
-					<Image
-						source={{ uri: item.afterImage }}
-						style={styles.imageHalf}
-						resizeMode="cover"
-					/>
-				</TouchableOpacity>
+				{item.beforeImage && (
+					<TouchableOpacity
+						style={styles.imageHalfTouchable}
+						onPress={() => openImageViewer(item.beforeImage)}
+						activeOpacity={0.7}
+					>
+						<Image
+							source={{ uri: item.beforeImage }}
+							style={styles.imageHalf}
+							resizeMode="cover"
+						/>
+					</TouchableOpacity>
+				)}
+				{item.afterImage && (
+					<TouchableOpacity
+						style={styles.imageHalfTouchable}
+						onPress={() => openImageViewer(item.afterImage)}
+						activeOpacity={0.7}
+					>
+						<Image
+							source={{ uri: item.afterImage }}
+							style={styles.imageHalf}
+							resizeMode="cover"
+						/>
+					</TouchableOpacity>
+				)}
 			</View>
 
 			{/* Message */}
 			<Text style={styles.message}>{item.message}</Text>
 			<Text style={styles.tag}>{item.tag}</Text>
 
+			<Text style={[styles.status, getStatusStyle(item.status)]}>
+				{item.status}
+			</Text>
 			{/* Actions */}
 			<View style={styles.actions}>
 				<View style={styles.actionIcons}>
-					<TouchableOpacity
-						style={styles.actionButton}
-						
-					>
+					<TouchableOpacity style={styles.actionButton}>
 						<Ionicons
 							name={item.like ? "thumbs-up" : "thumbs-up-outline"}
 							size={20}
@@ -150,18 +185,6 @@ export function PostCard({
 						/>
 					</TouchableOpacity>
 				</View>
-				{showviewMore && (
-					<TouchableOpacity
-						onPress={() =>
-							router.push({
-								pathname: "/(protected)/complaints/[id]",
-								params: { id: "1" },
-							})
-						}
-					>
-						<Text style={styles.viewMore}>View more</Text>
-					</TouchableOpacity>
-				)}
 			</View>
 			{/* Comments Section */}
 			<Animated.View
@@ -200,8 +223,7 @@ export function PostCard({
 					</TouchableOpacity>
 				</View>
 			</Modal>
-			
-		</View>
+		</Pressable>
 	);
 }
 
@@ -224,7 +246,6 @@ const CommentItem = ({
 );
 
 const styles = StyleSheet.create({
-	
 	card: {
 		backgroundColor: "#1e1e1e",
 		padding: 16,
@@ -236,6 +257,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		marginBottom: 12,
+		position: "relative",
 	},
 	userInfo: {
 		flexDirection: "row",
@@ -335,21 +357,29 @@ const styles = StyleSheet.create({
 	},
 	imageViewerContainer: {
 		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.9)", // Dark translucent background
+		backgroundColor: "rgba(0, 0, 0, 0.9)",
 		justifyContent: "center",
 		alignItems: "center",
 	},
 	fullScreenImage: {
-		width: screenWidth * 0.9, // Make image slightly smaller than screen to give padding
-		height: screenHeight * 0.8, // Adjust height
-		// You might want to use Dimensions.get('window') for more precise sizing
-		// or calculate based on image aspect ratio
+		width: screenWidth * 0.9,
+		height: screenHeight * 0.8,
 	},
 	closeButton: {
 		position: "absolute",
-		top: 50, // Adjust position as needed, considering SafeArea
+		top: 50,
 		right: 20,
-		zIndex: 1, // Ensure button is on top
-		padding: 10, // Make touchable area larger
+		zIndex: 1,
+		padding: 10,
+	},
+	status: {
+		alignSelf: "flex-end",
+		fontSize: 12,
+		fontWeight: "bold",
+		borderRadius: 12,
+		paddingHorizontal: 10,
+		paddingVertical: 4,
+		overflow: "hidden",
+		marginBottom: 8,
 	},
 });

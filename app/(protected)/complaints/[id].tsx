@@ -4,14 +4,57 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 
 import { PostCard } from "@/components/complaints/PostCard";
-import { posts } from "../(tabs)/feed";
+import { complaintsPosts } from "@/constants/posts";
 
 export default function PostDetailsScreen() {
 	const { id } = useLocalSearchParams();
 
-	const post = posts.find((p) => p.id === id);
+	const post = complaintsPosts.find((p) => p.id === id);
 
 	if (!post) return <Text>Post not found</Text>;
+	const buildTimeline = (post: {
+		raisedDate?: string;
+		responseDate?: string;
+		resolvedDate?: string;
+	}) => {
+		const timeline = [];
+
+		if (post.raisedDate) {
+			timeline.push({
+				date: post.raisedDate,
+				icon: "handshake",
+			});
+		} else {
+			timeline.push({
+				date: "-",
+				icon: "handshake",
+			});
+		}
+		if (post.responseDate) {
+			timeline.push({
+				date: post.responseDate,
+				icon: "checkmark-done",
+			});
+		} else {
+			timeline.push({
+				date: "-",
+				icon: "checkmark-done",
+			});
+		}
+		if (post.resolvedDate) {
+			timeline.push({
+				date: post.resolvedDate,
+				icon: "award",
+			});
+		} else {
+			timeline.push({
+				date: "-",
+				icon: "award",
+			});
+		}
+
+		return timeline;
+	};
 
 	return (
 		<ScrollView
@@ -27,43 +70,40 @@ export default function PostDetailsScreen() {
 			{/* Timeline */}
 			<View
 				style={{
-					marginTop: 20,
 					backgroundColor: "#1e1e1e",
 					borderRadius: 10,
-					paddingVertical: 20,
+					paddingVertical: 15,
 				}}
 			>
 				<PostCard item={post} showviewMore={false} />
 
-				{post.timeline.map((entry, index) => (
+				{buildTimeline(post).map((step, index, arr) => (
 					<View key={index} style={styles.timelineItem}>
-						{/* Circle and Icon Container */}
+						{/* Icon Circle & Lines */}
 						<View style={styles.iconContainerWrapper}>
-							{/* Vertical line connector */}
 							{index > 0 && (
 								<View style={styles.verticalLineTop} />
 							)}
-							{index < post.timeline.length - 1 && (
+							{index < arr.length - 1 && (
 								<View style={styles.verticalLineBottom} />
 							)}
 
 							<View style={styles.circle}>
-								{/* Conditional Icons based on index or entry content */}
-								{index === 0 && (
+								{step.icon === "handshake" && (
 									<FontAwesome5
 										name="handshake"
 										size={18}
 										color="#C0C0C0"
 									/>
 								)}
-								{index === 1 && (
+								{step.icon === "checkmark-done" && (
 									<Ionicons
 										name="checkmark-done"
-										size={24}
+										size={22}
 										color="#C0C0C0"
 									/>
 								)}
-								{index === 2 && (
+								{step.icon === "award" && (
 									<FontAwesome5
 										name="award"
 										size={18}
@@ -73,8 +113,9 @@ export default function PostDetailsScreen() {
 							</View>
 						</View>
 
-						{/* Date and Time Text */}
-						<Text style={styles.timelineText}>{entry}</Text>
+						{/* Label + Date */}
+
+						<Text style={styles.timelineText}>{step.date}</Text>
 					</View>
 				))}
 			</View>
