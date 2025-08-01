@@ -1,5 +1,6 @@
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
@@ -32,7 +33,8 @@ const ResolveComplaintScreen = () => {
 
 	const [form, setForm] = useState<any>(initialData);
 	const [showCamera, setShowCamera] = useState(false);
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const updateField = (key: string, value: any) =>
 		setForm((prev: any) => ({ ...prev, [key]: value }));
 
@@ -73,7 +75,7 @@ const ResolveComplaintScreen = () => {
 			style={{
 				flex: 1,
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 90,
 			}}
 		>
@@ -81,34 +83,83 @@ const ResolveComplaintScreen = () => {
 				contentContainerStyle={{ paddingBottom: 16 }}
 				showsVerticalScrollIndicator={false}
 			>
-				<Text className="text-2xl text-white font-bold mb-4">
+				<Text
+					className="text-2xl  font-bold mb-4"
+					style={{
+						color: textColor,
+					}}
+				>
 					Resolve Complaint
 				</Text>
 
 				{/* Read-Only Info */}
-				<Text className="text-white mb-1">Type: {form.type}</Text>
-				<Text className="text-white mb-1">Status: {form.status}</Text>
-				<Text className="text-white mb-1">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Type: {form.type}
+				</Text>
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Status: {form.status}
+				</Text>
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					Assigned By: {form.assignedBy}
 				</Text>
-				<Text className="text-white mb-1">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					Assigned To: {form.assignedTo}
 				</Text>
-				<Text className="text-white mb-1">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					Raised On: {form.raisedDate.toLocaleString()}
 				</Text>
-				<Text className="text-white mb-1">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					Response On: {form.responseDate.toLocaleString()}
 				</Text>
 
 				{/* Before Image (read-only) */}
-				<Text className="text-white text-xl mt-4 mb-1">
+				<Text
+					className="text-xl mt-4 mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					Before Image
 				</Text>
 				<ImageCard image={form.beforeImage} showCaptureIcon={false} />
 
 				{/* After Image */}
-				<Text className="text-white text-xl mt-4 mb-1">
+				<Text
+					className="text-xl mt-4 mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
 					After Image
 				</Text>
 				<ImageCard
@@ -123,8 +174,17 @@ const ResolveComplaintScreen = () => {
 					onPress={showDatePicker}
 					className="mt-4 mb-4"
 				>
-					<View className="bg-[#1e1e1e] p-3 rounded-lg">
-						<Text className="text-white">
+					<View
+						className=" p-3 rounded-lg"
+						style={{
+							backgroundColor: cardsColor,
+						}}
+					>
+						<Text
+							style={{
+								color: textColor,
+							}}
+						>
 							Resolved On:{" "}
 							{form.resolvedDate
 								? form.resolvedDate.toLocaleString()
@@ -138,7 +198,12 @@ const ResolveComplaintScreen = () => {
 					onPress={handleSubmit}
 					className="bg-green-600 py-3 rounded-xl mb-10"
 				>
-					<Text className="text-white text-center font-bold">
+					<Text
+						className="text-center font-bold"
+						style={{
+							color: "white",
+						}}
+					>
 						Mark as Resolved
 					</Text>
 				</TouchableOpacity>

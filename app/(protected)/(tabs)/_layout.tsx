@@ -1,56 +1,39 @@
 import StackHeader from "@/components/StackHeader";
 import { SpecialTabButton } from "@/components/test/SpecialTabButton";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	Ionicons,
 	MaterialCommunityIcons,
 	MaterialIcons,
 } from "@expo/vector-icons";
-import { router, Tabs, useNavigation } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const TabLayout = () => {
-	const navigation = useNavigation();
+	const { primaryColor, secondaryColor, cardsColor } = useAppTheme();
 
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: "#00EEFF",
+				tabBarActiveTintColor: primaryColor,
 				tabBarInactiveTintColor: "#727272",
 				tabBarBadgeStyle: {
-					backgroundColor: "#343232",
-					color: "#343232",
+					backgroundColor: secondaryColor,
+					color: secondaryColor,
 				},
 				headerPressOpacity: 1,
-				// tabBarStyle: Platform.select({
-				// 	ios: {
-				// 		backgroundColor: "#343232", // ✅ Tab bar background color
-				// 		position: "absolute",
-				// 		borderTopWidth: 0, // ✅ Remove top line
-				// 		shadowOpacity: 0, // ✅ Remove shadow
-				// 	},
-				// 	default: {
-				// 		backgroundColor: "#343232", // ✅ Tab bar background color
-				// 		padding: 10,
-				// 		marginBottom: 5,
-				// 		borderTopWidth: 0, // ✅ Remove top line
-				// 		elevation: 0, // ✅ Remove Android shadow
-				// 		// borderTopLeftRadius: 20, // ✅ Rounded top corners
-				// 		// borderTopRightRadius: 20,
-				// 		// overflow: "hidden",
-				// 	},
-				// }),
 				tabBarIconStyle: {
-					marginTop: 13, // ✅ Adds space above the icons
+					marginTop: 13,
 				},
-				animation: "none", // Custom animation
+				animation: "none",
 				tabBarStyle: {
 					position: "absolute",
 					bottom: 10,
 					left: 20,
 					right: 20,
 					height: 70,
-					backgroundColor: "#1c1c1e",
+					backgroundColor: cardsColor,
 					borderRadius: 35,
 					borderTopWidth: 0,
 					elevation: 0,
@@ -72,10 +55,10 @@ const TabLayout = () => {
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons name="home" color={color} size={size} />
 					),
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
@@ -95,10 +78,10 @@ const TabLayout = () => {
 							size={size}
 						/>
 					),
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
@@ -135,11 +118,11 @@ const TabLayout = () => {
 								size={size}
 							/>
 						),
-						tabBarActiveTintColor: "#00EEFF",
+						tabBarActiveTintColor: primaryColor,
 						headerTransparent: true,
 						header: () => (
 							<SafeAreaView
-								style={{ backgroundColor: "#00EEFF" }}
+								style={{ backgroundColor: primaryColor }}
 							>
 								<StackHeader showThreeDots={false} />
 							</SafeAreaView>
@@ -159,10 +142,10 @@ const TabLayout = () => {
 							size={size}
 						/>
 					),
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								onmenuTitlePress={() =>
 									router.push(

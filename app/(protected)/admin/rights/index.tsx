@@ -1,14 +1,26 @@
-import { useNavigation } from "@react-navigation/native";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const GroupManagementHome = () => {
-	const navigation = useNavigation();
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	return (
-		<View className="flex-1 bg-[#343232] p-6 pt-20">
-			<Text className="text-white text-2xl font-bold mb-6">
+		<View
+			style={{
+				flex: 1,
+				padding: 16,
+				backgroundColor: secondaryColor,
+				marginTop: 90,
+			}}
+		>
+			<Text
+				className=" text-2xl font-bold mb-6"
+				style={{
+					color: textColor,
+				}}
+			>
 				Group Management
 			</Text>
 

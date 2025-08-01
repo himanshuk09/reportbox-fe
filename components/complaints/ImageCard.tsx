@@ -1,4 +1,5 @@
 import { handleImageChoice } from "@/components/native/CameraScreen";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { FontAwesome5, Fontisto } from "@expo/vector-icons";
 import React from "react";
 import { Image, View } from "react-native";
@@ -9,6 +10,9 @@ const ImageCard = ({
 	setImage = () => {},
 	showCaptureIcon = true,
 }: any) => {
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+
 	return (
 		<View style={{ flex: 1, paddingBottom: 20 }}>
 			<View style={{ position: "relative", marginTop: 10 }}>
@@ -27,7 +31,7 @@ const ImageCard = ({
 						style={{
 							height: 200,
 							borderRadius: 30,
-							backgroundColor: "#1e1e1e",
+							backgroundColor: cardsColor,
 							justifyContent: "center",
 							alignItems: "center",
 						}}
@@ -44,7 +48,7 @@ const ImageCard = ({
 							bottom: -19,
 							left: "48%",
 							transform: [{ translateX: -15 }],
-							backgroundColor: "#ccc",
+							backgroundColor: cardsColor,
 							borderRadius: 30,
 							padding: 10,
 							elevation: 5, // shadow on Android

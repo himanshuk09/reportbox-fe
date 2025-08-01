@@ -1,18 +1,21 @@
 import Blob from "@/components/on-bording/blob";
 import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 
 const Notifications = () => {
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	if (complaintsPosts.length === 0) {
 		return (
 			<View
 				style={{
 					flex: 1,
-					backgroundColor: "#343232",
+					backgroundColor: secondaryColor,
 					justifyContent: "center",
 					alignItems: "center",
 				}}
@@ -24,13 +27,22 @@ const Notifications = () => {
 	return (
 		<View
 			className="flex-1  px-4"
-			style={{ marginTop: 110, backgroundColor: "#343232" }}
+			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
 			<View className="flex-row items-center justify-between mb-4">
-				<Text className="text-3xl text-white text-center font-bold">
+				<Text
+					className="text-3xl  text-center font-bold"
+					style={{
+						color: textColor,
+					}}
+				>
 					Notifications
 				</Text>
-				<Ionicons name="notifications-outline" size={27} color="#ccc" />
+				<Ionicons
+					name="notifications-outline"
+					size={27}
+					color={textColor}
+				/>
 			</View>
 
 			<FlatList
@@ -39,8 +51,11 @@ const Notifications = () => {
 				contentContainerStyle={{ paddingBottom: 20 }}
 				renderItem={({ item }) => (
 					<Pressable
-						className="flex-row bg-white rounded-xl shadow p-2 mb-3"
+						className="flex-row  rounded-xl shadow p-2 mb-3"
 						onPress={() => router.push("/(protected)/complaints/1")}
+						style={{
+							backgroundColor: cardsColor,
+						}}
 					>
 						<Image
 							source={{ uri: item.beforeImage }}
@@ -52,13 +67,28 @@ const Notifications = () => {
 							}}
 						/>
 						<View className="flex-1 my-3">
-							<Text className="font-semibold text-gray-800">
+							<Text
+								className="font-bold "
+								style={{
+									color: textColor,
+								}}
+							>
 								Complaint ID:{" "}
-								<Text className="text-gray-600">
+								<Text
+									style={{
+										color: textColor,
+										fontWeight: "400",
+									}}
+								>
 									{item.cid}
 								</Text>
 							</Text>
-							<Text className="text-sm text-gray-500 mt-1">
+							<Text
+								className="text-sm  mt-1"
+								style={{
+									color: textColor,
+								}}
+							>
 								Date: {item.date}
 							</Text>
 							<View
@@ -69,7 +99,12 @@ const Notifications = () => {
 									{item.status}
 								</Text>
 							</View>
-							<Text className="text-sm text-gray-600 mt-2">
+							<Text
+								className="text-sm  mt-2"
+								style={{
+									color: textColor,
+								}}
+							>
 								{item.status === "Resolved"
 									? `Resolved By: ${item.resolvedBy ?? "N/A"}`
 									: `Assigned To: ${

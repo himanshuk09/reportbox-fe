@@ -1,5 +1,5 @@
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -34,24 +34,19 @@ const AuthGuard = () => {
 	);
 };
 export default function RootLayout() {
-	const colorScheme = useColorScheme();
 	const [loaded] = useFonts({
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 	});
 
 	if (!loaded) {
-		// Async font loading only occurs in development.
 		return null;
 	}
 
 	return (
-		// <ThemeProvider
-		// 	value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-		// >
 		<AuthProvider>
-			<AuthGuard />
+			<ThemeProvider>
+				<AuthGuard />
+			</ThemeProvider>
 		</AuthProvider>
-		// 	<StatusBar style="auto" />
-		// </ThemeProvider>
 	);
 }

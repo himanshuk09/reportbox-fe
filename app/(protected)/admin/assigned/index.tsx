@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
@@ -24,8 +24,8 @@ const mockAssignedComplaints = [
 ];
 
 const WorkerAssignedComplaintsScreen = () => {
-	const navigation = useNavigation();
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const handleComplaintPress = (complaint: any) => {
 		router.push("/(protected)/admin/assigned/[complaintId]");
 	};
@@ -33,7 +33,10 @@ const WorkerAssignedComplaintsScreen = () => {
 	const renderComplaintCard = ({ item }: { item: any }) => (
 		<TouchableOpacity
 			onPress={() => handleComplaintPress(item)}
-			className="bg-[#1e1e1e] p-4 rounded-xl mb-3 flex-row items-center"
+			className=" p-4 rounded-xl mb-3 flex-row items-center"
+			style={{
+				backgroundColor: cardsColor,
+			}}
 		>
 			<Image
 				source={{ uri: item.beforeImage }}
@@ -45,13 +48,28 @@ const WorkerAssignedComplaintsScreen = () => {
 				}}
 			/>
 			<View style={{ flex: 1 }}>
-				<Text className="text-white font-bold text-lg">
+				<Text
+					className=" font-bold text-lg"
+					style={{
+						color: textColor,
+					}}
+				>
 					{item.type}
 				</Text>
-				<Text className="text-gray-300 text-sm">
+				<Text
+					className=" text-sm"
+					style={{
+						color: textColor,
+					}}
+				>
 					Assigned: {item.assignedBy}
 				</Text>
-				<Text className="text-gray-400 text-xs">
+				<Text
+					className=" text-xs"
+					style={{
+						color: textColor,
+					}}
+				>
 					Raised on: {new Date(item.raisedDate).toLocaleString()}
 				</Text>
 			</View>
@@ -63,11 +81,16 @@ const WorkerAssignedComplaintsScreen = () => {
 			className="flex-1  p-4 pt-10"
 			style={{
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
 		>
-			<Text className="text-white text-2xl font-bold mb-4">
+			<Text
+				className=" text-2xl font-bold mb-4"
+				style={{
+					color: textColor,
+				}}
+			>
 				Assigned Complaints
 			</Text>
 			<FlatList

@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import {
 	Dimensions,
@@ -33,8 +34,11 @@ export default function WaveHeaderScreen({
 	floatingOverlay,
 }: WaveHeaderScreenProps) {
 	const defaultImageHeight = screenHeight * imageContainerHeight;
+	const { primaryColor, secondaryColor } = useAppTheme();
 	return (
-		<SafeAreaView style={styles.safeArea}>
+		<SafeAreaView
+			style={[styles.safeArea, { backgroundColor: secondaryColor }]}
+		>
 			{floatingOverlay && (
 				<View
 					style={{
@@ -73,7 +77,13 @@ export default function WaveHeaderScreen({
 						</ImageBackground>
 					</View>
 
-					<View style={[styles.bottomContent, bottomContentStyle]}>
+					<View
+						style={[
+							styles.bottomContent,
+							bottomContentStyle,
+							{ backgroundColor: secondaryColor },
+						]}
+					>
 						{children}
 					</View>
 				</ScrollView>
@@ -85,7 +95,6 @@ export default function WaveHeaderScreen({
 const styles = StyleSheet.create({
 	safeArea: {
 		flex: 1,
-		backgroundColor: "#343232",
 	},
 	scrollViewContent: {
 		flexGrow: 1,
@@ -104,7 +113,6 @@ const styles = StyleSheet.create({
 	bottomContent: {
 		flex: 1,
 		position: "relative",
-		backgroundColor: "#343232",
 		paddingHorizontal: 20,
 	},
 

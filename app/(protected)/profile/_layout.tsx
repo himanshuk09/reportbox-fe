@@ -1,9 +1,12 @@
 import StackHeader from "@/components/StackHeader";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Stack } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const ProtectedLayout = () => {
+	const { primaryColor } = useAppTheme();
+
 	return (
 		<Stack>
 			<Stack.Screen
@@ -12,11 +15,11 @@ const ProtectedLayout = () => {
 					headerShown: false,
 					title: "", // Set your screen title here
 					headerStyle: {
-						backgroundColor: "#00EEFF", // Background color of the header
+						backgroundColor: primaryColor, // Background color of the header
 					},
 
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={false}
 								showMenuDrawer={false}

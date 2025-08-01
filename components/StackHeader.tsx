@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
@@ -24,10 +25,12 @@ const StackHeader = ({
 }: StackHeaderProps) => {
 	const navigation = useNavigation();
 	const [menuVisible, setMenuVisible] = useState(false);
+	const { primaryColor, secondaryColor } = useAppTheme();
+
 	return (
 		<View
 			style={{
-				backgroundColor: "#00EEFF",
+				backgroundColor: primaryColor,
 				height: 80,
 				marginTop: 30,
 				justifyContent: "center",
@@ -62,12 +65,16 @@ const StackHeader = ({
 						flexDirection: "row",
 					}}
 				>
-					<Ionicons name="chevron-back" size={30} color="#343232" />
+					<Ionicons
+						name="chevron-back"
+						size={30}
+						color={secondaryColor}
+					/>
 					<Text
 						style={{
 							fontSize: 22,
 							fontWeight: "bold",
-							color: "#343232", // White text
+							color: secondaryColor, // White text
 							// marginBottom: 20,
 						}}
 					>

@@ -1,4 +1,5 @@
 import WebViewComponent from "@/components/WebViewComponent";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
@@ -37,7 +38,7 @@ const html = `
                     show: true,
                     fontSize: '28px',
                     fontWeight: 'bold',
-                    color: '#000',
+                    color: '#ccc',
                     offsetY: 8,
                   }
                 }
@@ -54,13 +55,16 @@ const html = `
     </html>
   `;
 const MyComplaintsScreen = () => {
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
+
 	const [complaint, setComplaints] = useState([]);
 	if (complaint.length != 0) {
 		return (
 			<View
 				style={{
 					flex: 1,
-					backgroundColor: "#343232",
+					backgroundColor: secondaryColor,
 					justifyContent: "center",
 					alignItems: "center",
 				}}
@@ -70,14 +74,24 @@ const MyComplaintsScreen = () => {
 	return (
 		<ScrollView
 			className="flex-1  px-4 py-6"
-			style={{ marginTop: 110, backgroundColor: "#343232" }}
+			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
 			{/* Header */}
 			<View className="mb-4">
-				<Text className="text-white text-xl font-semibold">
+				<Text
+					className=" text-xl font-semibold"
+					style={{
+						color: textColor,
+					}}
+				>
 					My Complaints
 				</Text>
-				<Text className="text-[#00eeff] mt-1 font-medium">
+				<Text
+					className=" mt-1 font-medium"
+					style={{
+						color: primaryColor,
+					}}
+				>
 					My Progress
 				</Text>
 			</View>
@@ -85,7 +99,12 @@ const MyComplaintsScreen = () => {
 			{/* Chart and Status Row */}
 			<View className="flex-row justify-between mb-4">
 				{/* Donut Chart */}
-				<View className="bg-white rounded-xl  w-[48%] items-center justify-center">
+				<View
+					className=" rounded-xl  w-[48%] items-center justify-center"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<View style={{ width: 180, height: 160 }}>
 						<WebViewComponent
 							// webviewRef={webviewRef}
@@ -94,41 +113,116 @@ const MyComplaintsScreen = () => {
 							// setLoaded={setLocationReady}
 						/>
 					</View>
-					<Text className="text-black mt-2 text-center font-semibold text-sm">
+					<Text
+						className=" mt-2 text-center font-semibold text-sm"
+						style={{
+							color: textColor,
+						}}
+					>
 						Complaint ID:
 					</Text>
-					<Text className="text-black text-center font-bold text-sm mb-4">
+					<Text
+						className=" text-center font-bold text-sm mb-4"
+						style={{
+							color: textColor,
+						}}
+					>
 						#MDU45632
 					</Text>
 				</View>
 
 				{/* Status Timeline */}
-				<View className="bg-white rounded-xl p-4 w-[48%]">
-					<Text className="text-[#00eeff] font-semibold mb-2">
+				<View
+					className="rounded-xl p-4 w-[48%]"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
+					<Text
+						className="font-semibold mb-2"
+						style={{
+							color: primaryColor,
+						}}
+					>
 						Status Timeline
 					</Text>
-					<Text className="text-black mb-1">✓ Submitted</Text>
-					<Text className="text-black mb-1">
+					<Text
+						className=" mb-1"
+						style={{
+							color: textColor,
+						}}
+					>
+						✓ Submitted
+					</Text>
+					<Text
+						className=" mb-1"
+						style={{
+							color: textColor,
+						}}
+					>
 						✓ Assigned to Officer
 					</Text>
-					<Text className="text-black mb-1">✓ In Progress</Text>
-					<Text className="text-black">
+					<Text
+						className=" mb-1"
+						style={{
+							color: textColor,
+						}}
+					>
+						✓ In Progress
+					</Text>
+					<Text
+						style={{
+							color: textColor,
+						}}
+					>
 						Estimated Resolution: 2 days
 					</Text>
 				</View>
 			</View>
 
 			{/* Details Section */}
-			<View className="bg-white rounded-xl p-4">
-				<Text className="text-[#00eeff] font-semibold mb-2">
+			<View
+				className=" rounded-xl p-4"
+				style={{
+					backgroundColor: cardsColor,
+				}}
+			>
+				<Text
+					className=" font-semibold mb-2"
+					style={{
+						color: primaryColor,
+					}}
+				>
 					Details
 				</Text>
-				<Text className="text-black">Type: Garbage Collection</Text>
-				<Text className="text-black">Date: 28 May 2025</Text>
-				<Text className="text-black">
+				<Text
+					style={{
+						color: textColor,
+					}}
+				>
+					Type: Garbage Collection
+				</Text>
+				<Text
+					style={{
+						color: textColor,
+					}}
+				>
+					Date: 28 May 2025
+				</Text>
+				<Text
+					style={{
+						color: textColor,
+					}}
+				>
 					Location: Villapuram TNHB colony
 				</Text>
-				<Text className="text-black">Mode: App</Text>
+				<Text
+					style={{
+						color: textColor,
+					}}
+				>
+					Mode: App
+				</Text>
 			</View>
 		</ScrollView>
 	);

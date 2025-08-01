@@ -1,5 +1,6 @@
 import { users } from "@/constants/posts";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -41,6 +42,9 @@ const UserForm = ({
 	const [showImageViewer, setShowImageViewer] = useState(false);
 	const [currentImageUri, setCurrentImageUri] = useState("");
 	const { verifyOtp, session, user, completeProfile } = useAuth();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+
 	const openImageViewer = (uri: string) => {
 		setCurrentImageUri(uri);
 		setShowImageViewer(true);
@@ -57,7 +61,7 @@ const UserForm = ({
 		}));
 	};
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: "#343232" }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: secondaryColor }}>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 			>
@@ -117,7 +121,10 @@ const UserForm = ({
 
 						<View style={styles.profilePicWrapper}>
 							<TouchableOpacity
-								style={styles.profilePic}
+								style={[
+									styles.profilePic,
+									{ borderColor: primaryColor },
+								]}
 								onPress={() => openImageViewer(formData.avtar)}
 							>
 								<Image
@@ -134,7 +141,10 @@ const UserForm = ({
 							</TouchableOpacity>
 							{(edit || onlyForm) && (
 								<TouchableOpacity
-									style={styles.addIcon}
+									style={[
+										styles.addIcon,
+										{ borderColor: primaryColor },
+									]}
 									onPress={() =>
 										handleImageChoice(
 											setShowCamera,
@@ -145,7 +155,7 @@ const UserForm = ({
 									<Ionicons
 										name="add"
 										size={16}
-										color="#00EEFF"
+										color={primaryColor}
 									/>
 								</TouchableOpacity>
 							)}
@@ -153,12 +163,27 @@ const UserForm = ({
 					</ImageBackground>
 					{edit || onlyForm ? (
 						<>
-							<View style={styles.form}>
-								<Text style={styles.label}>User Name</Text>
+							<View
+								style={[
+									styles.form,
+									{ backgroundColor: secondaryColor },
+								]}
+							>
+								<Text
+									style={[styles.label, { color: textColor }]}
+								>
+									User Name
+								</Text>
 								<TextInput
 									placeholder="Enter your name"
 									placeholderTextColor="#aaa"
-									style={styles.input}
+									style={[
+										styles.input,
+										{
+											backgroundColor: cardsColor,
+											color: textColor,
+										},
+									]}
 									value={formData.name}
 									onChangeText={(text) => {
 										setFormData((prev: any) => ({
@@ -181,7 +206,10 @@ const UserForm = ({
 										<Text
 											style={[
 												styles.label,
-												{ fontSize: 12 },
+												{
+													fontSize: 12,
+													color: textColor,
+												},
 											]}
 										>
 											State
@@ -189,7 +217,13 @@ const UserForm = ({
 										<TextInput
 											placeholder="Enter your state"
 											placeholderTextColor="#aaa"
-											style={styles.input}
+											style={[
+												styles.input,
+												{
+													backgroundColor: cardsColor,
+													color: textColor,
+												},
+											]}
 											value={formData.state}
 											onChangeText={(text) => {
 												setFormData((prev: any) => ({
@@ -209,7 +243,10 @@ const UserForm = ({
 										<Text
 											style={[
 												styles.label,
-												{ fontSize: 12 },
+												{
+													fontSize: 12,
+													color: textColor,
+												},
 											]}
 										>
 											City
@@ -217,7 +254,13 @@ const UserForm = ({
 										<TextInput
 											placeholder="Enter your city"
 											placeholderTextColor="#aaa"
-											style={styles.input}
+											style={[
+												styles.input,
+												{
+													backgroundColor: cardsColor,
+													color: textColor,
+												},
+											]}
 											value={formData.city}
 											onChangeText={(text) => {
 												setFormData((prev: any) => ({
@@ -229,13 +272,24 @@ const UserForm = ({
 										/>
 									</View>
 								</View>
-								<Text style={[styles.label, { fontSize: 12 }]}>
+								<Text
+									style={[
+										styles.label,
+										{ fontSize: 12, color: textColor },
+									]}
+								>
 									Door no.
 								</Text>
 								<TextInput
 									placeholder="Enter door no."
 									placeholderTextColor="#aaa"
-									style={styles.input}
+									style={[
+										styles.input,
+										{
+											backgroundColor: cardsColor,
+											color: textColor,
+										},
+									]}
 									value={formData.doorNo}
 									onChangeText={(text) => {
 										setFormData((prev: any) => ({
@@ -245,13 +299,24 @@ const UserForm = ({
 										setFormChanged(true);
 									}}
 								/>
-								<Text style={[styles.label, { fontSize: 12 }]}>
+								<Text
+									style={[
+										styles.label,
+										{ fontSize: 12, color: textColor },
+									]}
+								>
 									Stree name
 								</Text>
 								<TextInput
 									placeholder="Enter your street"
 									placeholderTextColor="#aaa"
-									style={styles.input}
+									style={[
+										styles.input,
+										{
+											backgroundColor: cardsColor,
+											color: textColor,
+										},
+									]}
 									value={formData.street}
 									onChangeText={(text) => {
 										setFormData((prev: any) => ({
@@ -263,7 +328,10 @@ const UserForm = ({
 								/>
 
 								<TouchableOpacity
-									style={styles.button}
+									style={[
+										styles.button,
+										{ backgroundColor: primaryColor },
+									]}
 									onPress={() => {
 										Alert.alert(
 											"Save Changes?",
@@ -288,7 +356,12 @@ const UserForm = ({
 										);
 									}}
 								>
-									<Text style={styles.buttonText}>
+									<Text
+										style={[
+											styles.buttonText,
+											{ color: textColor },
+										]}
+									>
 										Continue
 									</Text>
 								</TouchableOpacity>
@@ -298,44 +371,74 @@ const UserForm = ({
 						<View
 							style={[
 								styles.form,
-								{ paddingTop: 0, paddingBottom: 30 },
+								{
+									paddingTop: 0,
+									paddingBottom: 30,
+									backgroundColor: secondaryColor,
+								},
 							]}
 						>
 							<View style={styles.userIdContainer}>
-								<Text style={[styles.label, { fontSize: 18 }]}>
+								<Text
+									style={[
+										styles.label,
+										{ fontSize: 18, color: textColor },
+									]}
+								>
 									This is Your User ID
 								</Text>
 
-								<View style={styles.userIdBox}>
-									<Text style={styles.userIdText}>
+								<View
+									style={[
+										styles.userIdBox,
+										{ borderColor: primaryColor },
+									]}
+								>
+									<Text
+										style={[
+											styles.userIdText,
+											{ color: textColor },
+										]}
+									>
 										{formData.userID}
 									</Text>
 								</View>
 							</View>
 
 							<View style={styles.addressContainer}>
-								<Text style={styles.addressText}>
+								<Text
+									style={[
+										styles.addressText,
+										{ color: textColor },
+									]}
+								>
 									{formData.name}
 								</Text>
-								<Text style={styles.addressText}>
+								<Text
+									style={[
+										styles.addressText,
+										{ color: textColor },
+									]}
+								>
 									{formData.street}, {formData.doorNo}
 								</Text>
-								<Text style={styles.addressText}>
+								<Text
+									style={[
+										styles.addressText,
+										{ color: textColor },
+									]}
+								>
 									{formData.city}
 								</Text>
-								<Text style={styles.addressText}>
+								<Text
+									style={[
+										styles.addressText,
+										{ color: textColor },
+									]}
+								>
 									{formData.state}
 								</Text>
 							</View>
-
-							{/* <TouchableOpacity
-								style={[
-									styles.button,
-									{ marginHorizontal: 10 },
-								]}
-							>
-								<Text style={styles.buttonText}>Done</Text>
-							</TouchableOpacity> */}
 						</View>
 					)}
 					{!edit && !onlyForm && (
@@ -360,7 +463,7 @@ const UserForm = ({
 							<Entypo
 								name="help-with-circle"
 								size={35}
-								color="#00EEFF"
+								color={primaryColor}
 							/>
 						</TouchableOpacity>
 					)}
@@ -419,16 +522,14 @@ const styles = StyleSheet.create({
 		position: "relative",
 		alignItems: "center",
 		justifyContent: "center",
-		marginBottom: -40, // pull it down over form
+		marginBottom: -40,
 		zIndex: 100,
 	},
 	profilePic: {
 		width: 90,
 		height: 90,
-		// backgroundColor: "#fff",
 		borderRadius: 45,
 		borderWidth: 3,
-		borderColor: "#00EEFF",
 	},
 	addIcon: {
 		position: "absolute",
@@ -440,23 +541,19 @@ const styles = StyleSheet.create({
 		height: 24,
 		alignItems: "center",
 		justifyContent: "center",
-		borderColor: "#00EEFF",
 		borderWidth: 2,
 	},
 	form: {
-		backgroundColor: "#343232",
 		paddingHorizontal: 20,
 		paddingTop: 50,
 		flex: 1,
 	},
 	label: {
-		color: "#fff",
 		fontSize: 14,
 		marginBottom: 8,
 		marginTop: 12,
 	},
 	input: {
-		backgroundColor: "#2c2c2c",
 		borderRadius: 8,
 		paddingHorizontal: 12,
 		paddingVertical: 12,
@@ -471,7 +568,6 @@ const styles = StyleSheet.create({
 		marginBottom: 12,
 	},
 	button: {
-		backgroundColor: "#00EEFF",
 		borderRadius: 999,
 		paddingVertical: 14,
 		alignItems: "center",
@@ -489,14 +585,12 @@ const styles = StyleSheet.create({
 	},
 
 	userIdBox: {
-		borderColor: "#00EEFF",
 		borderWidth: 1,
 		paddingHorizontal: 20,
 		paddingVertical: 8,
 		borderRadius: 6,
 	},
 	userIdText: {
-		color: "#fff",
 		fontSize: 18,
 		fontWeight: "bold",
 	},

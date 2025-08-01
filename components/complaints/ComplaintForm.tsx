@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -35,6 +36,8 @@ export default function ComplaintForm({
 	const [modalVisible, setModalVisible] = useState(false);
 	const [expandedType, setExpandedType] = useState<string | null>(null);
 	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>([]);
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
 
 	const toggleSubtype = (subtype: string) => {
 		setSelectedSubtypes((prev) =>
@@ -47,13 +50,17 @@ export default function ComplaintForm({
 	return (
 		<View style={{ flex: 1, padding: 10 }}>
 			{/* Complaint Type Field */}
-			<Text style={styles.label}>Complaint Type</Text>
+			<Text style={[styles.label, { color: textColor }]}>
+				Complaint Type
+			</Text>
 			<TouchableOpacity
-				style={styles.field}
+				style={[styles.field, { backgroundColor: cardsColor }]}
 				onPress={() => setModalVisible(true)}
 			>
 				<Text
-					style={{ color: selectedSubtypes.length ? "#ccc" : "#999" }}
+					style={{
+						color: selectedSubtypes.length ? textColor : "#999",
+					}}
 				>
 					{selectedSubtypes.length > 0
 						? selectedSubtypes.join(", ")
@@ -62,10 +69,12 @@ export default function ComplaintForm({
 			</TouchableOpacity>
 
 			{/* Location Field */}
-			<Text style={styles.label}>Your Location</Text>
-			<View style={styles.field}>
+			<Text style={[styles.label, { color: textColor }]}>
+				Your Location
+			</Text>
+			<View style={[styles.field, { backgroundColor: cardsColor }]}>
 				<Text
-					style={{ color: "#ccc" }}
+					style={{ color: textColor }}
 					onPress={async () => {
 						const { geo, loc }: any = await getLocationDetails();
 						setLocation(geo[0]?.formattedAddress);
@@ -76,12 +85,17 @@ export default function ComplaintForm({
 			</View>
 
 			{/* Explanation Field */}
-			<Text style={styles.label}>Explain your issue</Text>
+			<Text style={[styles.label, { color: textColor }]}>
+				Explain your issue
+			</Text>
 			<TextInput
 				multiline
 				numberOfLines={4}
 				placeholder="Describe your complaint here"
-				style={styles.textArea}
+				style={[
+					styles.textArea,
+					{ color: textColor, backgroundColor: cardsColor },
+				]}
 				value={explanation}
 				onChangeText={setExplanation}
 			/>
@@ -93,7 +107,11 @@ export default function ComplaintForm({
 				onRequestClose={() => setModalVisible(false)}
 			>
 				<View
-					style={{ flex: 1, padding: 10, backgroundColor: "#343232" }}
+					style={{
+						flex: 1,
+						padding: 10,
+						backgroundColor: secondaryColor,
+					}}
 				>
 					<Text style={styles.modalTitle}>
 						Select Complaint Subtype
@@ -136,8 +154,10 @@ export default function ComplaintForm({
 													styles.subtypeItem,
 													selectedSubtypes.includes(
 														sub
-													) &&
-														styles.subtypeItemSelected,
+													) && {
+														backgroundColor:
+															primaryColor,
+													},
 												]}
 												onPress={() =>
 													toggleSubtype(sub)
@@ -148,7 +168,7 @@ export default function ComplaintForm({
 														color: selectedSubtypes.includes(
 															sub
 														)
-															? "#343232"
+															? secondaryColor
 															: "#ccc",
 													}}
 												>
@@ -163,7 +183,12 @@ export default function ComplaintForm({
 					</ScrollView>
 
 					<TouchableOpacity
-						style={styles.closeButton}
+						style={[
+							styles.closeButton,
+							{
+								backgroundColor: primaryColor,
+							},
+						]}
 						onPress={() => setModalVisible(false)}
 					>
 						<Text style={styles.closeButtonText}>Done</Text>
@@ -179,7 +204,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 6,
 		fontWeight: "bold",
-		color: "#fff",
 	},
 	field: {
 		backgroundColor: "#1e1e1e",
@@ -188,7 +212,6 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	textArea: {
-		backgroundColor: "#1e1e1e",
 		padding: 12,
 		borderRadius: 8,
 		height: 100,
@@ -221,11 +244,8 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		marginVertical: 4,
 	},
-	subtypeItemSelected: {
-		backgroundColor: "#00EEFF",
-	},
+
 	closeButton: {
-		backgroundColor: "#00EEFF",
 		padding: 14,
 		borderRadius: 10,
 		alignItems: "center",

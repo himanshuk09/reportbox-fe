@@ -1,4 +1,5 @@
 import { getStatusStyle } from "@/constants/statuscode";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -43,6 +44,8 @@ export function PostCard({
 	const animatedHeight = useRef(new Animated.Value(0)).current;
 	const [showImageViewer, setShowImageViewer] = useState(false);
 	const [currentImageUri, setCurrentImageUri] = useState("");
+	const { primaryColor, cardsColor, textColor } = useAppTheme();
+
 	const toggleComments = () => {
 		setShowComments(!showComments);
 		Animated.timing(animatedHeight, {
@@ -70,7 +73,7 @@ export function PostCard({
 
 	return (
 		<Pressable
-			style={styles.card}
+			style={[styles.card, { backgroundColor: cardsColor }]}
 			onPress={() => {
 				if (!showviewMore) return;
 				router.push({
@@ -91,17 +94,26 @@ export function PostCard({
 						style={styles.avatar}
 					/>
 					<View>
-						<Text style={styles.username}>{item.user}</Text>
-						<Text style={styles.time}>{item.time}</Text>
+						<Text style={{ color: textColor, fontWeight: "600" }}>
+							{item.user}
+						</Text>
+						<Text
+							style={{
+								color: "#aaa",
+								fontSize: 12,
+							}}
+						>
+							{item.time}
+						</Text>
 					</View>
 				</View>
 				<Feather
 					name="more-vertical"
 					size={25}
-					color="white"
-					// onPress={() => setMenuVisible(!menuVisible)}
+					color={textColor}
+					onPress={() => setMenuVisible(!menuVisible)}
 				/>
-				{/* {menuVisible && (
+				{menuVisible && (
 					<View className="absolute  bg-slate-300 rounded-lg right-5 top-3 shadow p-2">
 						<Pressable
 							onPress={() => {
@@ -115,7 +127,7 @@ export function PostCard({
 							</Text>
 						</Pressable>
 					</View>
-				)} */}
+				)}
 			</View>
 
 			{/* Images */}
@@ -149,7 +161,9 @@ export function PostCard({
 			</View>
 
 			{/* Message */}
-			<Text style={styles.message}>{item.message}</Text>
+			<Text style={[styles.message, { color: textColor }]}>
+				{item.message}
+			</Text>
 			<Text style={styles.tag}>{item.tag}</Text>
 
 			<Text style={[styles.status, getStatusStyle(item.status)]}>
@@ -162,9 +176,11 @@ export function PostCard({
 						<Ionicons
 							name={item.like ? "thumbs-up" : "thumbs-up-outline"}
 							size={20}
-							color={item.like ? "#00eeff" : "#ccc"}
+							color={item.like ? primaryColor : textColor}
 						/>
-						<Text style={styles.likeCount}>{1000}</Text>
+						<Text style={{ color: textColor, fontSize: 14 }}>
+							{1000}
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.actionButton}
@@ -173,15 +189,17 @@ export function PostCard({
 						<Ionicons
 							name="chatbubble-outline"
 							size={20}
-							color="#ccc"
+							color={textColor}
 						/>
-						<Text className="text-white text-center p-1">1000</Text>
+						<Text style={{ color: textColor, fontSize: 14 }}>
+							1000
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity>
 						<Ionicons
 							name="share-social-outline"
 							size={20}
-							color="#ccc"
+							color={textColor}
 						/>
 					</TouchableOpacity>
 				</View>
@@ -235,19 +253,30 @@ const CommentItem = ({
 	avatar: string;
 	user: string;
 	comment: string;
-}) => (
-	<View style={styles.commentContainer}>
-		<Image source={{ uri: avatar }} style={styles.commentAvatar} />
-		<View style={styles.commentContent}>
-			<Text style={styles.commentUser}>{user}</Text>
-			<Text style={styles.commentText}>{comment}</Text>
+}) => {
+	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+	return (
+		<View style={styles.commentContainer}>
+			<Image
+				source={{
+					uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+				}}
+				style={styles.commentAvatar}
+			/>
+			<View style={styles.commentContent}>
+				<Text style={[styles.commentUser, { color: textColor }]}>
+					{user}
+				</Text>
+				<Text style={{ color: textColor, fontSize: 13 }}>
+					{comment}
+				</Text>
+			</View>
 		</View>
-	</View>
-);
+	);
+};
 
 const styles = StyleSheet.create({
 	card: {
-		backgroundColor: "#1e1e1e",
 		padding: 16,
 		borderRadius: 16,
 		marginBottom: 16,
@@ -269,24 +298,14 @@ const styles = StyleSheet.create({
 
 		gap: 4,
 	},
-	likeCount: {
-		color: "white",
-		fontSize: 14,
-	},
+
 	avatar: {
 		width: 40,
 		height: 40,
 		borderRadius: 20,
 		marginRight: 12,
 	},
-	username: {
-		color: "#fff",
-		fontWeight: "600",
-	},
-	time: {
-		color: "#aaa",
-		fontSize: 12,
-	},
+
 	imageRow: {
 		flexDirection: "row",
 		height: 160,
@@ -303,7 +322,6 @@ const styles = StyleSheet.create({
 		flex: 1, // Ensure touchable area fills its half
 	},
 	message: {
-		color: "#fff",
 		fontSize: 14,
 		marginBottom: 4,
 	},
@@ -346,15 +364,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	commentUser: {
-		color: "white",
 		fontWeight: "bold",
 		fontSize: 13,
 		marginBottom: 2,
 	},
-	commentText: {
-		color: "#ccc",
-		fontSize: 13,
-	},
+
 	imageViewerContainer: {
 		flex: 1,
 		backgroundColor: "rgba(0, 0, 0, 0.9)",

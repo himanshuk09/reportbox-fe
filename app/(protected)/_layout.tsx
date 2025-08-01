@@ -1,205 +1,178 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React from "react";
-
+const menuItems = [
+	{
+		label: "Home",
+		icon: "home-outline",
+		path: "/(protected)/(tabs)/dashboard",
+	},
+	{
+		label: "Settings",
+		icon: "settings-outline",
+		path: "/(protected)/settings",
+	},
+	{ label: "Profile", icon: "person-outline", path: "/(protected)/profile" },
+	{
+		label: "Complaint",
+		icon: "chatbubble-ellipses-outline",
+		path: "/(protected)/complaints",
+	},
+	{
+		label: "Progress",
+		icon: "trending-up-outline",
+		path: "/(protected)/complaints/progress",
+	},
+	{
+		label: "History",
+		icon: "time-outline",
+		path: "/(protected)/complaints/history",
+	},
+	{
+		label: "All Users",
+		icon: "people-outline",
+		path: "/(protected)/admin/users",
+	},
+	{
+		label: "Assigned",
+		icon: "checkmark-done-outline",
+		path: "/(protected)/admin/assigned",
+	},
+	{
+		label: "Rights",
+		icon: "shield-checkmark-outline",
+		path: "/(protected)/admin/rights",
+	},
+	{
+		label: "Edit Profile",
+		icon: "create-outline",
+		path: "/(protected)/profile",
+	},
+];
 const CustomDrawer = (props: any) => {
-	const navigation = useNavigation();
 	const { logout } = useAuth();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+
 	return (
-		<View style={styles.container}>
-			<View style={styles.header}>
+		<View style={[styles.container, { backgroundColor: secondaryColor }]}>
+			<View style={[styles.header, { borderBottomColor: textColor }]}>
 				<Image
 					source={{
 						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
 					}}
 					style={styles.profileImage}
 				/>
-				<Text style={styles.username}>John Doe</Text>
-				<Text style={styles.email}>john@example.com</Text>
+				<Text style={[styles.username, { color: textColor }]}>
+					John Doe
+				</Text>
+				<Text style={[styles.email, { color: textColor }]}>
+					john@example.com
+				</Text>
 			</View>
 
-			{/* Custom Items */}
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => {
-					router.push("/(protected)/(tabs)/dashboard");
-				}}
-			>
-				<Ionicons name="settings-outline" size={22} color={"white"} />
-				<Text style={styles.itemText}>Home</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => {
-					router.push("/(protected)/settings");
-				}}
-			>
-				<Ionicons name="settings-outline" size={22} color={"white"} />
-				<Text style={styles.itemText}>Settings</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => {
-					router.push("/(protected)/profile");
-				}}
-			>
-				<Ionicons name="person" size={22} color={"white"} />
-				<Text style={styles.itemText}>Profile</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => {
-					router.push("/(protected)/complaints");
-				}}
-			>
-				<Ionicons name="person" size={22} color={"white"} />
-				<Text style={styles.itemText}>Complaint</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => router.push("/(protected)/complaints/progress")}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>Progress</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => router.push("/(protected)/complaints/history")}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>History</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => router.push("/(protected)/admin/users" as any)}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>All Users</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() =>
-					router.push("/(protected)/admin/assigned" as any)
-				}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>Assinged</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => router.push("/(protected)/admin/rights" as any)}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>Rights</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.customItem}
-				onPress={() => router.push("/(protected)/profile")}
-			>
-				<Ionicons
-					name="person-remove-outline"
-					size={22}
-					color={"white"}
-				/>
-				<Text style={styles.itemText}>Edit Profile</Text>
-			</TouchableOpacity>
-
-			{/* Footer Section */}
-			<View style={styles.footer}>
-				<TouchableOpacity
-					style={styles.logoutButton}
-					onPress={() => {
-						logout();
-						router.push("/");
-					}}
-				>
-					<Ionicons
-						name="log-out-outline"
-						size={22}
-						color="#FF6347"
-					/>
-					<Text style={[styles.itemText, { color: "#FF6347" }]}>
-						Logout
-					</Text>
-				</TouchableOpacity>
-			</View>
+			<ScrollView contentContainerStyle={styles.menuContainer}>
+				{menuItems.map((item) => (
+					<TouchableOpacity
+						key={item.label}
+						style={styles.customItem}
+						onPress={() => router.push(item.path as any)}
+					>
+						<Ionicons
+							name={item.icon as any}
+							size={22}
+							color={textColor}
+						/>
+						<Text style={[styles.itemText, { color: textColor }]}>
+							{" "}
+							{item.label}
+						</Text>
+					</TouchableOpacity>
+				))}
+				<View style={[styles.footer, { borderTopColor: textColor }]}>
+					<TouchableOpacity
+						style={styles.logoutButton}
+						onPress={() => {
+							logout();
+							router.push("/");
+						}}
+					>
+						<Ionicons
+							name="log-out-outline"
+							size={22}
+							color="#FF6347"
+						/>
+						<Text style={[styles.itemText, { color: "#FF6347" }]}>
+							Logout
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
 		</View>
 	);
 };
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 20,
 	},
 	header: {
-		padding: 20,
+		paddingVertical: 24,
+		paddingHorizontal: 16,
 		borderBottomWidth: 1,
-		borderBottomColor: "#f4f4f4",
+		alignItems: "center",
 	},
 	profileImage: {
 		width: 80,
 		height: 80,
 		borderRadius: 40,
-		marginBottom: 10,
+		marginBottom: 8,
 	},
 	username: {
 		fontSize: 18,
-		fontWeight: "bold",
-		color: "white",
+		fontWeight: "600",
 	},
 	email: {
 		fontSize: 14,
-		color: "#fff",
+		opacity: 0.6,
+	},
+	menuContainer: {
+		padding: 10,
 	},
 	customItem: {
 		flexDirection: "row",
 		alignItems: "center",
-		padding: 15,
-		paddingLeft: 20,
+		paddingVertical: 12,
+		gap: 12,
 	},
 	itemText: {
-		marginLeft: 15,
 		fontSize: 16,
-		color: "white",
 	},
 	footer: {
-		padding: 20,
 		borderTopWidth: 1,
-		borderTopColor: "#f4f4f4",
+		padding: 16,
+		marginTop: 10,
 	},
 	logoutButton: {
 		flexDirection: "row",
 		alignItems: "center",
+		gap: 12,
 	},
 });
 
 export default function RootDrawerLayout() {
+	const { secondaryColor } = useAppTheme();
 	return (
 		<Drawer
 			screenOptions={{
@@ -207,7 +180,7 @@ export default function RootDrawerLayout() {
 				drawerPosition: "left", // Optional: if you want right-side drawer
 				drawerStyle: {
 					width: "80%", // Control drawer width
-					backgroundColor: "#343232",
+					backgroundColor: secondaryColor,
 				},
 				overlayColor: "rgba(0,0,0,0.5)", // Semi-transparent overlay
 			}}

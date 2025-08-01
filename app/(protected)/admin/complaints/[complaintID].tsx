@@ -1,5 +1,6 @@
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
@@ -47,7 +48,8 @@ const EditComplaintScreen = () => {
 		resolvedBy: "blabla",
 		assignedBy: "abc",
 	};
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const [form, setForm] = useState(initialData);
 	const [showCamera, setShowCamera] = useState(false);
 	const updateField = (key: string, value: any) =>
@@ -87,8 +89,17 @@ const EditComplaintScreen = () => {
 	};
 	const renderDateField = (label: string, key: PickerKey) => (
 		<TouchableOpacity onPress={() => showDatePicker(key)} className="mb-3">
-			<View className="bg-[#1e1e1e] p-3 rounded-lg">
-				<Text className="text-white">
+			<View
+				className="p-3 rounded-lg"
+				style={{
+					backgroundColor: cardsColor,
+				}}
+			>
+				<Text
+					style={{
+						color: textColor,
+					}}
+				>
 					{label}: {form[dateFieldMap[key]]?.toLocaleString()}
 				</Text>
 			</View>
@@ -99,7 +110,7 @@ const EditComplaintScreen = () => {
 		<SafeAreaView
 			style={{
 				flex: 1,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 				padding: 10,
 			}}
@@ -108,19 +119,38 @@ const EditComplaintScreen = () => {
 				contentContainerStyle={{ paddingBottom: 16 }}
 				showsVerticalScrollIndicator={false}
 			>
-				<Text className="text-2xl text-white font-bold mb-4">
+				<Text
+					className="text-2xl font-bold mb-4"
+					style={{
+						color: textColor,
+					}}
+				>
 					Edit Complaint
 				</Text>
 
 				{/* Images */}
-				<Text className="text-white text-xl mb-1">Before Image</Text>
+				<Text
+					className=" text-xl mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Before Image
+				</Text>
 				<ImageCard
 					image={form.beforeImage}
 					setShowCamera={setShowCamera}
 					setImage={handleSetBeforeImage}
 					showCaptureIcon={false}
 				/>
-				<Text className="text-white text-xl mb-1">After Image</Text>
+				<Text
+					className=" text-xl mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					After Image
+				</Text>
 				<ImageCard
 					image={form.afterImage}
 					setShowCamera={setShowCamera}
@@ -129,13 +159,25 @@ const EditComplaintScreen = () => {
 				/>
 
 				{/* Complaint Type */}
-				<Text className="text-white mb-1">Complaint Type</Text>
-				<View className="bg-[#1e1e1e] rounded-lg mb-3">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Complaint Type
+				</Text>
+				<View
+					className="rounded-lg mb-3"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<Picker
 						selectedValue={form.type}
 						onValueChange={(val) => updateField("type", val)}
-						style={{ color: "#fff" }}
-						dropdownIconColor="#fff"
+						style={{ color: textColor }}
+						dropdownIconColor={textColor}
 					>
 						<Picker.Item
 							label="Drainage Leakage"
@@ -150,14 +192,26 @@ const EditComplaintScreen = () => {
 				</View>
 
 				{/* Complaint Status */}
-				<Text className="text-white mb-1">Complaint Status</Text>
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Complaint Status
+				</Text>
 
-				<View className="bg-[#1e1e1e] rounded-lg mb-3">
+				<View
+					className=" rounded-lg mb-3"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<Picker
 						selectedValue={form.status}
 						onValueChange={(val) => updateField("status", val)}
-						style={{ color: "#fff" }}
-						dropdownIconColor="#fff"
+						style={{ color: textColor }}
+						dropdownIconColor={textColor}
 					>
 						<Picker.Item label="Raised" value="Raised" />
 						<Picker.Item label="Assigned" value="Assigned" />
@@ -167,13 +221,25 @@ const EditComplaintScreen = () => {
 				</View>
 
 				{/* Staff Pickers */}
-				<Text className="text-white mb-1">Assigned To</Text>
-				<View className="bg-[#1e1e1e] rounded-lg mb-3">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Assigned To
+				</Text>
+				<View
+					className="rounded-lg mb-3"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<Picker
 						selectedValue={form.assignedTo}
 						onValueChange={(val) => updateField("assignedTo", val)}
-						style={{ color: "#fff" }}
-						dropdownIconColor="#fff"
+						style={{ color: textColor }}
+						dropdownIconColor={textColor}
 					>
 						{staffNames.map((name) => (
 							<Picker.Item key={name} label={name} value={name} />
@@ -181,13 +247,25 @@ const EditComplaintScreen = () => {
 					</Picker>
 				</View>
 
-				<Text className="text-white mb-1">Assigned By</Text>
-				<View className="bg-[#1e1e1e] rounded-lg mb-3">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Assigned By
+				</Text>
+				<View
+					className=" rounded-lg mb-3"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<Picker
 						selectedValue={form.assignedBy}
 						onValueChange={(val) => updateField("assignedBy", val)}
-						style={{ color: "#fff" }}
-						dropdownIconColor="#fff"
+						style={{ color: textColor }}
+						dropdownIconColor={textColor}
 					>
 						{staffNames.map((name) => (
 							<Picker.Item key={name} label={name} value={name} />
@@ -195,13 +273,25 @@ const EditComplaintScreen = () => {
 					</Picker>
 				</View>
 
-				<Text className="text-white mb-1">Resolved By</Text>
-				<View className="bg-[#1e1e1e] rounded-lg mb-3">
+				<Text
+					className=" mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					Resolved By
+				</Text>
+				<View
+					className=" rounded-lg mb-3"
+					style={{
+						backgroundColor: cardsColor,
+					}}
+				>
 					<Picker
 						selectedValue={form.resolvedBy}
 						onValueChange={(val) => updateField("resolvedBy", val)}
-						style={{ color: "#fff" }}
-						dropdownIconColor="#fff"
+						style={{ color: textColor }}
+						dropdownIconColor={textColor}
 					>
 						{staffNames.map((name) => (
 							<Picker.Item key={name} label={name} value={name} />
@@ -220,7 +310,12 @@ const EditComplaintScreen = () => {
 						onPress={handleSubmit}
 						className="flex-1 bg-green-600 py-3 rounded-xl mr-2"
 					>
-						<Text className="text-white text-center font-bold">
+						<Text
+							className=" text-center font-bold"
+							style={{
+								color: textColor,
+							}}
+						>
 							Submit
 						</Text>
 					</TouchableOpacity>
@@ -228,7 +323,12 @@ const EditComplaintScreen = () => {
 						onPress={handleDelete}
 						className="flex-1 bg-red-600 py-3 rounded-xl ml-2"
 					>
-						<Text className="text-white text-center font-bold">
+						<Text
+							className=" text-center font-bold"
+							style={{
+								color: textColor,
+							}}
+						>
 							Delete
 						</Text>
 					</TouchableOpacity>

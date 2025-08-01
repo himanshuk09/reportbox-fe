@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React, { useState } from "react";
 import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
 
@@ -10,7 +11,8 @@ const AssignRightsToGroupScreen = () => {
 	const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 	const [selectedRights, setSelectedRights] = useState<string[]>([]);
 	const [groupRights, setGroupRights] = useState<GroupRightsMap>({});
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const toggleRight = (right: string) => {
 		setSelectedRights((prev) =>
 			prev.includes(right)
@@ -35,8 +37,20 @@ const AssignRightsToGroupScreen = () => {
 	const renderGroupRightsItem = ({ item }: { item: string }) => {
 		const rights = groupRights[item] || [];
 		return (
-			<View className="bg-[#1e1e1e] p-3 rounded-lg mb-2">
-				<Text className="text-white font-bold mb-1">{item}</Text>
+			<View
+				className=" p-3 rounded-lg mb-2"
+				style={{
+					backgroundColor: cardsColor,
+				}}
+			>
+				<Text
+					className=" font-bold mb-1"
+					style={{
+						color: textColor,
+					}}
+				>
+					{item}
+				</Text>
 				<Text className="text-gray-300">
 					Rights:{" "}
 					{rights.length > 0 ? rights.join(", ") : "None assigned"}
@@ -46,13 +60,32 @@ const AssignRightsToGroupScreen = () => {
 	};
 
 	return (
-		<View className="flex-1 bg-[#343232] p-6 pt-20">
-			<Text className="text-white text-2xl font-bold mb-4">
+		<View
+			style={{
+				flex: 1,
+				padding: 16,
+				backgroundColor: secondaryColor,
+				marginTop: 90,
+			}}
+		>
+			<Text
+				className=" text-2xl font-bold mb-4"
+				style={{
+					color: textColor,
+				}}
+			>
 				Assign Rights
 			</Text>
 
 			{/* Group Selection */}
-			<Text className="text-white mb-2">Select Group:</Text>
+			<Text
+				className=" mb-2"
+				style={{
+					color: textColor,
+				}}
+			>
+				Select Group:
+			</Text>
 			{allGroups.map((group) => (
 				<TouchableOpacity
 					key={group}
@@ -60,29 +93,51 @@ const AssignRightsToGroupScreen = () => {
 						setSelectedGroup(group);
 						setSelectedRights(groupRights[group] || []);
 					}}
-					className={`p-3 rounded-lg mb-2 ${
-						selectedGroup === group ? "bg-blue-600" : "bg-[#1e1e1e]"
-					}`}
+					className={`p-3 rounded-lg mb-2`}
+					style={{
+						backgroundColor:
+							selectedGroup === group ? primaryColor : cardsColor,
+					}}
 				>
-					<Text className="text-white">{group}</Text>
+					<Text
+						style={{
+							color: textColor,
+						}}
+					>
+						{group}
+					</Text>
 				</TouchableOpacity>
 			))}
 
 			{/* Rights Selection */}
 			{selectedGroup && (
 				<>
-					<Text className="text-white mt-4 mb-2">Select Rights:</Text>
+					<Text
+						className=" mt-4 mb-2"
+						style={{
+							color: textColor,
+						}}
+					>
+						Select Rights:
+					</Text>
 					{availableRights.map((right) => (
 						<TouchableOpacity
 							key={right}
 							onPress={() => toggleRight(right)}
-							className={`p-3 rounded-lg mb-2 ${
-								selectedRights.includes(right)
-									? "bg-green-600"
-									: "bg-[#1e1e1e]"
-							}`}
+							className={`p-3 rounded-lg mb-2 `}
+							style={{
+								backgroundColor: selectedRights.includes(right)
+									? primaryColor
+									: cardsColor,
+							}}
 						>
-							<Text className="text-white">{right}</Text>
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
+								{right}
+							</Text>
 						</TouchableOpacity>
 					))}
 
@@ -98,7 +153,12 @@ const AssignRightsToGroupScreen = () => {
 			)}
 
 			{/* Group Rights Display Section */}
-			<Text className="text-white text-xl mt-8 mb-2 font-semibold">
+			<Text
+				className=" text-xl mt-8 mb-2 font-semibold"
+				style={{
+					color: textColor,
+				}}
+			>
 				Groups & Assigned Rights
 			</Text>
 			<FlatList
@@ -106,7 +166,7 @@ const AssignRightsToGroupScreen = () => {
 				keyExtractor={(item) => item}
 				renderItem={renderGroupRightsItem}
 				ListEmptyComponent={
-					<Text className="text-gray-400">
+					<Text className="text-gray-800">
 						No rights assigned yet.
 					</Text>
 				}

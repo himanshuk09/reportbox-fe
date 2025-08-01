@@ -1,10 +1,12 @@
 import StackHeader from "@/components/StackHeader";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const AdminUserLayout = () => {
 	const navigation = useNavigation();
+	const { primaryColor } = useAppTheme();
 
 	return (
 		<Stack>
@@ -12,10 +14,10 @@ const AdminUserLayout = () => {
 				name="index"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
@@ -25,10 +27,10 @@ const AdminUserLayout = () => {
 				name="[userID]"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),

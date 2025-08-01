@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -20,6 +21,8 @@ const { width, height } = Dimensions.get("window");
 const height1 = 160;
 
 function DoubleWaveSvg() {
+	const { primaryColor, secondaryColor } = useAppTheme();
+
 	return (
 		<Svg width={width} height={height1}>
 			{/* Cyan top border path */}
@@ -29,7 +32,7 @@ function DoubleWaveSvg() {
           Q${width * 0.25},130 ${width * 0.5},100
           T${width},80
         `}
-				stroke="#00EEFF"
+				stroke={primaryColor}
 				strokeWidth={30}
 				fill="transparent"
 				strokeLinecap="round"
@@ -46,7 +49,7 @@ function DoubleWaveSvg() {
                 L0,${height1}
                 Z
                 `}
-				fill="#343232"
+				fill={secondaryColor}
 				fillOpacity={1}
 			/>
 		</Svg>
@@ -60,6 +63,7 @@ const svgHeight = screenWidth * aspectRatio;
 
 const MobileSvg = () => {
 	const { width } = useWindowDimensions();
+	const { primaryColor, secondaryColor } = useAppTheme();
 
 	return (
 		<Svg
@@ -71,11 +75,11 @@ const MobileSvg = () => {
 			<G transform="scale(-1,1) translate(-390,0)">
 				<Path
 					d="m-3 100c28.5-23.5 80-53.4 134-45 67.5 10.5 106 77.5 200.5 58 55.3-11.41 74.91-37.43 79.5-58.22v-19.78c1.34 5.23 1.68 12.16 0 19.78v108.1h-416.68z"
-					fill="#00EEFF"
+					fill={primaryColor}
 				/>
 				<Path
 					d="m-.5 130c14-11.98 52.98-37.52 106.96-28.64 67.48 11.1 130.46 59.18 224.93 38.58 55.29-12.06 74.89-39.56 79.48-61.53v-20.91c1.34 5.53 1.68 12.85 0 20.91v130.09h-433.87z"
-					fill="#343232"
+					fill={secondaryColor}
 				/>
 			</G>
 		</Svg>
@@ -83,6 +87,8 @@ const MobileSvg = () => {
 };
 
 export default function WaveHeaderScreen() {
+	const { primaryColor, secondaryColor } = useAppTheme();
+
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<KeyboardAvoidingView
@@ -108,7 +114,12 @@ export default function WaveHeaderScreen() {
 					</View>
 
 					{/* Below wave area */}
-					<View style={styles.bottomContent}>
+					<View
+						style={[
+							styles.bottomContent,
+							{ backgroundColor: secondaryColor },
+						]}
+					>
 						<Text style={styles.title}>Sign in</Text>
 						<TextInput
 							style={styles.input}
@@ -116,7 +127,10 @@ export default function WaveHeaderScreen() {
 							placeholderTextColor="#ccc"
 						/>
 						<TouchableOpacity
-							style={styles.button}
+							style={[
+								styles.button,
+								{ backgroundColor: primaryColor },
+							]}
 							onPress={() =>
 								router.push("/(protected)/(tabs)/dashboard")
 							}
@@ -131,10 +145,6 @@ export default function WaveHeaderScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#343232",
-	},
 	headerWrapper: {
 		position: "relative",
 		height: height * 0.5,
@@ -157,7 +167,6 @@ const styles = StyleSheet.create({
 	bottomContent: {
 		flex: 1,
 		padding: 20,
-		backgroundColor: "#343232",
 	},
 	title: {
 		fontSize: 22,
@@ -173,7 +182,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 	},
 	button: {
-		backgroundColor: "#00EEFF",
 		paddingVertical: 12,
 		alignItems: "center",
 		borderRadius: 8,

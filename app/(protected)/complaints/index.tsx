@@ -3,6 +3,7 @@ import ComplaintSuccessModal from "@/components/complaints/ComplaintSuccessModal
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -18,6 +19,7 @@ import {
 } from "react-native";
 
 const Complaint = () => {
+	const { primaryColor, secondaryColor, textColor } = useAppTheme();
 	const [showCamera, setShowCamera] = useState(false);
 	const [complaintData, setComplaintData] = useState({
 		image: "",
@@ -49,7 +51,7 @@ const Complaint = () => {
 		<SafeAreaView
 			style={{
 				flex: 1,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 110,
 				padding: 16,
 			}}
@@ -62,7 +64,9 @@ const Complaint = () => {
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}
 				>
-					<Text style={styles.title}>Raise a Complaint:</Text>
+					<Text style={[styles.title, { color: textColor }]}>
+						Raise a Complaint:
+					</Text>
 					<ImageCard
 						image={complaintData.image}
 						setShowCamera={setShowCamera}
@@ -75,10 +79,18 @@ const Complaint = () => {
 						setExplanation={handleSetExplaination}
 					/>
 					<TouchableOpacity
-						className="bg-[#00eeff] rounded-full my-3 p-3 mb-4 items-center"
+						className=" rounded-full my-3 p-3 mb-4 items-center"
 						onPress={() => setShowSuccess(true)}
+						style={{
+							backgroundColor: primaryColor,
+						}}
 					>
-						<Text className="text-black font-bold text-lg">
+						<Text
+							className=" font-bold text-lg"
+							style={{
+								color: textColor,
+							}}
+						>
 							Submit
 						</Text>
 					</TouchableOpacity>
@@ -120,17 +132,10 @@ const Complaint = () => {
 
 export default Complaint;
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#343232",
-		paddingHorizontal: 6,
-		paddingVertical: 6,
-		paddingTop: 120,
-	},
 	title: {
 		fontSize: 22,
 		fontWeight: "bold",
-		color: "#fff", // White text
+		// White text
 		marginBottom: 20,
 	},
 });

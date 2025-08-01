@@ -1,10 +1,12 @@
 import StackHeader from "@/components/StackHeader";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const AdminLayout = () => {
 	const navigation = useNavigation();
+	const { primaryColor } = useAppTheme();
 
 	return (
 		<Stack>
@@ -12,7 +14,7 @@ const AdminLayout = () => {
 				name="assigned"
 				options={({ route }) => ({
 					headerShown: false,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 				})}
 			/>
@@ -20,7 +22,7 @@ const AdminLayout = () => {
 				name="users"
 				options={({ route }) => ({
 					headerShown: false,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 				})}
 			/>
@@ -28,7 +30,7 @@ const AdminLayout = () => {
 				name="rights"
 				options={({ route }) => ({
 					headerShown: false,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 				})}
 			/>
@@ -36,10 +38,10 @@ const AdminLayout = () => {
 				name="complaints/[complaintID]"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={true}
 								showMenuDrawer={false}

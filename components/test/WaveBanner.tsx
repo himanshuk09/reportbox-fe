@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
@@ -19,17 +20,18 @@ const generateWavePath = (amplitude = 0.35, height = 200, points = 100) => {
 export default function WavyBanner() {
 	const waveHeight = 500;
 	const path = generateWavePath(0.35, waveHeight, 100);
+	const { primaryColor, secondaryColor } = useAppTheme();
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.banner}>
+			<View style={[styles.banner, { backgroundColor: primaryColor }]}>
 				<Svg
 					width={width}
 					height={waveHeight}
 					style={styles.wave}
 					viewBox={`0 0 ${width} ${waveHeight}`}
 				>
-					<Path d={path} fill="#343232" />
+					<Path d={path} fill={secondaryColor} />
 				</Svg>
 			</View>
 
@@ -41,6 +43,7 @@ export default function WavyBanner() {
 export function WavyHeaderBackground() {
 	const waveHeight = 50;
 	const path = generateWavePath(0.35, waveHeight, 100);
+	const { primaryColor, secondaryColor } = useAppTheme();
 
 	return (
 		<Svg
@@ -54,9 +57,9 @@ export function WavyHeaderBackground() {
 				y="0"
 				width={width}
 				height={waveHeight}
-				fill="#00EEFF"
+				fill={primaryColor}
 			/>
-			<Path d={path} fill="#343232" />
+			<Path d={path} fill={secondaryColor} />
 		</Svg>
 	);
 }
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
 	banner: {
 		height: "100%",
 		width: "100%",
-		backgroundColor: "#00EEFF",
+
 		alignItems: "center",
 		paddingTop: 64,
 		position: "relative",

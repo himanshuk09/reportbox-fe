@@ -1,5 +1,6 @@
 import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router, useLocalSearchParams } from "expo-router";
 import {
 	FlatList,
@@ -15,22 +16,33 @@ export default function ComplaintListScreen() {
 	const { userID } = useLocalSearchParams();
 
 	const complaints = complaintsPosts.filter((c) => c.userID === userID);
-
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
 	return (
 		<SafeAreaView
 			className="flex-1 px-4 pt-4"
 			style={{
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
 		>
-			<Text className="text-xl font-semibold mb-3 text-white">
+			<Text
+				className="text-xl font-semibold mb-3 "
+				style={{
+					color: textColor,
+				}}
+			>
 				Complaints for: {userID}
 			</Text>
 			{complaints.length === 0 ? (
 				<View className="flex-1 justify-center items-center">
-					<Text className="text-white font-bold text-2xl">
+					<Text
+						className=" font-bold text-2xl"
+						style={{
+							color: textColor,
+						}}
+					>
 						No Complaint Found
 					</Text>
 				</View>
@@ -41,7 +53,10 @@ export default function ComplaintListScreen() {
 					ItemSeparatorComponent={() => <View className="h-3" />}
 					renderItem={({ item }) => (
 						<Pressable
-							className="p-4 rounded-xl bg-[#1e1e1e]"
+							className="p-4 rounded-xl "
+							style={{
+								backgroundColor: cardsColor,
+							}}
 							onPress={() =>
 								router.push({
 									pathname:
@@ -52,7 +67,12 @@ export default function ComplaintListScreen() {
 								})
 							}
 						>
-							<Text className="text-lg font-semibold text-white mb-2">
+							<Text
+								className="text-lg font-semibold  mb-2"
+								style={{
+									color: textColor,
+								}}
+							>
 								{item.type}
 							</Text>
 
@@ -70,21 +90,37 @@ export default function ComplaintListScreen() {
 							>
 								Status: {item.status}
 							</Text>
-							<Text className="text-white">
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
 								Complaint ID: {item.cid}
 							</Text>
-							<Text className="text-white">
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
 								Date: {item.date}
 							</Text>
 
 							{item.status === "Resolved" && (
-								<Text className="text-white">
+								<Text
+									style={{
+										color: textColor,
+									}}
+								>
 									Resolved By: {item.resolvedBy}
 								</Text>
 							)}
 
 							{item.status === "Assigned" && (
-								<Text className="text-white">
+								<Text
+									style={{
+										color: textColor,
+									}}
+								>
 									Assigned To: {item.assignedTo}
 								</Text>
 							)}

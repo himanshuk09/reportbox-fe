@@ -5,10 +5,12 @@ import { useLocalSearchParams } from "expo-router";
 
 import { PostCard } from "@/components/complaints/PostCard";
 import { complaintsPosts } from "@/constants/posts";
+import { useAppTheme } from "@/hooks/useAppTheme";
 
 export default function PostDetailsScreen() {
 	const { id } = useLocalSearchParams();
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const post = complaintsPosts.find((p) => p.id === id);
 
 	if (!post) return <Text>Post not found</Text>;
@@ -60,7 +62,7 @@ export default function PostDetailsScreen() {
 		<ScrollView
 			style={{
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
 			contentContainerStyle={{
@@ -70,7 +72,7 @@ export default function PostDetailsScreen() {
 			{/* Timeline */}
 			<View
 				style={{
-					backgroundColor: "#1e1e1e",
+					backgroundColor: cardsColor,
 					borderRadius: 10,
 					paddingVertical: 15,
 				}}
@@ -93,21 +95,21 @@ export default function PostDetailsScreen() {
 									<FontAwesome5
 										name="handshake"
 										size={18}
-										color="#C0C0C0"
+										color={primaryColor}
 									/>
 								)}
 								{step.icon === "checkmark-done" && (
 									<Ionicons
 										name="checkmark-done"
 										size={22}
-										color="#C0C0C0"
+										color={primaryColor}
 									/>
 								)}
 								{step.icon === "award" && (
 									<FontAwesome5
 										name="award"
 										size={18}
-										color="#C0C0C0"
+										color={primaryColor}
 									/>
 								)}
 							</View>
@@ -115,7 +117,15 @@ export default function PostDetailsScreen() {
 
 						{/* Label + Date */}
 
-						<Text style={styles.timelineText}>{step.date}</Text>
+						<Text
+							style={{
+								color: textColor, // White text for date/time
+								fontSize: 16,
+								fontWeight: "500",
+							}}
+						>
+							{step.date}
+						</Text>
 					</View>
 				))}
 			</View>
@@ -145,18 +155,13 @@ export default function PostDetailsScreen() {
 	);
 }
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#1e1e1e", // Dark background as in the image
-		paddingVertical: 20, // Some top/bottom padding
-	},
 	timelineItem: {
 		flexDirection: "row",
 		alignItems: "center",
-		// justifyContent: "center",
+
 		paddingHorizontal: 15,
-		marginBottom: 16, // Space between timeline entries
-		position: "relative", // For positioning the vertical line
+		marginBottom: 16,
+		position: "relative",
 		marginLeft: 20,
 	},
 	iconContainerWrapper: {
@@ -165,39 +170,35 @@ const styles = StyleSheet.create({
 		marginRight: 12,
 		alignItems: "center",
 		justifyContent: "center",
-		position: "relative", // Allows absolute positioning of lines relative to this wrapper
+		position: "relative",
 	},
 	circle: {
 		width: 40,
 		height: 40,
-		borderRadius: 20, // Half of width/height for a perfect circle
-		backgroundColor: "#333", // Darker background for the circle
+		borderRadius: 20,
+		backgroundColor: "#333",
 		alignItems: "center",
 		justifyContent: "center",
-		zIndex: 2, // Ensure circle is above lines
+		zIndex: 2,
 	},
 	verticalLineTop: {
 		position: "absolute",
-		width: 2, // Thickness of the line
-		backgroundColor: "#555", // Color of the line
-		top: -16, // Start slightly above the circle
-		height: 16, // Height to reach the circle
-		left: "50%", // Center horizontally
-		marginLeft: -1, // Adjust for line width to truly center
-		zIndex: 1, // Below the circle
+		width: 2,
+		backgroundColor: "#555",
+		top: -16,
+		height: 16,
+		left: "50%",
+		marginLeft: -1,
+		zIndex: 1,
 	},
 	verticalLineBottom: {
 		position: "absolute",
-		width: 2, // Thickness of the line
-		backgroundColor: "#555", // Color of the line
-		bottom: -16, // End slightly below the circle
-		height: 16, // Height to reach the next circle
-		left: "50%", // Center horizontally
-		marginLeft: -1, // Adjust for line width to truly center
-		zIndex: 1, // Below the circle
-	},
-	timelineText: {
-		color: "#fff", // White text for date/time
-		fontSize: 16,
+		width: 2,
+		backgroundColor: "#555",
+		bottom: -16,
+		height: 16,
+		left: "50%",
+		marginLeft: -1,
+		zIndex: 1,
 	},
 });

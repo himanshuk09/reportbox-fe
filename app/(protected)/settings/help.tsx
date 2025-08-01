@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -42,11 +43,12 @@ const CIRCLE_SIZE = 48;
 const LINE_WIDTH = 2;
 const ITEM_MARGIN_BOTTOM = 20;
 const ComplaintStepsTimeline = () => {
+	const { primaryColor, secondaryColor } = useAppTheme();
 	return (
 		<ScrollView
 			style={{
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
 			contentContainerStyle={{

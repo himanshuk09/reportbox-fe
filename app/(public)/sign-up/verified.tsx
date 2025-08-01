@@ -2,11 +2,14 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 function VerificationSuccessScreen() {
 	const { setSessionActive, user } = useAuth();
+	const { primaryColor, secondaryColor } = useAppTheme();
+
 	return (
 		<View className="flex-1 relative justify-center">
 			{/* Other content below */}
@@ -33,7 +36,12 @@ function VerificationSuccessScreen() {
 					<Text className="text-white  text-2xl font-semibold">
 						Let’s complete your profile
 					</Text>
-					<View className="bg-[#00eeff] rounded-full p-2 ml-1">
+					<View
+						className=" rounded-full p-2 ml-1"
+						style={{
+							backgroundColor: primaryColor,
+						}}
+					>
 						<AntDesign name="arrowright" size={22} color="#fff" />
 					</View>
 				</TouchableOpacity>
@@ -43,9 +51,15 @@ function VerificationSuccessScreen() {
 }
 
 const Verified = () => {
+	const { primaryColor, secondaryColor } = useAppTheme();
 	const floatingCard = (
 		<View className="bg-white rounded-3xl mb-2 p-6 w-72 items-center shadow-lg">
-			<Text className="text-center text-2xl font-bold text-[#343232] mb-2">
+			<Text
+				className="text-center text-2xl font-bold  mb-2"
+				style={{
+					color: secondaryColor,
+				}}
+			>
 				You’ve been verified
 			</Text>
 			<Image

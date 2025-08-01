@@ -1,5 +1,6 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -7,6 +8,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 function SignInScreen() {
 	const [phoneNo, setPhoneNo] = useState<any>("");
 	const { loginWithPhone } = useAuth();
+	const { primaryColor } = useAppTheme();
 
 	return (
 		<View className="px-2 pt-6">
@@ -32,12 +34,15 @@ function SignInScreen() {
 
 			{/* Button */}
 			<TouchableOpacity
-				className="bg-[#00eeff] rounded-full p-3 mt-6 items-center"
+				className=" rounded-full p-3 mt-6 items-center"
 				onPress={() => {
 					loginWithPhone(phoneNo);
 					router.push("/(public)/sign-up/verify-otp");
 				}}
 				disabled={phoneNo.length !== 10}
+				style={{
+					backgroundColor: primaryColor,
+				}}
 			>
 				<Text className="text-black font-semibold">Get OTP</Text>
 			</TouchableOpacity>

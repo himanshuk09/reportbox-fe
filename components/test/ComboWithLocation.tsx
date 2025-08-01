@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Camera, CameraType, CameraView } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
@@ -27,7 +28,7 @@ export default function ImagePickerCameraScreen() {
 		useState<Location.LocationObjectCoords | null>(null);
 	const [address, setAddress] = useState<string>("");
 	const cameraRef = useRef<any>(null);
-
+	const { primaryColor, secondaryColor } = useAppTheme();
 	// Ask permissions for camera, media and location
 	const requestPermissions = async () => {
 		const { status: cameraStatus } =
@@ -194,7 +195,9 @@ export default function ImagePickerCameraScreen() {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.imageBlock}>
+			<View
+				style={[styles.imageBlock, { backgroundColor: secondaryColor }]}
+			>
 				{imageUri ? (
 					<Image source={{ uri: imageUri }} style={styles.image} />
 				) : (
@@ -256,7 +259,6 @@ const styles = StyleSheet.create({
 		height: 200,
 		borderWidth: 1,
 		borderColor: "#ccc",
-		backgroundColor: "#343232",
 		borderRadius: 10,
 		alignItems: "center",
 		justifyContent: "center",

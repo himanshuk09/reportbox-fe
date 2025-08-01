@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, Pressable, Text, View } from "react-native";
@@ -7,6 +8,8 @@ export default function ComplaintSuccessModal({
 	onClose,
 	onTrack,
 }: any) {
+	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+
 	return (
 		<Modal visible={visible} transparent animationType="fade">
 			<View className="flex-1 items-center justify-center bg-black/60 px-4">
@@ -25,12 +28,22 @@ export default function ComplaintSuccessModal({
 					</Pressable>
 
 					{/* Check Icon */}
-					<View className="bg-[#00eeff] p-4 rounded-full my-2">
+					<View
+						className=" p-4 rounded-full my-2"
+						style={{
+							backgroundColor: primaryColor,
+						}}
+					>
 						<Ionicons name="checkmark" size={32} color="white" />
 					</View>
 
 					{/* Title */}
-					<Text className="text-center mb-2 font-bold text-2xl text-[#343232]">
+					<Text
+						className="text-center mb-2 font-bold text-2xl "
+						style={{
+							color: textColor,
+						}}
+					>
 						Complaint Submitted!
 					</Text>
 
@@ -49,7 +62,10 @@ export default function ComplaintSuccessModal({
 					{/* Track Button */}
 					<Pressable
 						onPress={onTrack}
-						className="bg-[#00eeff] px-6 py-2.5 my-3 rounded-full"
+						className=" px-6 py-2.5 my-3 rounded-full"
+						style={{
+							backgroundColor: primaryColor,
+						}}
 					>
 						<Text className="text-white font-semibold text-lg">
 							Track Your Complaint

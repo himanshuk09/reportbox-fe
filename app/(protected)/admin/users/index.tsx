@@ -1,4 +1,5 @@
 import { complaintsPosts, users } from "@/constants/posts";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
@@ -17,7 +18,8 @@ export default function UserListScreen() {
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState("");
 	const [statusFilter, setStatusFilter] = useState("");
-
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const filteredUsers = useMemo(() => {
 		return users
 			.filter((user: any) => {
@@ -51,14 +53,18 @@ export default function UserListScreen() {
 
 	return (
 		<SafeAreaView
-			className="flex-1 bg-[#343232] px-4 py-2"
 			style={{
 				padding: 16,
-				backgroundColor: "#343232",
+				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
 		>
-			<Text className="text-xl font-semibold text-[#ccc] mb-2">
+			<Text
+				className="text-xl font-semibold  mb-2"
+				style={{
+					color: textColor,
+				}}
+			>
 				User Complaints
 			</Text>
 
@@ -67,14 +73,17 @@ export default function UserListScreen() {
 				<View
 					className="flex-1  rounded-lg px-3"
 					style={{
-						backgroundColor: "#1e1e1e",
+						backgroundColor: cardsColor,
 					}}
 				>
 					<TextInput
 						placeholder="Search by User ID or Phone"
 						value={search}
 						onChangeText={setSearch}
-						className="py-2 color-white"
+						className="py-4 "
+						style={{
+							color: textColor,
+						}}
 					/>
 				</View>
 			</View>
@@ -83,7 +92,7 @@ export default function UserListScreen() {
 				<View
 					className="flex-1  rounded-lg"
 					style={{
-						backgroundColor: "#1e1e1e",
+						backgroundColor: cardsColor,
 					}}
 				>
 					<Picker
@@ -102,7 +111,7 @@ export default function UserListScreen() {
 				<View
 					className="flex-1  rounded-lg"
 					style={{
-						backgroundColor: "#1e1e1e",
+						backgroundColor: cardsColor,
 					}}
 				>
 					<Picker
@@ -128,7 +137,7 @@ export default function UserListScreen() {
 					<View
 						className="flex-row items-center p-3 mb-3  rounded-xl"
 						style={{
-							backgroundColor: "#1e1e1e",
+							backgroundColor: cardsColor,
 						}}
 					>
 						<Image
@@ -136,13 +145,26 @@ export default function UserListScreen() {
 							className="w-14 h-14 rounded-full mr-4"
 						/>
 						<View className="flex-1">
-							<Text className="text-base text-[#ccc] font-semibold">
+							<Text
+								className="text-base  font-semibold"
+								style={{
+									color: textColor,
+								}}
+							>
 								{item.name}
 							</Text>
-							<Text className="text-[#ccc]">
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
 								User ID: {item.userID}
 							</Text>
-							<Text className="text-[#ccc]">
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
 								Complaints: {item.complaintCount}
 							</Text>
 						</View>
@@ -160,7 +182,7 @@ export default function UserListScreen() {
 							<MaterialIcons
 								name="arrow-forward-ios"
 								size={20}
-								color={"white"}
+								color={textColor}
 							/>
 						</TouchableOpacity>
 					</View>

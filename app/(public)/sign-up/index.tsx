@@ -1,16 +1,18 @@
+import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import {
-	View,
+	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	StyleSheet,
+	View,
 } from "react-native";
-import { router } from "expo-router";
-import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 
 // Content for the Registration Screen
 function RegistrationContent() {
+	const { primaryColor } = useAppTheme();
+
 	return (
 		<View style={registerStyles.contentContainer}>
 			<Text style={registerStyles.title}>Create Account</Text>
@@ -32,7 +34,10 @@ function RegistrationContent() {
 				secureTextEntry
 			/>
 			<TouchableOpacity
-				style={registerStyles.button}
+				style={[
+					registerStyles.button,
+					{ backgroundColor: primaryColor },
+				]}
 				onPress={() => console.log("Register button pressed")}
 			>
 				<Text style={registerStyles.buttonText}>Register</Text>
@@ -71,7 +76,7 @@ const registerStyles = StyleSheet.create({
 		paddingVertical: 8,
 	},
 	button: {
-		backgroundColor: "#00EEFF", // Different button color for registration
+		// Different button color for registration
 		paddingVertical: 12,
 		alignItems: "center",
 		borderRadius: 8,

@@ -1,5 +1,6 @@
 import { bannersImageUrls } from "@/constants/banners";
 import { categories } from "@/constants/complaints";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import {
 	FlatList,
@@ -13,15 +14,40 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
 
 const ComplaintCategoriesScreen = () => {
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: secondaryColor }]}
+		>
 			<FlatList
 				data={categories}
 				keyExtractor={(_, index) => index.toString()}
 				renderItem={({ item }) => (
 					<TouchableOpacity style={styles.item}>
-						<View style={styles.iconCircle}>{item.icon}</View>
-						<Text style={styles.label}>{item.label}</Text>
+						<View
+							style={[
+								styles.iconCircle,
+								{
+									backgroundColor: cardsColor,
+									borderColor: primaryColor,
+									borderWidth: 1,
+								},
+							]}
+						>
+							{item.icon}
+						</View>
+						<Text
+							style={[
+								styles.label,
+								{
+									color: textColor,
+									fontWeight: "500",
+								},
+							]}
+						>
+							{item.label}
+						</Text>
 					</TouchableOpacity>
 				)}
 				ListHeaderComponent={
@@ -31,7 +57,7 @@ const ComplaintCategoriesScreen = () => {
 							autoplay
 							autoplayTimeout={3}
 							dotColor="#ccc"
-							activeDotColor="#fff"
+							activeDotColor={primaryColor}
 							style={{ borderRadius: 15 }}
 						>
 							{bannersImageUrls.map((uri, index) => (
@@ -62,7 +88,6 @@ export default ComplaintCategoriesScreen;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#343232",
 		paddingVertical: 6,
 		paddingHorizontal: 6,
 		marginTop: 90,
@@ -78,7 +103,6 @@ const styles = StyleSheet.create({
 		marginBottom: 25,
 	},
 	iconCircle: {
-		backgroundColor: "#1c1c1c",
 		borderRadius: 50,
 		padding: 20,
 		marginBottom: 8,
@@ -86,7 +110,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	label: {
-		color: "#fff",
 		fontSize: 12,
 		textAlign: "center",
 	},

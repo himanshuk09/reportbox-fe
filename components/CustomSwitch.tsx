@@ -1,6 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                           Custom animated Switch                           */
 /* -------------------------------------------------------------------------- */
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { useEffect, useRef } from "react";
 import {
 	Animated,
@@ -22,6 +23,7 @@ const CustomSwitch = ({
 	disabled = false,
 }: CustomSwitchProps) => {
 	/* --------------------------- Reference Variables -------------------------- */
+	const { primaryColor } = useAppTheme();
 
 	const translateX = useRef(new Animated.Value(isEnabled ? 30 : 0)).current; // Initialize translateX based on current isEnabled state
 
@@ -97,7 +99,7 @@ const CustomSwitch = ({
 						width: 18,
 						height: 18,
 						borderRadius: 9,
-						backgroundColor: "#00EEFF",
+						backgroundColor: primaryColor,
 						position: "absolute",
 						top: 3,
 						left: 3,

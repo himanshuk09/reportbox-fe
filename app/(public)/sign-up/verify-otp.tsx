@@ -1,5 +1,6 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -7,6 +8,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 function VerificationScreen() {
 	const { verifyOtp, session, user } = useAuth();
 	const [code, setCode] = useState("");
+	const { primaryColor } = useAppTheme();
 
 	const handleKeyPress = (digit: string) => {
 		if (digit === "x") {
@@ -69,7 +71,7 @@ function VerificationScreen() {
 						<Feather
 							name="check-circle"
 							size={28}
-							color="#00eeff"
+							color={primaryColor}
 							onPress={() => {
 								if (!verifyOtp(code)) {
 									return;

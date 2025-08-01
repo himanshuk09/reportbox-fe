@@ -1,11 +1,14 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
-import React from "react";
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
+import React from "react";
 
 function WelcomeCard() {
+	const { primaryColor } = useAppTheme();
+
 	return (
 		<View>
 			<Text className="text-white text-3xl font-semibold">
@@ -27,7 +30,12 @@ function WelcomeCard() {
 			>
 				<Text className="text-white text-2xl mr-2">Continue</Text>
 
-				<View className="bg-[#00eeff] rounded-full p-2">
+				<View
+					className=" rounded-full p-2"
+					style={{
+						backgroundColor: primaryColor,
+					}}
+				>
 					<AntDesign name="arrowright" size={24} color="#fff" />
 				</View>
 			</TouchableOpacity>

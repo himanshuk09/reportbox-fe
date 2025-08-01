@@ -1,14 +1,17 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Path, Text } from "react-native-svg";
 
 const Blob = ({ text, iconName }: any) => {
+	const { primaryColor, secondaryColor } = useAppTheme();
+
 	return (
 		<View style={styles.container}>
 			<Svg viewBox="0 0 200 200" style={styles.svg}>
 				<Path
-					fill="#00EEFF"
+					fill={primaryColor}
 					d="M58,-13.1C67.3,9.8,61.6,43.4,41,59C20.4,74.5,-15.1,72.1,-39.4,54.4C-63.7,36.7,-76.7,3.8,-68.3,-18C-59.9,-39.7,-29.9,-50.2,-2.8,-49.3C24.3,-48.4,48.7,-36,58,-13.1Z"
 					transform="translate(100 100)"
 				/>
@@ -17,7 +20,7 @@ const Blob = ({ text, iconName }: any) => {
 				<Ionicons
 					name={iconName}
 					size={35}
-					color="#343232"
+					color={secondaryColor}
 					className="mb-3"
 				/>
 				<TextSVG text={text} />
@@ -27,20 +30,23 @@ const Blob = ({ text, iconName }: any) => {
 };
 
 export default Blob;
-const TextSVG = ({ text }: { text: string }) => (
-	<Svg height="20" width="200">
-		<Text
-			x="100"
-			y="15"
-			fill="#343232"
-			fontSize="18"
-			fontWeight="bold"
-			textAnchor="middle"
-		>
-			{text}
-		</Text>
-	</Svg>
-);
+const TextSVG = ({ text }: { text: string }) => {
+	const { primaryColor, secondaryColor } = useAppTheme();
+	return (
+		<Svg height="20" width="200">
+			<Text
+				x="100"
+				y="15"
+				fill={secondaryColor}
+				fontSize="18"
+				fontWeight="bold"
+				textAnchor="middle"
+			>
+				{text}
+			</Text>
+		</Svg>
+	);
+};
 
 const styles = StyleSheet.create({
 	container: {

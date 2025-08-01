@@ -1,10 +1,12 @@
 import StackHeader from "@/components/StackHeader";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const ComplaintLayout = () => {
 	const navigation = useNavigation();
+	const { primaryColor } = useAppTheme();
 
 	return (
 		<Stack>
@@ -12,10 +14,10 @@ const ComplaintLayout = () => {
 				name="index"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={false}
 								showMenuDrawer={true}
@@ -29,10 +31,10 @@ const ComplaintLayout = () => {
 				name="[id]"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={false}
 								showMenuDrawer={true}
@@ -46,10 +48,10 @@ const ComplaintLayout = () => {
 				name="progress"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={true}
 								showMenuDrawer={false}
@@ -63,10 +65,10 @@ const ComplaintLayout = () => {
 				name="history"
 				options={({ route }) => ({
 					headerShown: true,
-					tabBarActiveTintColor: "#00EEFF",
+					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
-						<SafeAreaView style={{ backgroundColor: "#00EEFF" }}>
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
 								showBackIcon={true}
 								showMenuDrawer={false}
