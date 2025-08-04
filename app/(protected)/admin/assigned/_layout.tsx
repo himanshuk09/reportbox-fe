@@ -1,11 +1,10 @@
 import StackHeader from "@/components/StackHeader";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Stack, useNavigation } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const AssignedLayout = () => {
-	const navigation = useNavigation();
 	const { primaryColor } = useAppTheme();
 
 	return (
