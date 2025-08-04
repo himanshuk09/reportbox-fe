@@ -25,7 +25,7 @@ const StackHeader = ({
 }: StackHeaderProps) => {
 	const navigation = useNavigation();
 	const [menuVisible, setMenuVisible] = useState(false);
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { primaryColor, secondaryColor, cardsColor } = useAppTheme();
 
 	return (
 		<View
@@ -49,7 +49,7 @@ const StackHeader = ({
 						zIndex: 10,
 					}}
 				>
-					<Ionicons name="menu" size={35} color="black" />
+					<Ionicons name="menu" size={35} color={cardsColor} />
 				</Pressable>
 			)}
 			{/* Back Button */}
@@ -68,13 +68,13 @@ const StackHeader = ({
 					<Ionicons
 						name="chevron-back"
 						size={30}
-						color={secondaryColor}
+						color={cardsColor}
 					/>
 					<Text
 						style={{
 							fontSize: 22,
 							fontWeight: "bold",
-							color: secondaryColor, // White text
+							color: cardsColor, // White text
 							// marginBottom: 20,
 						}}
 					>
@@ -111,7 +111,7 @@ const StackHeader = ({
 					<Entypo
 						name="dots-three-vertical"
 						size={25}
-						color="black"
+						color={cardsColor}
 					/>
 				</Pressable>
 			)}

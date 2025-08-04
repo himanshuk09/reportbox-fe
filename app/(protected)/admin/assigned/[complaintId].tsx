@@ -7,7 +7,9 @@ import {
 	Alert,
 	Modal,
 	ScrollView,
+	StyleSheet,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
@@ -192,7 +194,20 @@ const ResolveComplaintScreen = () => {
 						</Text>
 					</View>
 				</TouchableOpacity>
-
+				<Text style={[styles.label, { color: textColor }]}>
+					Resolved message
+				</Text>
+				<TextInput
+					multiline
+					numberOfLines={4}
+					placeholder="Describe your resolved complaint here"
+					style={[
+						styles.textArea,
+						{ color: textColor, backgroundColor: cardsColor },
+					]}
+					// value={message}
+					// onChangeText={setMessage}
+				/>
 				{/* Submit */}
 				<TouchableOpacity
 					onPress={handleSubmit}
@@ -225,3 +240,19 @@ const ResolveComplaintScreen = () => {
 };
 
 export default ResolveComplaintScreen;
+const styles = StyleSheet.create({
+	label: {
+		fontSize: 16,
+		marginBottom: 6,
+		fontWeight: "bold",
+	},
+
+	textArea: {
+		padding: 12,
+		borderRadius: 8,
+		height: 100,
+		marginVertical: 10,
+		textAlignVertical: "top",
+		color: "#ccc",
+	},
+});

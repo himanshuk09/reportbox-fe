@@ -8,7 +8,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 function VerificationScreen() {
 	const { verifyOtp, session, user } = useAuth();
 	const [code, setCode] = useState("");
-	const { primaryColor } = useAppTheme();
+	const { primaryColor, textColor, secondaryColor, cardsColor } =
+		useAppTheme();
 
 	const handleKeyPress = (digit: string) => {
 		if (digit === "x") {
@@ -30,10 +31,13 @@ function VerificationScreen() {
 						<FontAwesome5
 							name="backspace"
 							size={24}
-							color="white"
+							color={textColor}
 						/>
 					) : (
-						<Text className="text-white text-2xl font-bold">
+						<Text
+							className="text-2xl font-semibold italic "
+							style={{ color: textColor }}
+						>
 							{digit}
 						</Text>
 					)}
@@ -44,11 +48,17 @@ function VerificationScreen() {
 
 	return (
 		<View className="px-6 items-center">
-			<Text className="text-white text-xl font-bold mb-2">
+			<Text
+				className=" text-xl font-bold mb-2"
+				style={{ color: textColor }}
+			>
 				VERIFICATION CODE
 			</Text>
 
-			<Text className="text-gray-300  mb-6 text-center text-lg">
+			<Text
+				className="text-gray-300  mb-6 text-center text-lg"
+				style={{ color: textColor }}
+			>
 				Please enter verification code sent to +91 9876543210
 			</Text>
 
@@ -57,9 +67,13 @@ function VerificationScreen() {
 					{[...Array(4).keys()].map((_, i) => (
 						<View
 							key={i}
-							className="w-14 m-1 h-14 rounded-md bg-gray-700 items-center justify-center"
+							className="w-14 m-1 h-14 rounded-md  items-center justify-center"
+							style={{ backgroundColor: cardsColor }}
 						>
-							<Text className="text-white text-2xl font-bold">
+							<Text
+								className="text-2xl font-bold"
+								style={{ color: textColor }}
+							>
 								{code?.[i] ?? ""}
 							</Text>
 						</View>
@@ -76,7 +90,7 @@ function VerificationScreen() {
 								if (!verifyOtp(code)) {
 									return;
 								}
-								router.push("/(public)/sign-up/verified");
+								router.push("/(public)/sign-in/verified");
 							}}
 						/>
 					)}

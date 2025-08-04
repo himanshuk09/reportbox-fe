@@ -1,5 +1,14 @@
+import { complaintTypes } from "@/constants/complaints";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { AntDesign } from "@expo/vector-icons";
+import {
+	AntDesign,
+	Entypo,
+	FontAwesome,
+	FontAwesome5,
+	FontAwesome6,
+	MaterialCommunityIcons,
+	MaterialIcons,
+} from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
 	Modal,
@@ -11,42 +20,43 @@ import {
 	View,
 } from "react-native";
 import { getLocationDetails } from "../native/Map";
-
-const complaintData = [
-	{
-		type: "Water Department",
-		subtypes: ["No Supply", "Dirty Water", "Leakage", "Low Pressure"],
-	},
-	{
-		type: "Lighting Department",
-		subtypes: ["Street Light Out", "Flickering", "Broken Pole"],
-	},
-	{
-		type: "Sewerage & Drainage",
-		subtypes: ["Clogged Drain", "Open Sewer", "Overflow"],
-	},
-];
+const ICON_MAP: any = {
+	AntDesign,
+	FontAwesome,
+	FontAwesome5,
+	FontAwesome6,
+	MaterialCommunityIcons,
+	MaterialIcons,
+	Entypo,
+};
 
 export default function ComplaintForm({
 	location,
 	setLocation,
 	explanation,
 	setExplanation,
+	subtypes,
 }: any) {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [expandedType, setExpandedType] = useState<string | null>(null);
-	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>([]);
+	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>(
+		subtypes ?? ""
+	);
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
 
 	const toggleSubtype = (subtype: string) => {
-		setSelectedSubtypes((prev) =>
-			prev.includes(subtype)
-				? prev.filter((s) => s !== subtype)
-				: [...prev, subtype]
+		//single
+		setSelectedSubtypes((prev: any) =>
+			prev[0] === subtype ? [] : [subtype]
 		);
+		//multi select
+		// setSelectedSubtypes((prev: any) =>
+		// 	prev.includes(subtype)
+		// 		? prev.filter((s: any) => s !== subtype)
+		// 		: [...prev, subtype]
+		// );
 	};
-
 	return (
 		<View style={{ flex: 1, padding: 10 }}>
 			{/* Complaint Type Field */}
@@ -59,10 +69,10 @@ export default function ComplaintForm({
 			>
 				<Text
 					style={{
-						color: selectedSubtypes.length ? textColor : "#999",
+						color: selectedSubtypes?.length ? textColor : "#999",
 					}}
 				>
-					{selectedSubtypes.length > 0
+					{selectedSubtypes?.length > 0
 						? selectedSubtypes.join(", ")
 						: "Select complaint type"}
 				</Text>
@@ -99,7 +109,18 @@ export default function ComplaintForm({
 				value={explanation}
 				onChangeText={setExplanation}
 			/>
-
+			<Text style={[styles.label, { color: textColor }]}>Hash Tags</Text>
+			<TextInput
+				multiline
+				numberOfLines={3}
+				placeholder="Describe your complaint here"
+				style={[
+					styles.field,
+					{ color: textColor, backgroundColor: cardsColor },
+				]}
+				value={explanation}
+				onChangeText={setExplanation}
+			/>
 			{/* Complaint Modal */}
 			<Modal
 				visible={modalVisible}
@@ -113,75 +134,135 @@ export default function ComplaintForm({
 						backgroundColor: secondaryColor,
 					}}
 				>
-					<Text style={styles.modalTitle}>
-						Select Complaint Subtype
+					<Text style={[styles.modalTitle, { color: textColor }]}>
+						Select Complaint Type
 					</Text>
-					<ScrollView>
-						{complaintData.map((item, index) => (
-							<View key={index}>
-								<TouchableOpacity
-									style={styles.typeItem}
-									onPress={() =>
-										setExpandedType(
-											expandedType === item.type
-												? null
-												: item.type
-										)
-									}
-								>
-									<Text style={styles.typeText}>
-										{item.type}
-									</Text>
-									<AntDesign
-										name={
-											expandedType === item.type
-												? "up"
-												: "down"
-										}
-										size={18}
-										color="#ccc"
-									/>
-								</TouchableOpacity>
 
-								{expandedType === item.type && (
-									<View
-										style={{ marginLeft: 10, marginTop: 5 }}
+					<ScrollView>
+						{complaintTypes?.map((item: any, index) => {
+							const IconType = ICON_MAP[item.iconType];
+							return (
+								<View key={index}>
+									<TouchableOpacity
+										style={styles.typeItem}
+										onPress={() =>
+											setExpandedType(
+												expandedType === item.label
+													? null
+													: item.label
+											)
+										}
 									>
-										{item.subtypes.map((sub, i) => (
-											<TouchableOpacity
-												key={i}
-												style={[
-													styles.subtypeItem,
-													selectedSubtypes.includes(
-														sub
-													) && {
-														backgroundColor:
-															primaryColor,
-													},
-												]}
-												onPress={() =>
-													toggleSubtype(sub)
+										<View
+											style={{
+												flexDirection: "row",
+												alignItems: "center",
+											}}
+										>
+											{IconType && (
+												<IconType
+													name={item.icon}
+													size={20}
+													color={primaryColor}
+													style={{ marginRight: 10 }}
+												/>
+											)}
+											<Text style={styles.typeText}>
+												{item.label}
+											</Text>
+										</View>
+										<AntDesign
+											name={
+												expandedType === item.label
+													? "up"
+													: "down"
+											}
+											size={18}
+											color="#ccc"
+										/>
+									</TouchableOpacity>
+
+									{expandedType === item.label && (
+										<View
+											style={{
+												marginLeft: 10,
+												marginTop: 5,
+											}}
+										>
+											{item.categories.map(
+												(sub: any, i: any) => {
+													const SubIcon =
+														ICON_MAP[sub.iconType];
+													return (
+														<TouchableOpacity
+															key={i}
+															style={[
+																styles.subtypeItem,
+																selectedSubtypes.includes(
+																	sub.label
+																) && {
+																	backgroundColor:
+																		primaryColor,
+																},
+															]}
+															onPress={() =>
+																toggleSubtype(
+																	sub.label
+																)
+															}
+														>
+															<View
+																style={{
+																	flexDirection:
+																		"row",
+																	alignItems:
+																		"center",
+																}}
+															>
+																{SubIcon && (
+																	<SubIcon
+																		name={
+																			sub.icon
+																		}
+																		size={
+																			18
+																		}
+																		color={
+																			selectedSubtypes.includes(
+																				sub.label
+																			)
+																				? secondaryColor
+																				: primaryColor
+																		}
+																		style={{
+																			marginRight: 8,
+																		}}
+																	/>
+																)}
+																<Text
+																	style={{
+																		color: selectedSubtypes.includes(
+																			sub.label
+																		)
+																			? secondaryColor
+																			: "#ccc",
+																	}}
+																>
+																	{sub.label}
+																</Text>
+															</View>
+														</TouchableOpacity>
+													);
 												}
-											>
-												<Text
-													style={{
-														color: selectedSubtypes.includes(
-															sub
-														)
-															? secondaryColor
-															: "#ccc",
-													}}
-												>
-													{sub}
-												</Text>
-											</TouchableOpacity>
-										))}
-									</View>
-								)}
-							</View>
-						))}
+											)}
+										</View>
+									)}
+								</View>
+							);
+						})}
 					</ScrollView>
 
+					{/* Done Button */}
 					<TouchableOpacity
 						style={[
 							styles.closeButton,

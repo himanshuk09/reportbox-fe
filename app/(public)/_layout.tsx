@@ -1,21 +1,9 @@
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 
 const AuthLayout = () => {
-	return 	<Stack>
-			<Stack.Screen
-				name="sign-in"
-				options={({ route }) => ({
-					headerShown: false,
-					
-				})}
-			/>
-			<Stack.Screen
-				name="forgot-pin"
-				options={({ route }) => ({
-					headerShown: false,		
-				})}
-			/>
+	return (
+		<Stack>
 			<Stack.Screen
 				name="welcome"
 				options={({ route }) => ({
@@ -23,12 +11,32 @@ const AuthLayout = () => {
 				})}
 			/>
 			<Stack.Screen
-				name="sign-up"
+				name="sign-in"
 				options={({ route }) => ({
 					headerShown: false,
 				})}
 			/>
-		</Stack>;
+
+			{/* <Stack.Screen
+				name="verify-otp"
+				options={({ route }) => ({
+					headerShown: false,
+				})}
+			/>
+			<Stack.Screen
+				name="verified"
+				options={({ route }) => ({
+					headerShown: true,
+				})}
+			/>
+			<Stack.Screen
+				name="profile-form"
+				options={({ route }) => ({
+					headerShown: false,
+				})}
+			/> */}
+		</Stack>
+	);
 };
 
 export default AuthLayout;

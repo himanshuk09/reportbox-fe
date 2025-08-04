@@ -57,6 +57,7 @@ export default function UserListScreen() {
 				padding: 16,
 				backgroundColor: secondaryColor,
 				marginTop: 100,
+				flex: 1,
 			}}
 		>
 			<Text

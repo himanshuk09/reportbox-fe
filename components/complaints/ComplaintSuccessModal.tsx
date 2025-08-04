@@ -8,7 +8,8 @@ export default function ComplaintSuccessModal({
 	onClose,
 	onTrack,
 }: any) {
-	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 
 	return (
 		<Modal visible={visible} transparent animationType="fade">
@@ -41,7 +42,7 @@ export default function ComplaintSuccessModal({
 					<Text
 						className="text-center mb-2 font-bold text-2xl "
 						style={{
-							color: textColor,
+							color: "#000",
 						}}
 					>
 						Complaint Submitted!

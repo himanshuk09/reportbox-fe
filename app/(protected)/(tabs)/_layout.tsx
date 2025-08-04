@@ -1,5 +1,5 @@
+import { SpecialTabButton } from "@/components/SpecialTabButton";
 import StackHeader from "@/components/StackHeader";
-import { SpecialTabButton } from "@/components/test/SpecialTabButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	Ionicons,

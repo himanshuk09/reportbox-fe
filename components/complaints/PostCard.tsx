@@ -1,6 +1,6 @@
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
 	Pressable,
 	StyleSheet,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
@@ -20,23 +21,7 @@ export function PostCard({
 	item,
 	showviewMore = true,
 }: {
-	item: {
-		avatar: string;
-		user: string;
-		time: string;
-		beforeImage: string;
-		afterImage: string;
-		message: string;
-		tag: string;
-		like: any;
-		status: string;
-		comments: {
-			id: string;
-			avatar: string;
-			user: string;
-			comment: string;
-		}[];
-	};
+	item: any;
 	showviewMore?: boolean;
 }) {
 	const [menuVisible, setMenuVisible] = useState(false);
@@ -70,14 +55,30 @@ export function PostCard({
 		setShowImageViewer(false);
 		setCurrentImageUri("");
 	};
+	//new comment
+	const [newCommentText, setNewCommentText] = useState("");
+	const [localComments, setLocalComments] = useState(item.comments || []);
+	const handleAddComment = () => {
+		if (!newCommentText.trim()) return;
 
+		const newComment = {
+			id: Date.now().toString(),
+			avatar: item.avatar,
+			user: item.user,
+			comment: newCommentText.trim(),
+		};
+
+		setLocalComments((prev: any) => [...prev, newComment]);
+		console.log("New comment added:", newComment);
+		setNewCommentText("");
+	};
 	return (
 		<Pressable
 			style={[styles.card, { backgroundColor: cardsColor }]}
 			onPress={() => {
 				if (!showviewMore) return;
 				router.push({
-					pathname: "/(protected)/complaints/[id]",
+					pathname: "/(protected)/complaints/view/[id]",
 					params: { id: "1" },
 				});
 			}}
@@ -114,7 +115,23 @@ export function PostCard({
 					onPress={() => setMenuVisible(!menuVisible)}
 				/>
 				{menuVisible && (
-					<View className="absolute  bg-slate-300 rounded-lg right-5 top-3 shadow p-2">
+					<View className="absolute z-50 bg-slate-300 rounded-lg right-5 top-3 shadow p-2">
+						<Pressable
+							onPress={() => {
+								setMenuVisible(!menuVisible);
+								console.log("Complaint History pressed");
+								router.push({
+									pathname:
+										"/(protected)/complaints/edit/[id]",
+									params: { id: "1" },
+								});
+							}}
+							className="p-1"
+						>
+							<Text className="text-black text-sm font-semibold">
+								Edit
+							</Text>
+						</Pressable>
 						<Pressable
 							onPress={() => {
 								setMenuVisible(!menuVisible);
@@ -123,7 +140,7 @@ export function PostCard({
 							className="p-1"
 						>
 							<Text className="text-black text-sm font-semibold">
-								Complaint History
+								Delete
 							</Text>
 						</Pressable>
 					</View>
@@ -214,9 +231,37 @@ export function PostCard({
 				{showComments && (
 					<View>
 						{/* Use the comments prop instead of dummyComments */}
-						{item.comments.map((comment) => (
+						{item.comments.map((comment: any) => (
 							<CommentItem key={comment.id} {...comment} />
 						))}
+						<View style={styles.newCommentContainer}>
+							<TextInput
+								value={newCommentText}
+								onChangeText={setNewCommentText}
+								placeholder="Add a comment..."
+								placeholderTextColor="#aaa"
+								style={[
+									styles.commentInput,
+									{
+										color: textColor,
+										borderColor: primaryColor,
+									},
+								]}
+							/>
+							<TouchableOpacity
+								onPress={handleAddComment}
+								style={[
+									styles.commentButton,
+									{ backgroundColor: primaryColor },
+								]}
+							>
+								<FontAwesome
+									name="send"
+									size={18}
+									color={cardsColor}
+								/>
+							</TouchableOpacity>
+						</View>
 					</View>
 				)}
 			</Animated.View>
@@ -255,6 +300,7 @@ const CommentItem = ({
 	comment: string;
 }) => {
 	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+
 	return (
 		<View style={styles.commentContainer}>
 			<Image
@@ -395,5 +441,24 @@ const styles = StyleSheet.create({
 		paddingVertical: 4,
 		overflow: "hidden",
 		marginBottom: 8,
+	},
+	newCommentContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		paddingTop: 8,
+	},
+	commentInput: {
+		flex: 1,
+		borderWidth: 1,
+		borderRadius: 20,
+		paddingHorizontal: 12,
+		paddingVertical: 8,
+		marginRight: 8,
+		fontSize: 14,
+	},
+	commentButton: {
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		borderRadius: 20,
 	},
 });

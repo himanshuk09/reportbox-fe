@@ -29,9 +29,11 @@ export const complaintsPosts = [
 			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
 		afterImage:
 			"https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-		message:
+		message: "Please collect Garbage for bla bla place",
+		tag: ["#QuickAction"],
+		location: "bla bla bla",
+		afterResolvedMessage:
 			"Garbage cleared successfully by Zone 4 volunteers.\nComplaint resolved in 6 hours. 🙌",
-		tag: "#QuickAction",
 		comments: dummyComments,
 		like: true,
 		timeline: [
@@ -41,7 +43,8 @@ export const complaintsPosts = [
 		],
 		feedback: "Quick and clean response. Thank you!",
 		cid: "MDU34567",
-		type: "Drainage Leakage",
+		type: "Water Department",
+		subtype: ["No Supply", "Dirty Water", "Leakage", "Low Pressure"],
 		raisedDate: "28 May 2025, 9:15 AM",
 		responseDate: "29 May 2025, 11:00 AM",
 		resolvedDate: "29 May 2025, 4:20 PM",

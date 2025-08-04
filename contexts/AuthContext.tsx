@@ -1,5 +1,6 @@
 import { users } from "@/constants/posts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SplashScreen from "expo-splash-screen";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
@@ -45,6 +46,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				setIsLoading(false);
 			} catch (error) {
 				console.log("Loading error");
+			} finally {
+				await SplashScreen.hideAsync();
 			}
 		};
 		load();
@@ -55,8 +58,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	const verifyOtp = async (otp: string) => {
-		console.log("call");
-
 		// Fake OTP match logic
 		if (otp === "1234" && phoneNo) {
 			const existing = users?.find((u: any) => u.phoneNo === phoneNo);

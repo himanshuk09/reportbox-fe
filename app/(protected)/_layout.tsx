@@ -19,12 +19,12 @@ const menuItems = [
 		icon: "home-outline",
 		path: "/(protected)/(tabs)/dashboard",
 	},
+	{ label: "Profile", icon: "person-outline", path: "/(protected)/profile" },
 	{
 		label: "Settings",
 		icon: "settings-outline",
 		path: "/(protected)/settings",
 	},
-	{ label: "Profile", icon: "person-outline", path: "/(protected)/profile" },
 	{
 		label: "Complaint",
 		icon: "chatbubble-ellipses-outline",
@@ -56,9 +56,9 @@ const menuItems = [
 		path: "/(protected)/admin/rights",
 	},
 	{
-		label: "Edit Profile",
-		icon: "create-outline",
-		path: "/(protected)/profile",
+		label: "About US",
+		icon: "information-circle",
+		path: "/(protected)/admin/rights",
 	},
 ];
 const CustomDrawer = (props: any) => {
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		paddingVertical: 12,
+		marginLeft: 10,
 		gap: 12,
 	},
 	itemText: {

@@ -7,8 +7,7 @@ export const SpecialTabButton = () => {
 	const { primaryColor } = useAppTheme();
 
 	const handlePress = () => {
-		router.push("/(protected)/complaints");
-		// Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		router.push("/(protected)/complaints/add");
 	};
 
 	return (

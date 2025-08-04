@@ -8,17 +8,21 @@ import { router } from "expo-router";
 import React from "react";
 function VerificationSuccessScreen() {
 	const { setSessionActive, user } = useAuth();
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 
 	return (
 		<View className="flex-1 relative justify-center">
 			{/* Other content below */}
 			<View className="px-2 items-center pt-6">
-				<Text className="text-white text-xl font-bold mb-3 text-center">
+				<Text
+					className="text-xl font-bold mb-3 text-center"
+					style={{ color: textColor }}
+				>
 					Report Issues Instantly
 				</Text>
 
-				<Text className="text-gray-300 text-md mb-10 text-center">
+				<Text className="text-gray-500 text-md mb-10 text-center">
 					Spotted a problem? Submit complaints quickly by describing
 					the issue, adding photos, and choosing a location.
 				</Text>
@@ -29,11 +33,14 @@ function VerificationSuccessScreen() {
 						if (user) {
 							setSessionActive();
 						} else {
-							router.push("/(public)/sign-up/profile-form");
+							router.push("/(public)/sign-in/profile-form");
 						}
 					}}
 				>
-					<Text className="text-white  text-2xl font-semibold">
+					<Text
+						className="  text-2xl font-semibold"
+						style={{ color: textColor }}
+					>
 						Let’s complete your profile
 					</Text>
 					<View
@@ -51,13 +58,14 @@ function VerificationSuccessScreen() {
 }
 
 const Verified = () => {
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	const floatingCard = (
 		<View className="bg-white rounded-3xl mb-2 p-6 w-72 items-center shadow-lg">
 			<Text
 				className="text-center text-2xl font-bold  mb-2"
 				style={{
-					color: secondaryColor,
+					color: textColor,
 				}}
 			>
 				You’ve been verified

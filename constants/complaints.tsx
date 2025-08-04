@@ -9,130 +9,51 @@ import {
 	MaterialIcons,
 } from "@expo/vector-icons";
 
-export const categories = [
+export const Dashboard_Categories = [
 	{
-		label: "Sewage Leak",
+		label: "About",
+		icon: <Ionicons name="information-circle" size={28} color="black" />,
+		route: "/(protected)/settings/about",
+	},
+	{
+		label: "Complaint",
 		icon: (
 			<MaterialCommunityIcons
-				name="pipe-leak"
+				name="comment-alert-outline"
 				size={28}
 				color="#00F0FF"
 			/>
 		),
+		route: "/(protected)/complaints/add",
 	},
 	{
-		label: "Garbage Clean",
-		icon: <FontAwesome5 name="trash" size={28} color="#00F0FF" />,
+		label: "Sanitation Module",
+		icon: <FontAwesome6 name="broom-ball" size={24} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/sanitation",
 	},
 	{
-		label: "Garbage van",
-		icon: <MaterialCommunityIcons name="truck" size={28} color="#00F0FF" />,
+		label: "Water & Sewerage",
+		icon: <MaterialCommunityIcons name="pipe" size={28} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/water",
 	},
 	{
-		label: "Storm Water Drains",
-		icon: <Feather name="cloud-rain" size={28} color="#00F0FF" />,
+		label: "Health & Safety",
+		icon: <FontAwesome5 name="first-aid" size={28} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/health",
 	},
 	{
-		label: "Pothole",
-		icon: <Ionicons name="warning-outline" size={28} color="#00F0FF" />,
+		label: "Street & Infrastructure",
+		icon: <MaterialIcons name="construction" size={28} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/street",
 	},
 	{
-		label: "Mosquito Menace",
-		icon: <FontAwesome6 name="mosquito" size={28} color="#00F0FF" />,
+		label: "Animal Control",
+		icon: <MaterialCommunityIcons name="paw" size={28} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/animal",
 	},
 	{
-		label: "Public Toilet",
-		icon: <Ionicons name="people-outline" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Street Dogs",
-		icon: (
-			<MaterialCommunityIcons name="dog-side" size={28} color="#00F0FF" />
-		),
-	},
-	{
-		label: "Water Stagnation",
-		icon: <FontAwesome5 name="water" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Street light",
-		icon: (
-			<MaterialCommunityIcons
-				name="light-flood-up"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
-	},
-	{
-		label: "Tree Fallen",
-		// icon: <MaterialCommunityIcons name="tree" size={28} color="#00F0FF" />,
-		icon: <Entypo name="tree" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Others",
-		icon: <Entypo name="dots-three-horizontal" size={28} color="#00F0FF" />,
-	},
-	// New
-	{
-		label: "Lighting Dept",
-		icon: <Feather name="zap" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Health Dept",
-		icon: (
-			<MaterialCommunityIcons
-				name="hospital-box-outline"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
-	},
-	{
-		label: "Sewerage & Drainage",
-		icon: (
-			<MaterialCommunityIcons
-				name="water-pump"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
-	},
-	{
-		label: "Stray Animals",
-		icon: <MaterialCommunityIcons name="cow" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Horticulture",
-		icon: (
-			<MaterialCommunityIcons name="flower" size={28} color="#00F0FF" />
-		),
-	},
-	{
-		label: "Water Dept",
-		icon: <FontAwesome5 name="tint" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Consumer Complaints",
-		icon: <FontAwesome name="rupee" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Paan, Gutkha, Spitting",
-		icon: <MaterialIcons name="smoking-rooms" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "PM Awas Yojana",
-		icon: <FontAwesome5 name="home" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Paid Sanitization",
-		icon: (
-			<MaterialCommunityIcons
-				name="spray-bottle"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
+		label: "Green Waste",
+		icon: <MaterialCommunityIcons name="leaf" size={28} color="#00F0FF" />,
 	},
 	{
 		label: "Public Works Dept",
@@ -145,7 +66,7 @@ export const categories = [
 		),
 	},
 	{
-		label: "C&D Waste",
+		label: "C & D Waste",
 		icon: (
 			<MaterialCommunityIcons
 				name="dump-truck"
@@ -153,10 +74,6 @@ export const categories = [
 				color="#00F0FF"
 			/>
 		),
-	},
-	{
-		label: "Green Waste",
-		icon: <MaterialCommunityIcons name="leaf" size={28} color="#00F0FF" />,
 	},
 	{
 		label: "Food Safety",
@@ -184,118 +101,469 @@ export const categories = [
 			/>
 		),
 	},
-
-	// Requests
 	{
-		label: "Garbage Cart Request",
-		icon: <MaterialCommunityIcons name="cart" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Home Composting Kit",
+		label: "Emergency Contact",
 		icon: (
-			<MaterialCommunityIcons
-				name="compass-rose"
-				size={28}
-				color="#00F0FF"
-			/>
+			<MaterialIcons name="contact-emergency" size={24} color="black" />
 		),
+		route: "/(protected)/settings/emergency-no",
 	},
 	{
-		label: "Utensil Bank Request",
+		label: "Environment & Recycling",
+		icon: (
+			<MaterialCommunityIcons name="recycle" size={28} color="#00F0FF" />
+		),
+		route: "/(protected)/complaints/1234/view",
+	},
+];
+
+export const Sanitation_Categories = [
+	{
+		label: "Garbage Clean",
+		icon: <FontAwesome5 name="trash" size={20} color="#00F0FF" />,
+	},
+	{
+		label: "Garbage van",
+		icon: <MaterialCommunityIcons name="truck" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Home Composting",
+		icon: <MaterialIcons name="compost" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Utensil Bank",
 		icon: (
 			<MaterialCommunityIcons
 				name="silverware-fork-knife"
-				size={28}
+				size={22}
 				color="#00F0FF"
 			/>
 		),
 	},
 	{
-		label: "Water Harvesting Request",
+		label: "RRR (Reduce, Reuse, Recycle)",
 		icon: (
-			<MaterialCommunityIcons
-				name="water-outline"
-				size={28}
-				color="#00F0FF"
-			/>
+			<MaterialCommunityIcons name="recycle" size={22} color="#00F0FF" />
 		),
 	},
 	{
-		label: "Safaimitra Helpline",
-		icon: <Ionicons name="call-outline" size={28} color="#00F0FF" />,
+		label: "RRR Collection Point",
+		icon: <Entypo name="location" size={22} color="#00F0FF" />,
 	},
 	{
 		label: "Yellow Spot",
-		icon: <MaterialIcons name="report" size={28} color="#00F0FF" />,
-	},
-	{
-		label: "Sanitation Report",
-		icon: (
-			<Ionicons name="document-text-outline" size={28} color="#00F0FF" />
-		),
-	},
-	{
-		label: "Know Your Kachra",
-		icon: (
-			<MaterialCommunityIcons
-				name="recycle-variant"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
-	},
-	{
-		label: "Reuse Treated Water",
-		icon: (
-			<MaterialCommunityIcons
-				name="water-sync"
-				size={28}
-				color="#00F0FF"
-			/>
-		),
-	},
-	{
-		label: "C&D Collection Point",
 		icon: (
 			<MaterialCommunityIcons
 				name="map-marker"
-				size={28}
+				size={22}
 				color="#00F0FF"
 			/>
 		),
 	},
 	{
-		label: "Rain Water Contractors",
+		label: "Red Spot",
 		icon: (
 			<MaterialCommunityIcons
-				name="account-group"
-				size={28}
+				name="alert-circle"
+				size={22}
 				color="#00F0FF"
 			/>
 		),
 	},
 	{
-		label: "Rain Harvesting Cost",
-		icon: <FontAwesome name="money" size={28} color="#00F0FF" />,
+		label: "Sanitation Activity",
+		icon: <MaterialCommunityIcons name="broom" size={22} color="#00F0FF" />,
 	},
 	{
 		label: "Plastic Ban Helpline",
 		icon: (
 			<MaterialCommunityIcons
 				name="smoking-off"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Paid Sanitization",
+		icon: (
+			<MaterialCommunityIcons
+				name="spray-bottle"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: 'Know Your "Waste"',
+		icon: (
+			<MaterialCommunityIcons
+				name="trash-can"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+];
+export const Water_Sewage = [
+	{
+		label: "Sewage Leak",
+		icon: (
+			<MaterialCommunityIcons
+				name="pipe-leak"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Storm Water Drains",
+		icon: <Feather name="cloud-rain" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Water Stagnation",
+		icon: <FontAwesome5 name="water" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Water Dept",
+		icon: <FontAwesome5 name="tint" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Sewerage & Drainage",
+		icon: (
+			<MaterialCommunityIcons
+				name="water-pump"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Request for Water Harvesting",
+		icon: <FontAwesome5 name="cloud" size={20} color="#00F0FF" />,
+	},
+	{
+		label: "Treated Water Reuse Request",
+		icon: <FontAwesome5 name="recycle" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Rainwater Harvesting Contractors List",
+		icon: (
+			<MaterialCommunityIcons
+				name="weather-rainy"
+				size={24}
+				color="#00F0FF"
+			/>
+		),
+	},
+];
+export const Health_Safety = [
+	{
+		label: "Mosquito Menace",
+		icon: <FontAwesome6 name="mosquito" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Public Toilet",
+		icon: <Ionicons name="people-outline" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Health Dept",
+		icon: (
+			<MaterialCommunityIcons
+				name="hospital-box-outline"
+				size={22}
+				color="#00F0FF"
+			/>
+		),
+	},
+	{
+		label: "Paan, Gutkha, Spitting",
+		icon: <MaterialIcons name="smoking-rooms" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "14420 Helpline",
+		icon: <MaterialIcons name="phone-in-talk" size={24} color="#00F0FF" />,
+	},
+	{
+		label: "SafaiMitra Safety Helpline",
+		icon: <MaterialIcons name="security" size={24} color="#00F0FF" />,
+	},
+];
+export const Street_Infrastructure = [
+	{
+		label: "Pothole",
+		icon: <Ionicons name="warning-outline" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "Street light",
+		icon: (
+			<MaterialCommunityIcons
+				name="light-flood-up"
 				size={28}
 				color="#00F0FF"
 			/>
 		),
 	},
 	{
-		label: "PNG Gas Request",
+		label: "Tree Fallen",
+		icon: <Entypo name="tree" size={28} color="#00F0FF" />,
+	},
+
+	{
+		label: "Lighting Dept",
+		icon: <Feather name="zap" size={28} color="#00F0FF" />,
+	},
+	{
+		label: "C&D Waste Collection Point",
 		icon: (
 			<MaterialCommunityIcons
-				name="gas-cylinder"
-				size={28}
+				name="dump-truck"
+				size={24}
 				color="#00F0FF"
 			/>
 		),
+	},
+
+	{
+		label: "PNG Gas Pipeline Request",
+		icon: <MaterialCommunityIcons name="pipe" size={24} color="#00F0FF" />,
+	},
+	{
+		label: "Horticulture",
+		icon: (
+			<MaterialCommunityIcons name="flower" size={28} color="#00F0FF" />
+		),
+	},
+];
+export const Animal_Control = [
+	{
+		label: "Street Dogs",
+		icon: (
+			<MaterialCommunityIcons name="dog-side" size={28} color="#00F0FF" />
+		),
+	},
+
+	{
+		label: "Stray Animals",
+		icon: <MaterialCommunityIcons name="cow" size={28} color="#00F0FF" />,
+	},
+];
+export const Housing_Welfare = [
+	{
+		label: "PM Awas Yojana",
+		icon: <FontAwesome5 name="home" size={22} color="#00F0FF" />,
+	},
+	{
+		label: "Consumer Complaints",
+		icon: <FontAwesome name="rupee" size={22} color="#00F0FF" />,
+	},
+];
+export const complaintTypes = [
+	{
+		label: "Sanitation Module",
+		icon: "broom-ball",
+		iconType: "FontAwesome6",
+		categories: [
+			{ label: "Green Waste", icon: "leaf", iconType: "FontAwesome5" },
+			{ label: "Garbage Clean", icon: "trash", iconType: "FontAwesome5" },
+			{
+				label: "Garbage van",
+				icon: "truck",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Home Composting",
+				icon: "recycle",
+				iconType: "FontAwesome5",
+			},
+			{
+				label: "Utensil Bank",
+				icon: "utensils",
+				iconType: "FontAwesome5",
+			},
+			{ label: "RRR", icon: "recycle", iconType: "FontAwesome5" },
+			{
+				label: "RRR Collection Point",
+				icon: "warehouse",
+				iconType: "FontAwesome5",
+			},
+			{
+				label: "Yellow Spot",
+				icon: "dot-circle-o",
+				iconType: "FontAwesome",
+			},
+			{
+				label: "Red Spot",
+				icon: "exclamation-circle",
+				iconType: "FontAwesome",
+			},
+			{
+				label: "Swachhata Activity",
+				icon: "broom",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Plastic Ban Helpline",
+				icon: "ban",
+				iconType: "FontAwesome",
+			},
+			{
+				label: "Paid Sanitization",
+				icon: "spray-bottle",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Know your Garbage",
+				icon: "info-circle",
+				iconType: "FontAwesome",
+			},
+		],
+	},
+	{
+		label: "Water & Sewerage",
+		icon: "pipe",
+		iconType: "MaterialCommunityIcons",
+		categories: [
+			{
+				label: "Sewage Leak",
+				icon: "pipe-leak",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Storm Water Drains",
+				icon: "cloud-rain",
+				iconType: "Feather",
+			},
+			{
+				label: "Water Stagnation",
+				icon: "water",
+				iconType: "FontAwesome5",
+			},
+			{ label: "Water Dept", icon: "tint", iconType: "FontAwesome5" },
+			{
+				label: "C&D Collection Point",
+				icon: "dump-truck",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Request for Water Harvesting",
+				icon: "water-check",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Treated Water Reuse",
+				icon: "water-sync",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "PNG Gas Pipeline Installation",
+				icon: "gas-cylinder",
+				iconType: "MaterialCommunityIcons",
+			},
+		],
+	},
+	{
+		label: "Health & Safety",
+		icon: "first-aid",
+		iconType: "FontAwesome5",
+		categories: [
+			{
+				label: "Mosquito Menace",
+				icon: "mosquito",
+				iconType: "FontAwesome6",
+			},
+			{
+				label: "Public Toilet",
+				icon: "people-outline",
+				iconType: "Ionicons",
+			},
+			{
+				label: "Health Dept",
+				icon: "hospital-box-outline",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Noise Pollution",
+				icon: "volume-high",
+				iconType: "Ionicons",
+			},
+			{
+				label: "Food Safety",
+				icon: "utensils",
+				iconType: "FontAwesome5",
+			},
+			{
+				label: "14420 Helpline",
+				icon: "phone-in-talk",
+				iconType: "MaterialIcons",
+			},
+			{
+				label: "Safaimitra Helpline",
+				icon: "account-heart",
+				iconType: "MaterialCommunityIcons",
+			},
+		],
+	},
+	{
+		label: "Street & Infrastructure",
+		icon: "construction",
+		iconType: "MaterialIcons",
+		categories: [
+			{ label: "Pothole", icon: "warning-outline", iconType: "Ionicons" },
+			{
+				label: "Street light",
+				icon: "light-flood-up",
+				iconType: "MaterialCommunityIcons",
+			},
+			{ label: "Tree Fallen", icon: "tree", iconType: "Entypo" },
+			{ label: "Lighting Dept", icon: "zap", iconType: "Feather" },
+			{
+				label: "Public Works Dept",
+				icon: "building",
+				iconType: "FontAwesome",
+			},
+			{ label: "PM Awas Yojana", icon: "home", iconType: "FontAwesome5" },
+			{ label: "ibus", icon: "bus", iconType: "FontAwesome" },
+		],
+	},
+	{
+		label: "Animal Control",
+		icon: "paw",
+		iconType: "MaterialCommunityIcons",
+		categories: [
+			{
+				label: "Street Dogs",
+				icon: "dog-side",
+				iconType: "MaterialCommunityIcons",
+			},
+			{
+				label: "Stray Animals",
+				icon: "cow",
+				iconType: "MaterialCommunityIcons",
+			},
+		],
+	},
+	{
+		label: "Other Complaints",
+		icon: "dots-three-horizontal",
+		iconType: "Entypo",
+		categories: [
+			{
+				label: "Consumer Complaints",
+				icon: "rupee",
+				iconType: "FontAwesome",
+			},
+			{
+				label: "Paan, Gutkha, Spitting",
+				icon: "smoking-rooms",
+				iconType: "MaterialIcons",
+			},
+			{
+				label: "Environment",
+				icon: "earth-europe",
+				iconType: "FontAwesome6",
+			},
+			{ label: "Recycling", icon: "recycle", iconType: "FontAwesome5" },
+		],
 	},
 ];

@@ -1,22 +1,30 @@
-import { Text, TouchableOpacity, View } from "react-native";
-
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 function WelcomeCard() {
-	const { primaryColor } = useAppTheme();
+	const { primaryColor, textColor, secondaryColor, cardsColor } =
+		useAppTheme();
 
 	return (
 		<View>
-			<Text className="text-white text-3xl font-semibold">
+			<Text
+				className="text-3xl font-semibold"
+				style={{ color: textColor }}
+			>
 				Welcome to{" "}
-				<Text className="text-cyan-400 font-bold">Report Box</Text>
+				<Text className=" font-bold" style={{ color: primaryColor }}>
+					Report Box
+				</Text>
 			</Text>
 
-			<Text className="text-white text-3xl font-semibold mt-4">
+			<Text
+				className=" text-3xl font-semibold mt-4"
+				style={{ color: textColor }}
+			>
 				Your Voice, Heard
 			</Text>
 
@@ -28,7 +36,9 @@ function WelcomeCard() {
 				className="flex-row items-center justify-end mt-28 "
 				onPress={() => router.replace("/(public)/sign-in")}
 			>
-				<Text className="text-white text-2xl mr-2">Continue</Text>
+				<Text className="text-2xl mr-2" style={{ color: textColor }}>
+					Continue
+				</Text>
 
 				<View
 					className=" rounded-full p-2"

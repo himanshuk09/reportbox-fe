@@ -47,6 +47,42 @@ const ProtectedLayout = () => {
 					),
 				})}
 			/>
+			<Stack.Screen
+				name="about"
+				options={({ route }) => ({
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					title: "Help",
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<StackHeader
+								showBackIcon={true}
+								showMenuDrawer={false}
+								showThreeDots={false}
+							/>
+						</SafeAreaView>
+					),
+				})}
+			/>
+			<Stack.Screen
+				name="emergency-no"
+				options={({ route }) => ({
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					title: "Help",
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<StackHeader
+								showBackIcon={true}
+								showMenuDrawer={false}
+								showThreeDots={false}
+							/>
+						</SafeAreaView>
+					),
+				})}
+			/>
 		</Stack>
 	);
 };

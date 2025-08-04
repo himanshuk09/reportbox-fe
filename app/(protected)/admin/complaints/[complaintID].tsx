@@ -8,7 +8,9 @@ import {
 	Alert,
 	Modal,
 	ScrollView,
+	StyleSheet,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
@@ -191,6 +193,34 @@ const EditComplaintScreen = () => {
 					</Picker>
 				</View>
 
+				<Text style={[styles.label, { color: textColor }]}>
+					Issue Explained
+				</Text>
+				<TextInput
+					multiline
+					numberOfLines={4}
+					placeholder="Describe your complaint here"
+					style={[
+						styles.textArea,
+						{ color: textColor, backgroundColor: cardsColor },
+					]}
+					// value={message}
+					// onChangeText={setMessage}
+				/>
+				<Text style={[styles.label, { color: textColor }]}>
+					Resolved message
+				</Text>
+				<TextInput
+					multiline
+					numberOfLines={4}
+					placeholder="Describe your resolved complaint here"
+					style={[
+						styles.textArea,
+						{ color: textColor, backgroundColor: cardsColor },
+					]}
+					// value={message}
+					// onChangeText={setMessage}
+				/>
 				{/* Complaint Status */}
 				<Text
 					className=" mb-1"
@@ -200,7 +230,6 @@ const EditComplaintScreen = () => {
 				>
 					Complaint Status
 				</Text>
-
 				<View
 					className=" rounded-lg mb-3"
 					style={{
@@ -349,3 +378,19 @@ const EditComplaintScreen = () => {
 };
 
 export default EditComplaintScreen;
+const styles = StyleSheet.create({
+	label: {
+		fontSize: 16,
+		marginBottom: 6,
+		fontWeight: "bold",
+	},
+
+	textArea: {
+		padding: 12,
+		borderRadius: 8,
+		height: 100,
+		marginVertical: 10,
+		textAlignVertical: "top",
+		color: "#ccc",
+	},
+});

@@ -61,7 +61,7 @@ const ImageCard = ({
 						<Fontisto
 							name="camera"
 							size={23}
-							color="#000"
+							color="#ccc"
 							onPress={() =>
 								handleImageChoice(setShowCamera, setImage)
 							}

@@ -194,7 +194,16 @@ const UserForm = ({
 									}}
 								/>
 
-								<Text style={styles.label}>Address</Text>
+								<Text
+									style={[
+										styles.label,
+										{
+											color: textColor,
+										},
+									]}
+								>
+									Address
+								</Text>
 
 								<View style={styles.row}>
 									<View

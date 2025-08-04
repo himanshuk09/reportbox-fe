@@ -1,11 +1,9 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
-
 import { PostCard } from "@/components/complaints/PostCard";
 import { complaintsPosts } from "@/constants/posts";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function PostDetailsScreen() {
 	const { id } = useLocalSearchParams();

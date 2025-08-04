@@ -1,22 +1,19 @@
-
-import { Stack, useNavigation } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 
-const ProtectedLayout = () => {
-	const navigation = useNavigation();
+const SignINayout = () => {
 	return (
 		<Stack>
 			<Stack.Screen
 				name="index"
 				options={({ route }) => ({
 					headerShown: false,
-					
 				})}
 			/>
 			<Stack.Screen
 				name="verify-otp"
 				options={({ route }) => ({
-					headerShown: false,		
+					headerShown: false,
 				})}
 			/>
 			<Stack.Screen
@@ -29,11 +26,10 @@ const ProtectedLayout = () => {
 				name="profile-form"
 				options={({ route }) => ({
 					headerShown: false,
-					
 				})}
 			/>
 		</Stack>
 	);
 };
 
-export default ProtectedLayout;
+export default SignINayout;
