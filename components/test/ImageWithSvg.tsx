@@ -99,6 +99,7 @@ export default function WaveHeaderScreen() {
 						marginBottom: 20,
 					}}
 					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
 				>
 					{/* Header with Image and wave */}
 					<View style={styles.headerWrapper}>

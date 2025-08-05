@@ -1,7 +1,6 @@
 import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Linking, Platform, StyleSheet, View } from "react-native";
-import { WebView } from "react-native-webview";
 import WebViewComponent from "../WebViewComponent";
 const htmlcontent = /*html*/ `
     <!DOCTYPE html>
@@ -163,8 +162,6 @@ export const getLocationDetails = async () => {
 					},
 				]
 			);
-		} else {
-			console.warn("Permission to access location was denied");
 		}
 		return;
 	}
@@ -270,7 +267,12 @@ export default function LeafletMapWebView({ location, setLocation }: any) {
 					onLoad={() => setLocationReady(true)}
 				/>
 			) : (
-					<WebViewComponent webviewRef={webviewRef} htmlcontent={htmlcontent}  onMessage={onMessage} setLoaded={setLocationReady} />
+				<WebViewComponent
+					webviewRef={webviewRef}
+					htmlcontent={htmlcontent}
+					onMessage={onMessage}
+					setLoaded={setLocationReady}
+				/>
 			)}
 		</View>
 	);

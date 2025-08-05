@@ -1,28 +1,34 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+	Keyboard,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 function SignInScreen() {
 	const [phoneNo, setPhoneNo] = useState<any>("");
 	const { loginWithPhone } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-
+	const router = useRouter();
 	return (
 		<View className="px-2 pt-6">
 			{/* Title */}
 			<Text
-				className=" text-2xl font-bold mb-8"
+				className=" text-3xl font-bold mb-8"
 				style={{ color: textColor }}
 			>
 				Sign in
 			</Text>
 
 			{/* Label */}
-			<Text className=" text-sm mb-2" style={{ color: textColor }}>
+			<Text className=" text-lg mb-2" style={{ color: textColor }}>
 				Phone number
 			</Text>
 
@@ -38,7 +44,7 @@ function SignInScreen() {
 					placeholder="Enter phone number"
 					placeholderTextColor={textColor}
 					keyboardType="phone-pad"
-					className="flex-1 text-base "
+					className="flex-1 text-lg "
 					value={phoneNo}
 					onChangeText={setPhoneNo}
 					maxLength={10}
@@ -51,7 +57,8 @@ function SignInScreen() {
 				className=" rounded-full p-3 mt-6 items-center"
 				onPress={() => {
 					loginWithPhone(phoneNo);
-					router.push("/(public)/sign-in/verify-otp");
+					router.replace("/(public)/sign-in/verify-otp");
+					Keyboard.dismiss();
 				}}
 				disabled={phoneNo.length !== 10}
 				style={{

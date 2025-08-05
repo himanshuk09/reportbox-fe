@@ -2,20 +2,33 @@ import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 function VerificationScreen() {
+	const router = useRouter();
 	const { verifyOtp, session, user } = useAuth();
 	const [code, setCode] = useState("");
 	const { primaryColor, textColor, secondaryColor, cardsColor } =
 		useAppTheme();
-
-	const handleKeyPress = (digit: string) => {
+	const [showVerificationIcon, setShowVerificationIcon] = useState(false);
+	const [isValidOtp, setIsValidOtp] = useState(false);
+	const handleKeyPress = async (digit: string) => {
 		if (digit === "x") {
 			setCode(code.slice(0, -1));
 		} else if (code.length < 4) {
-			setCode(code + digit);
+			const newCode = code + digit;
+			setCode(newCode);
+
+			// Automatically verify when code reaches 4 digits
+			if (newCode.length === 4) {
+				const isValid = await verifyOtp(newCode);
+				setIsValidOtp(isValid);
+				setShowVerificationIcon(true);
+				if (isValid) {
+					setTimeout(()=>router.replace("/(public)/sign-in/verified"),500)
+				}
+			}
 		}
 	};
 
@@ -81,17 +94,11 @@ function VerificationScreen() {
 				</View>
 
 				<View className="absolute -right-1">
-					{code.length === 4 && (
+					{showVerificationIcon && (
 						<Feather
-							name="check-circle"
+							name={isValidOtp ? "check-circle" : "x-circle"}
 							size={28}
-							color={primaryColor}
-							onPress={() => {
-								if (!verifyOtp(code)) {
-									return;
-								}
-								router.push("/(public)/sign-in/verified");
-							}}
+							color={isValidOtp ? primaryColor : "#e31837"}
 						/>
 					)}
 				</View>

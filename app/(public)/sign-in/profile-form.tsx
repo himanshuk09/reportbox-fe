@@ -1,11 +1,15 @@
-
-import React from "react";
 import UserForm from "@/components/profile/UserForm";
-import { router } from "expo-router";
-export default function ProfileFormScreen() {	
+import { useRouter } from "expo-router";
+import React from "react";
+export default function ProfileFormScreen() {
+	const router = useRouter();
 	return (
-		<UserForm onlyForm={true} editable={false} onPressContinue={()=>router.replace("/(protected)/(tabs)/dashboard") } />
+		<UserForm
+			onlyForm={true}
+			editable={false}
+			onPressContinue={() =>
+				router.replace("/(protected)/(tabs)/dashboard")
+			}
+		/>
 	);
 }
-
-

@@ -1,17 +1,12 @@
+import Blob from "@/components/on-bording/blob";
 import { complaintsPosts, users } from "@/constants/posts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LegendList } from "@legendapp/list";
 import { Picker } from "@react-native-picker/picker";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
-import {
-	FlatList,
-	Image,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserListScreen() {
@@ -20,6 +15,7 @@ export default function UserListScreen() {
 	const [statusFilter, setStatusFilter] = useState("");
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+	const router = useRouter();
 	const filteredUsers = useMemo(() => {
 		return users
 			.filter((user: any) => {
@@ -131,8 +127,12 @@ export default function UserListScreen() {
 			</View>
 
 			{/* User List */}
-			<FlatList
+
+			<LegendList
 				data={filteredUsers}
+				estimatedItemSize={25}
+				recycleItems
+				showsVerticalScrollIndicator={false}
 				keyExtractor={(item) => item.userID}
 				renderItem={({ item }) => (
 					<View
@@ -188,6 +188,18 @@ export default function UserListScreen() {
 						</TouchableOpacity>
 					</View>
 				)}
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"Not Users !"} iconName={"people-sharp"} />
+					</View>
+				}
 			/>
 		</SafeAreaView>
 	);

@@ -1,5 +1,5 @@
 import { SpecialTabButton } from "@/components/SpecialTabButton";
-import StackHeader from "@/components/StackHeader";
+import StackHeader from "@/components/ui/StackHeader";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	Ionicons,
@@ -11,20 +11,28 @@ import React from "react";
 import { SafeAreaView } from "react-native";
 
 const TabLayout = () => {
-	const { primaryColor, secondaryColor, cardsColor } = useAppTheme();
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
+	const MemoizedStackHeader = React.memo(StackHeader);
 
 	return (
 		<Tabs
+			initialRouteName="dashboard"
+			backBehavior="history"
 			screenOptions={{
+				lazy: true, // Enable lazy loading
 				tabBarActiveTintColor: primaryColor,
 				tabBarInactiveTintColor: "#727272",
 				tabBarBadgeStyle: {
-					backgroundColor: secondaryColor,
-					color: secondaryColor,
+					backgroundColor: "#ccc",
+					color: cardsColor,
+					fontSize: 10,
 				},
 				headerPressOpacity: 1,
 				tabBarIconStyle: {
-					marginTop: 13,
+					marginVertical: 13,
+					opacity: 1,
+					touchAction: "none",
 				},
 				animation: "none",
 				tabBarStyle: {
@@ -44,6 +52,7 @@ const TabLayout = () => {
 					paddingHorizontal: 20,
 					marginBottom: 20,
 					marginHorizontal: 20,
+					opacity: 1,
 				},
 			}}
 		>
@@ -53,13 +62,19 @@ const TabLayout = () => {
 					title: "",
 					headerShown: true,
 					tabBarIcon: ({ color, size }) => (
-						<Ionicons name="home" color={color} size={size} />
+						<Ionicons
+							name="home"
+							color={color}
+							size={size}
+							activeOpacity={1}
+						/>
 					),
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
+					tabBarBadge: undefined,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
-							<StackHeader showThreeDots={false} />
+							<MemoizedStackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				}}
@@ -76,13 +91,14 @@ const TabLayout = () => {
 							name="dynamic-feed"
 							color={color}
 							size={size}
+							activeOpacity={1}
 						/>
 					),
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
-							<StackHeader showThreeDots={false} />
+							<MemoizedStackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
 				}}
@@ -116,6 +132,7 @@ const TabLayout = () => {
 								name="notifications"
 								color={color}
 								size={size}
+								activeOpacity={1}
 							/>
 						),
 						tabBarActiveTintColor: primaryColor,
@@ -124,7 +141,7 @@ const TabLayout = () => {
 							<SafeAreaView
 								style={{ backgroundColor: primaryColor }}
 							>
-								<StackHeader showThreeDots={false} />
+								<MemoizedStackHeader showThreeDots={false} />
 							</SafeAreaView>
 						),
 					}}
@@ -140,13 +157,14 @@ const TabLayout = () => {
 							name="chat-alert"
 							color={color}
 							size={size}
+							activeOpacity={1}
 						/>
 					),
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
-							<StackHeader
+							<MemoizedStackHeader
 								onmenuTitlePress={() =>
 									router.push(
 										"/(protected)/complaints/history"

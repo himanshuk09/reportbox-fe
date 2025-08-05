@@ -66,6 +66,7 @@ export default function PostDetailsScreen() {
 			contentContainerStyle={{
 				paddingBottom: 100,
 			}}
+			showsVerticalScrollIndicator={false}
 		>
 			{/* Timeline */}
 			<View

@@ -1,14 +1,14 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 function WelcomeCard() {
 	const { primaryColor, textColor, secondaryColor, cardsColor } =
 		useAppTheme();
-
+	const router = useRouter();
 	return (
 		<View>
 			<Text

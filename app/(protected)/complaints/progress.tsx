@@ -9,12 +9,19 @@ const html = `
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <style>
-          body, html {
+           body, html, #chart {
             margin: 0;
             padding: 0;
-            background: transparent;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-          }
+            background: transparent;
+        }
+        #chart {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         </style>
       </head>
       <body>
@@ -59,6 +66,7 @@ const MyComplaintsScreen = () => {
 		useAppTheme();
 
 	const [complaint, setComplaints] = useState([]);
+	const [loaded, setLoaded] = useState(false);
 	if (complaint.length != 0) {
 		return (
 			<View
@@ -74,6 +82,7 @@ const MyComplaintsScreen = () => {
 	return (
 		<ScrollView
 			className="flex-1  px-4 py-6"
+			showsVerticalScrollIndicator={false}
 			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
 			{/* Header */}
@@ -105,12 +114,19 @@ const MyComplaintsScreen = () => {
 						backgroundColor: cardsColor,
 					}}
 				>
-					<View style={{ width: 180, height: 160 }}>
+					<View
+						style={{
+							width: 180,
+							height: 160,
+							borderRadius: 10,
+							overflow: "hidden",
+						}}
+					>
 						<WebViewComponent
 							// webviewRef={webviewRef}
 							htmlcontent={html}
 							// onMessage={onMessage}
-							// setLoaded={setLocationReady}
+							setLoaded={setLoaded}
 						/>
 					</View>
 					<Text

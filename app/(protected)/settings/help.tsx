@@ -51,6 +51,7 @@ const ComplaintStepsTimeline = () => {
 				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
+			showsVerticalScrollIndicator={false}
 			contentContainerStyle={{
 				paddingBottom: 100,
 			}}

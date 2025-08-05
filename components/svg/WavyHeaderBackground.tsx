@@ -17,7 +17,7 @@ const generateWavePath = (amplitude = 0.35, height = 200, points = 100) => {
 	return path;
 };
 
-export default function WavyBanner() {
+function WavyBanner() {
 	const waveHeight = 500;
 	const path = generateWavePath(0.35, waveHeight, 100);
 	const { primaryColor, secondaryColor } = useAppTheme();
@@ -40,7 +40,7 @@ export default function WavyBanner() {
 	);
 }
 
-export function WavyHeaderBackground() {
+export default function WavyHeaderBackground() {
 	const waveHeight = 50;
 	const path = generateWavePath(0.35, waveHeight, 100);
 	const { primaryColor, secondaryColor } = useAppTheme();

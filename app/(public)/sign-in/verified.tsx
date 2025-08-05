@@ -4,13 +4,13 @@ import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 function VerificationSuccessScreen() {
 	const { setSessionActive, user } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-
+	const router = useRouter();
 	return (
 		<View className="flex-1 relative justify-center">
 			{/* Other content below */}
@@ -33,7 +33,7 @@ function VerificationSuccessScreen() {
 						if (user) {
 							setSessionActive();
 						} else {
-							router.push("/(public)/sign-in/profile-form");
+							router.replace("/(public)/sign-in/profile-form");
 						}
 					}}
 				>

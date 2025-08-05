@@ -1,7 +1,7 @@
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
 	Animated,
@@ -29,8 +29,9 @@ export function PostCard({
 	const animatedHeight = useRef(new Animated.Value(0)).current;
 	const [showImageViewer, setShowImageViewer] = useState(false);
 	const [currentImageUri, setCurrentImageUri] = useState("");
-	const { primaryColor, cardsColor, textColor } = useAppTheme();
-
+	const { primaryColor, cardsColor, textColor, secondaryColor } =
+		useAppTheme();
+	const router = useRouter();
 	const toggleComments = () => {
 		setShowComments(!showComments);
 		Animated.timing(animatedHeight, {
@@ -115,31 +116,62 @@ export function PostCard({
 					onPress={() => setMenuVisible(!menuVisible)}
 				/>
 				{menuVisible && (
-					<View className="absolute z-50 bg-slate-300 rounded-lg right-5 top-3 shadow p-2">
+					<View
+						style={{
+							position: "absolute",
+							right: 0,
+							top: 40,
+							backgroundColor: secondaryColor,
+							borderRadius: 8,
+							paddingVertical: 4,
+							paddingHorizontal: 8,
+							shadowColor: "#000",
+							shadowOffset: { width: 0, height: 2 },
+							shadowOpacity: 0.25,
+							shadowRadius: 4,
+							elevation: 5,
+							borderWidth: 0.5,
+							borderColor: "#ccc",
+							width: 120,
+							zIndex: 100,
+						}}
+					>
 						<Pressable
 							onPress={() => {
-								setMenuVisible(!menuVisible);
-								console.log("Complaint History pressed");
+								setMenuVisible(false);
 								router.push({
 									pathname:
 										"/(protected)/complaints/edit/[id]",
 									params: { id: "1" },
 								});
 							}}
-							className="p-1"
+							style={{ paddingVertical: 8 }}
 						>
-							<Text className="text-black text-sm font-semibold">
+							<Text
+								style={{
+									color: textColor,
+									fontSize: 14,
+									fontWeight: "500",
+								}}
+							>
 								Edit
 							</Text>
 						</Pressable>
+
 						<Pressable
 							onPress={() => {
-								setMenuVisible(!menuVisible);
-								console.log("Complaint History pressed");
+								setMenuVisible(false);
+								// Your delete logic here
 							}}
-							className="p-1"
+							style={{ paddingVertical: 8 }}
 						>
-							<Text className="text-black text-sm font-semibold">
+							<Text
+								style={{
+									color: textColor,
+									fontSize: 14,
+									fontWeight: "500",
+								}}
+							>
 								Delete
 							</Text>
 						</Pressable>

@@ -1,8 +1,10 @@
 import ComplaintDetailModal from "@/components/complaints/ComplaintDetailModal";
+import Blob from "@/components/on-bording/blob";
 import { complaintsPosts } from "@/constants/posts";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { LegendList } from "@legendapp/list";
 import React, { useState } from "react";
-import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
@@ -80,9 +82,13 @@ const ComplaintHistoryScreen = () => {
 			>
 				Complaint History
 			</Text>
-			<FlatList
+
+			<LegendList
 				data={complaintsPosts}
-				keyExtractor={(item) => item.id}
+				estimatedItemSize={25}
+				recycleItems
+				showsVerticalScrollIndicator={false}
+				keyExtractor={(_, index) => index.toString()}
 				renderItem={({ item }) => (
 					<ComplaintCard
 						item={item}
@@ -90,7 +96,18 @@ const ComplaintHistoryScreen = () => {
 						setIsModalOpen={setIsModalOpen}
 					/>
 				)}
-				showsVerticalScrollIndicator={false}
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+					</View>
+				}
 			/>
 			<ComplaintDetailModal
 				visible={isModalOpen}

@@ -1,4 +1,5 @@
-import CustomSwitch from "@/components/CustomSwitch";
+import CustomAlert from "@/components/ui/CustomAlert";
+import CustomSwitch from "@/components/ui/CustomSwitch";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -109,7 +110,12 @@ const SettingsPanel = () => {
 								? "bg-[#00EEFF] border-transparent"
 								: "border-white"
 						}`}
-						onPress={() => setLanguage("en")}
+						onPress={() => {
+							CustomAlert({
+								title: "Hello",
+							});
+							setLanguage("en");
+						}}
 					>
 						<Text
 							className={`text-md ${language === "en" ? "text-white" : "text-white"}`}

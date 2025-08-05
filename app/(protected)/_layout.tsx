@@ -83,7 +83,10 @@ const CustomDrawer = (props: any) => {
 				</Text>
 			</View>
 
-			<ScrollView contentContainerStyle={styles.menuContainer}>
+			<ScrollView
+				contentContainerStyle={styles.menuContainer}
+				showsVerticalScrollIndicator={false}
+			>
 				{menuItems.map((item) => (
 					<TouchableOpacity
 						key={item.label}

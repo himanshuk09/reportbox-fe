@@ -1,13 +1,7 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { LegendList } from "@legendapp/list";
 import React, { useState } from "react";
-import {
-	Alert,
-	FlatList,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const CreateGroupScreen = () => {
 	const [groupName, setGroupName] = useState("");
@@ -98,9 +92,12 @@ const CreateGroupScreen = () => {
 				Created Groups:
 			</Text>
 
-			<FlatList
+			<LegendList
 				data={groups}
-				keyExtractor={(item, index) => item + index}
+				estimatedItemSize={25}
+				recycleItems
+				showsVerticalScrollIndicator={false}
+				keyExtractor={(_, index) => index.toString()}
 				renderItem={renderGroupItem}
 				ListEmptyComponent={
 					<Text className="text-gray-400">

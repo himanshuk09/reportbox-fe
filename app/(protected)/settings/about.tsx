@@ -11,7 +11,10 @@ const AboutUsScreen = () => {
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			<ScrollView contentContainerStyle={styles.scroll}>
+			<ScrollView
+				contentContainerStyle={styles.scroll}
+				showsVerticalScrollIndicator={false}
+			>
 				{/* Logo or Banner */}
 				<Image
 					source={{

@@ -1,3 +1,4 @@
+import Blob from "@/components/on-bording/blob";
 import {
 	Animal_Control,
 	Health_Safety,
@@ -7,15 +8,10 @@ import {
 	Water_Sewage,
 } from "@/constants/complaints";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { LegendList } from "@legendapp/list";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import {
-	FlatList,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const RenderComplaintList = () => {
@@ -60,13 +56,27 @@ const RenderComplaintList = () => {
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			<FlatList
+			<LegendList
+				estimatedItemSize={25}
+				recycleItems
 				data={complaintData}
 				keyExtractor={(item, index) => index.toString()}
 				renderItem={renderItem}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
 				ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+					</View>
+				}
 			/>
 		</SafeAreaView>
 	);

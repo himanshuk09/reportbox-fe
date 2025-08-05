@@ -1,4 +1,4 @@
-import StackHeader from "@/components/StackHeader";
+import StackHeader from "@/components/ui/StackHeader";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Stack, useNavigation } from "expo-router";
 import React from "react";

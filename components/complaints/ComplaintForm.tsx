@@ -138,7 +138,7 @@ export default function ComplaintForm({
 						Select Complaint Type
 					</Text>
 
-					<ScrollView>
+					<ScrollView showsVerticalScrollIndicator={false}>
 						{complaintTypes?.map((item: any, index) => {
 							const IconType = ICON_MAP[item.iconType];
 							return (

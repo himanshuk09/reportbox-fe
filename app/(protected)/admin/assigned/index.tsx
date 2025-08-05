@@ -1,7 +1,9 @@
+import Blob from "@/components/on-bording/blob";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router } from "expo-router";
+import { LegendList } from "@legendapp/list";
+import { useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const mockAssignedComplaints = [
 	{
@@ -29,7 +31,7 @@ const WorkerAssignedComplaintsScreen = () => {
 	const handleComplaintPress = (complaint: any) => {
 		router.push("/(protected)/admin/assigned/[complaintId]");
 	};
-
+	const router = useRouter();
 	const renderComplaintCard = ({ item }: { item: any }) => (
 		<TouchableOpacity
 			onPress={() => handleComplaintPress(item)}
@@ -93,11 +95,26 @@ const WorkerAssignedComplaintsScreen = () => {
 			>
 				Assigned Complaints
 			</Text>
-			<FlatList
+
+			<LegendList
 				data={mockAssignedComplaints}
-				keyExtractor={(item) => item.id}
-				renderItem={renderComplaintCard}
+				estimatedItemSize={25}
+				recycleItems
 				showsVerticalScrollIndicator={false}
+				keyExtractor={(_, index) => index.toString()}
+				renderItem={renderComplaintCard}
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"No Assigned!"} iconName={"alert-sharp"} />
+					</View>
+				}
 			/>
 		</View>
 	);

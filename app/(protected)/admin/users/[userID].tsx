@@ -1,15 +1,10 @@
+import Blob from "@/components/on-bording/blob";
 import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router, useLocalSearchParams } from "expo-router";
-import {
-	FlatList,
-	Image,
-	Pressable,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { LegendList } from "@legendapp/list";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ComplaintListScreen() {
@@ -18,6 +13,7 @@ export default function ComplaintListScreen() {
 	const complaints = complaintsPosts.filter((c) => c.userID === userID);
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
+	const router = useRouter();
 	return (
 		<SafeAreaView
 			className="flex-1 px-4 pt-4"
@@ -35,99 +31,99 @@ export default function ComplaintListScreen() {
 			>
 				Complaints for: {userID}
 			</Text>
-			{complaints.length === 0 ? (
-				<View className="flex-1 justify-center items-center">
-					<Text
-						className=" font-bold text-2xl"
+
+			<LegendList
+				estimatedItemSize={25}
+				recycleItems
+				data={complaints}
+				keyExtractor={(item) => item.id}
+				showsVerticalScrollIndicator={false}
+				ItemSeparatorComponent={() => <View className="h-3" />}
+				renderItem={({ item }) => (
+					<Pressable
+						className="p-4 rounded-xl "
 						style={{
-							color: textColor,
+							backgroundColor: cardsColor,
+						}}
+						onPress={() =>
+							router.push({
+								pathname:
+									"/(protected)/admin/users/edit-complaint/[id]",
+								params: {
+									complaintID: "1",
+								},
+							})
+						}
+					>
+						<Text
+							className="text-lg font-semibold  mb-2"
+							style={{
+								color: textColor,
+							}}
+						>
+							{item.type}
+						</Text>
+
+						<Image
+							source={{ uri: item.beforeImage }}
+							className="w-full h-40 rounded-lg mb-3"
+							resizeMode="cover"
+						/>
+
+						<Text
+							style={[styles.status, getStatusStyle(item.status)]}
+						>
+							Status: {item.status}
+						</Text>
+						<Text
+							style={{
+								color: textColor,
+							}}
+						>
+							Complaint ID: {item.cid}
+						</Text>
+						<Text
+							style={{
+								color: textColor,
+							}}
+						>
+							Date: {item.date}
+						</Text>
+
+						{item.status === "Resolved" && (
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
+								Resolved By: {item.resolvedBy}
+							</Text>
+						)}
+
+						{item.status === "Assigned" && (
+							<Text
+								style={{
+									color: textColor,
+								}}
+							>
+								Assigned To: {item.assignedTo}
+							</Text>
+						)}
+					</Pressable>
+				)}
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
-						No Complaint Found
-					</Text>
-				</View>
-			) : (
-				<FlatList
-					data={complaints}
-					keyExtractor={(item) => item.id}
-					ItemSeparatorComponent={() => <View className="h-3" />}
-					renderItem={({ item }) => (
-						<Pressable
-							className="p-4 rounded-xl "
-							style={{
-								backgroundColor: cardsColor,
-							}}
-							onPress={() =>
-								router.push({
-									pathname:
-										"/(protected)/admin/complaints/[complaintID]",
-									params: {
-										complaintID: "1",
-									},
-								})
-							}
-						>
-							<Text
-								className="text-lg font-semibold  mb-2"
-								style={{
-									color: textColor,
-								}}
-							>
-								{item.type}
-							</Text>
-
-							<Image
-								source={{ uri: item.beforeImage }}
-								className="w-full h-40 rounded-lg mb-3"
-								resizeMode="cover"
-							/>
-
-							<Text
-								style={[
-									styles.status,
-									getStatusStyle(item.status),
-								]}
-							>
-								Status: {item.status}
-							</Text>
-							<Text
-								style={{
-									color: textColor,
-								}}
-							>
-								Complaint ID: {item.cid}
-							</Text>
-							<Text
-								style={{
-									color: textColor,
-								}}
-							>
-								Date: {item.date}
-							</Text>
-
-							{item.status === "Resolved" && (
-								<Text
-									style={{
-										color: textColor,
-									}}
-								>
-									Resolved By: {item.resolvedBy}
-								</Text>
-							)}
-
-							{item.status === "Assigned" && (
-								<Text
-									style={{
-										color: textColor,
-									}}
-								>
-									Assigned To: {item.assignedTo}
-								</Text>
-							)}
-						</Pressable>
-					)}
-				/>
-			)}
+						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+					</View>
+				}
+			/>
 		</SafeAreaView>
 	);
 }

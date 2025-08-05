@@ -6,15 +6,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 2. Start the app
 
-   ```bash
-   npx expo start
-   ```
+    ```bash
+    npx expo start
+    ```
 
 In the output, you'll find options to open the app in a
 
@@ -48,3 +48,55 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+  app/
+  ├── (public)/
+  │ ├── \_layout.tsx
+  │ ├── welcome.tsx
+  │ ├── signin.tsx
+  │ ├── otp-verification.tsx
+  │ ├── verify.tsx
+  │ └── user-details-form.tsx
+  │
+  ├── (protected)/
+  │ ├── \_layout.tsx ← Drawer layout
+  │ │
+  │ ├── (tabs)/ ← Bottom tabs inside drawer
+  │ │ ├── \_layout.tsx
+  │ │ ├── dashboard.tsx
+  │ │ ├── feed.tsx ← Complaint list
+  │ │ ├── notification.tsx
+  │ │ └── progress.tsx
+  │ │
+  │ ├── complaint/ ← Complaint nested stack
+  │ │ ├── add.tsx
+  │ │ ├── history.tsx
+  │ │ ├── type-list.tsx
+  │ │ ├── progress.tsx
+  │ │ ├── view/
+  │ │ │ └── [id].tsx
+  │ │ ├── edit/
+  │ │ │ └── [id].tsx
+  │ │
+  │ ├── admin/ ← Admin section
+  │ │ ├── users/
+  │ │ │ ├── index.tsx ← all users
+  │ │ │ ├── [id].tsx ← user profile
+  │ │ │ ├── [id]-complaints.tsx ← all complaints of a user
+  │ │ │ └── edit-complaint/
+  │ │ │ └── [id].tsx ← edit assigned complaint
+  │ │ ├── rights/
+  │ │ │ ├── groups.tsx
+  │ │ │ ├── rights.tsx
+  │ │ │ ├── group-rights.tsx
+  │ │ │ └── group-users.tsx
+  │
+  │ ├── profile/
+  │ │ ├── view.tsx
+  │ │ └── edit.tsx
+  │
+  │ └── settings/
+  │ └── index.tsx
+  │
+  ├── \_layout.tsx ← Root layout that redirects to (public) or (protected)
+  ├── \_app.tsx ← Optional global config
+  └── index.tsx ← Optional redirect to (public)/welcome

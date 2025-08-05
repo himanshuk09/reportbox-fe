@@ -2,19 +2,12 @@ import { getLocationDetails } from "@/components/native/Map";
 import { bannersImageUrls } from "@/constants/banners";
 import { Dashboard_Categories } from "@/constants/complaints";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router } from "expo-router";
+import { LegendList } from "@legendapp/list";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-	FlatList,
-	Image,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
-
 const getWeatherEmoji = (code: number) => {
 	if (code === 0) return "☀️";
 	if (code === 1) return "🌤";
@@ -38,7 +31,7 @@ const ComplaintCategoriesScreen = () => {
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 	const [weather, setWeather] = useState<any>(null);
-
+	const router = useRouter();
 	useEffect(() => {
 		const fetchLocation = async () => {
 			const { geo, loc }: any = await getLocationDetails();
@@ -55,15 +48,19 @@ const ComplaintCategoriesScreen = () => {
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			<FlatList
+			<LegendList
 				data={Dashboard_Categories}
+				estimatedItemSize={25}
+				numColumns={3}
+				recycleItems
+				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				renderItem={({ item }: any) => (
 					<TouchableOpacity
 						style={styles.item}
 						onPress={() => {
 							if (item.route) {
-								router.push(item?.route);
+								router.replace(item?.route);
 							}
 						}}
 					>
@@ -96,7 +93,6 @@ const ComplaintCategoriesScreen = () => {
 				)}
 				ListHeaderComponent={
 					<View style={{ marginBottom: 20 }}>
-						{/* Swiper */}
 						<View style={{ height: 200, marginBottom: 10 }}>
 							<Swiper
 								showsPagination
@@ -121,7 +117,6 @@ const ComplaintCategoriesScreen = () => {
 							</Swiper>
 						</View>
 
-						{/* Weather Bar */}
 						{weather && (
 							<View
 								style={
@@ -172,8 +167,6 @@ const ComplaintCategoriesScreen = () => {
 						)}
 					</View>
 				}
-				showsVerticalScrollIndicator={false}
-				numColumns={3}
 				contentContainerStyle={styles.listContent}
 			/>
 		</SafeAreaView>

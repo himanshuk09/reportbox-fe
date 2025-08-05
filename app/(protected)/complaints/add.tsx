@@ -4,7 +4,7 @@ import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
 	KeyboardAvoidingView,
@@ -28,7 +28,7 @@ const Complaint = () => {
 		location: "",
 	});
 	const [showSuccess, setShowSuccess] = useState(false);
-
+	const router = useRouter();
 	const handleSetImage = (newImage: string) => {
 		setComplaintData((prev) => ({
 			...prev,

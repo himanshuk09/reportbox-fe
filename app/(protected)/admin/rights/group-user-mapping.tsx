@@ -161,54 +161,53 @@ const AssignUsersToGroupScreen = () => {
 				>
 					Select Users:
 				</Text>
-				{filteredUsers.length > 0 ? (
-					<FlatList
-						data={filteredUsers}
-						keyExtractor={(item) => item.id}
-						scrollEnabled={false}
-						renderItem={({ item }) => (
-							<TouchableOpacity
-								onPress={() => toggleUser(item.id)}
-								className={`flex-row items-center gap-3 p-3 rounded-lg mb-3 `}
-								style={{
-									backgroundColor: selectedUsers.includes(
-										item.id
-									)
-										? primaryColor
-										: cardsColor,
-								}}
-							>
-								<Image
-									source={{ uri: item.avatar }}
-									className="w-10 h-10 rounded-full"
-								/>
-								<View className="flex-1">
-									<Text
-										className=" font-semibold"
-										style={{
-											color: textColor,
-										}}
-									>
-										{item.name}
-									</Text>
-									<Text
-										className=" text-xs"
-										style={{
-											color: textColor,
-										}}
-									>
-										UserID: {item.userID}
-									</Text>
-									<Text className="text-gray-500 text-xs">
-										Phone: {item.phone}
-									</Text>
-								</View>
-							</TouchableOpacity>
-						)}
-					/>
-				) : (
-					<Text className="text-gray-400">No users found.</Text>
-				)}
+
+				<FlatList
+					data={filteredUsers}
+					showsVerticalScrollIndicator={false}
+					keyExtractor={(item) => item.id}
+					scrollEnabled={false}
+					renderItem={({ item }) => (
+						<TouchableOpacity
+							onPress={() => toggleUser(item.id)}
+							className={`flex-row items-center gap-3 p-3 rounded-lg mb-3 `}
+							style={{
+								backgroundColor: selectedUsers.includes(item.id)
+									? primaryColor
+									: cardsColor,
+							}}
+						>
+							<Image
+								source={{ uri: item.avatar }}
+								className="w-10 h-10 rounded-full"
+							/>
+							<View className="flex-1">
+								<Text
+									className=" font-semibold"
+									style={{
+										color: textColor,
+									}}
+								>
+									{item.name}
+								</Text>
+								<Text
+									className=" text-xs"
+									style={{
+										color: textColor,
+									}}
+								>
+									UserID: {item.userID}
+								</Text>
+								<Text className="text-gray-500 text-xs">
+									Phone: {item.phone}
+								</Text>
+							</View>
+						</TouchableOpacity>
+					)}
+					ListEmptyComponent={
+						<Text className="text-gray-400">No users found.</Text>
+					}
+				/>
 
 				{/* Assign Button */}
 				<TouchableOpacity

@@ -1,6 +1,8 @@
+import Blob from "@/components/on-bording/blob";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { LegendList } from "@legendapp/list";
 import React, { useState } from "react";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 
 const allGroups = ["Sanitation Team", "Water Team"];
 const availableRights = ["View", "Resolve", "Delete", "Assign"];
@@ -161,14 +163,25 @@ const AssignRightsToGroupScreen = () => {
 			>
 				Groups & Assigned Rights
 			</Text>
-			<FlatList
+
+			<LegendList
 				data={Object.keys(groupRights)}
-				keyExtractor={(item) => item}
+				estimatedItemSize={25}
+				recycleItems
+				showsVerticalScrollIndicator={false}
+				keyExtractor={(_, index) => index.toString()}
 				renderItem={renderGroupRightsItem}
 				ListEmptyComponent={
-					<Text className="text-gray-800">
-						No rights assigned yet.
-					</Text>
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+					</View>
 				}
 			/>
 		</View>

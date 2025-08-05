@@ -1,8 +1,9 @@
+import Blob from "@/components/on-bording/blob";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { LegendList } from "@legendapp/list";
 import React from "react";
 import {
-	FlatList,
 	Linking,
 	StyleSheet,
 	Text,
@@ -72,12 +73,27 @@ const EmergencyContactScreen = () => {
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			<FlatList
+			<LegendList
 				data={emergencyContacts}
 				keyExtractor={(item, index) => index.toString()}
 				renderItem={renderItem}
+				showsVerticalScrollIndicator={false}
 				contentContainerStyle={styles.list}
 				ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+				estimatedItemSize={25}
+				recycleItems
+				ListEmptyComponent={
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+					</View>
+				}
 			/>
 		</SafeAreaView>
 	);

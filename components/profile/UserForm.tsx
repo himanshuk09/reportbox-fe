@@ -68,6 +68,7 @@ const UserForm = ({
 				<ScrollView
 					contentContainerStyle={{ flexGrow: 1 }}
 					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
 				>
 					{/* Background Header */}
 					<ImageBackground
