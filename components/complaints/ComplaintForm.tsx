@@ -31,11 +31,15 @@ const ICON_MAP: any = {
 };
 
 export default function ComplaintForm({
+	tags,
+	setTags,
 	location,
 	setLocation,
-	explanation,
-	setExplanation,
+	message,
+	setMessage,
 	subtypes,
+	setComplaintType,
+	setComplaintSubtype,
 }: any) {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [expandedType, setExpandedType] = useState<string | null>(null);
@@ -46,10 +50,14 @@ export default function ComplaintForm({
 		useAppTheme();
 
 	const toggleSubtype = (subtype: string) => {
+		if (!expandedType) return;
+
 		//single
 		setSelectedSubtypes((prev: any) =>
 			prev[0] === subtype ? [] : [subtype]
 		);
+		setComplaintType(expandedType);
+		setComplaintSubtype(subtype);
 		//multi select
 		// setSelectedSubtypes((prev: any) =>
 		// 	prev.includes(subtype)
@@ -106,20 +114,20 @@ export default function ComplaintForm({
 					styles.textArea,
 					{ color: textColor, backgroundColor: cardsColor },
 				]}
-				value={explanation}
-				onChangeText={setExplanation}
+				value={message}
+				onChangeText={setMessage}
 			/>
 			<Text style={[styles.label, { color: textColor }]}>Hash Tags</Text>
 			<TextInput
 				multiline
 				numberOfLines={3}
-				placeholder="Describe your complaint here"
+				placeholder="Add tags..."
 				style={[
 					styles.field,
 					{ color: textColor, backgroundColor: cardsColor },
 				]}
-				value={explanation}
-				onChangeText={setExplanation}
+				value={tags}
+				onChangeText={setTags}
 			/>
 			{/* Complaint Modal */}
 			<Modal

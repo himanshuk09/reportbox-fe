@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-const ProtectedLayout = () => {
+const ProfileLayout = () => {
 	const { primaryColor } = useAppTheme();
 
 	return (
@@ -33,4 +33,4 @@ const ProtectedLayout = () => {
 	);
 };
 
-export default ProtectedLayout;
+export default ProfileLayout;

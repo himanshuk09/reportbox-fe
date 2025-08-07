@@ -1,15 +1,14 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export const SpecialTabButton = () => {
 	const { primaryColor } = useAppTheme();
-
+	const router = useRouter();
 	const handlePress = () => {
 		router.push("/(protected)/complaints/add");
 	};
-
 	return (
 		<TouchableOpacity
 			onPress={handlePress}

@@ -103,6 +103,7 @@ const WorkerAssignedComplaintsScreen = () => {
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				renderItem={renderComplaintCard}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ListEmptyComponent={
 					<View
 						style={{

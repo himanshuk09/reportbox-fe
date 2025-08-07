@@ -75,7 +75,6 @@ export const handleImageChoice = async (setShowCamera: any, setImage: any) => {
 					aspect: [4, 3],
 					quality: 1,
 				});
-
 				if (!result.canceled) {
 					setImage(result.assets[0].uri);
 				}

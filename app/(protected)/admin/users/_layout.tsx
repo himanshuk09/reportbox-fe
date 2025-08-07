@@ -23,7 +23,7 @@ const AdminUserLayout = () => {
 				})}
 			/>
 			<Stack.Screen
-				name="edit-complaint"
+				name="edit-complaint/[id]"
 				options={({ route }) => ({
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,

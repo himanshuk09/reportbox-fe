@@ -1,18 +1,20 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { verifySentOtp } from "@/services/auth.service";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 function VerificationScreen() {
 	const router = useRouter();
-	const { verifyOtp, session, user } = useAuth();
+	const { data, completeProfile, setTempData } = useAuth();
 	const [code, setCode] = useState("");
-	const { primaryColor, textColor, secondaryColor, cardsColor } =
-		useAppTheme();
+	const { primaryColor, textColor, cardsColor } = useAppTheme();
 	const [showVerificationIcon, setShowVerificationIcon] = useState(false);
 	const [isValidOtp, setIsValidOtp] = useState(false);
+
 	const handleKeyPress = async (digit: string) => {
 		if (digit === "x") {
 			setCode(code.slice(0, -1));
@@ -22,11 +24,34 @@ function VerificationScreen() {
 
 			// Automatically verify when code reaches 4 digits
 			if (newCode.length === 4) {
-				const isValid = await verifyOtp(newCode);
-				setIsValidOtp(isValid);
+				const { status, isRegistered, userID } = await verifySentOtp({
+					email: data?.email,
+					otp: newCode,
+				});
+				setIsValidOtp(status);
 				setShowVerificationIcon(true);
-				if (isValid) {
-					setTimeout(()=>router.replace("/(public)/sign-in/verified"),500)
+				console.log(userID);
+				if (status) {
+					setTempData("userID", userID);
+					Toast.show({
+						type: "success",
+						text1: "Email Verifed.",
+					});
+
+					if (isRegistered) {
+						setTimeout(() => {
+							completeProfile(userID);
+						}, 1000);
+					} else {
+						setTimeout(() => {
+							router.replace("/(public)/sign-in/verified");
+						}, 500);
+					}
+				} else {
+					Toast.show({
+						type: "error",
+						text1: "Incorrect OTP.",
+					});
 				}
 			}
 		}

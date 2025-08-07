@@ -134,6 +134,7 @@ export default function UserListScreen() {
 				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(item) => item.userID}
+				extraData={[cardsColor, textColor, primaryColor]}
 				renderItem={({ item }) => (
 					<View
 						className="flex-row items-center p-3 mb-3  rounded-xl"

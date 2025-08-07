@@ -1,13 +1,11 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
-import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 function VerificationSuccessScreen() {
-	const { setSessionActive, user } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 	const router = useRouter();
@@ -30,11 +28,7 @@ function VerificationSuccessScreen() {
 				<TouchableOpacity
 					className="flex-row items-center space-x-2"
 					onPress={() => {
-						if (user) {
-							setSessionActive();
-						} else {
-							router.replace("/(public)/sign-in/profile-form");
-						}
+						router.replace("/(public)/sign-in/profile-form");
 					}}
 				>
 					<Text

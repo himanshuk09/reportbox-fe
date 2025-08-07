@@ -38,6 +38,7 @@ export default function ComplaintListScreen() {
 				data={complaints}
 				keyExtractor={(item) => item.id}
 				showsVerticalScrollIndicator={false}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ItemSeparatorComponent={() => <View className="h-3" />}
 				renderItem={({ item }) => (
 					<Pressable
@@ -50,7 +51,7 @@ export default function ComplaintListScreen() {
 								pathname:
 									"/(protected)/admin/users/edit-complaint/[id]",
 								params: {
-									complaintID: "1",
+									id: "1",
 								},
 							})
 						}

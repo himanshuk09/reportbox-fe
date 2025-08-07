@@ -99,6 +99,7 @@ const CreateGroupScreen = () => {
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				renderItem={renderGroupItem}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ListEmptyComponent={
 					<Text className="text-gray-400">
 						No groups created yet.

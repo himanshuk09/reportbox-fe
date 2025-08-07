@@ -171,6 +171,7 @@ const AssignRightsToGroupScreen = () => {
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				renderItem={renderGroupRightsItem}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ListEmptyComponent={
 					<View
 						style={{

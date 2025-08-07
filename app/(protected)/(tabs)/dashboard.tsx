@@ -50,11 +50,12 @@ const ComplaintCategoriesScreen = () => {
 		>
 			<LegendList
 				data={Dashboard_Categories}
-				estimatedItemSize={25}
+				estimatedItemSize={5}
 				numColumns={3}
 				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
+				extraData={[cardsColor, textColor, primaryColor]}
 				renderItem={({ item }: any) => (
 					<TouchableOpacity
 						style={styles.item}

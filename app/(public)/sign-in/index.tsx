@@ -1,22 +1,31 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { sendOtpRToEmail } from "@/services/auth.service";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+	ActivityIndicator,
 	Keyboard,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 function SignInScreen() {
-	const [phoneNo, setPhoneNo] = useState<any>("");
-	const { loginWithPhone } = useAuth();
+	const router = useRouter();
+	const { setTempData } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const router = useRouter();
+	const [email, setEmail] = useState<string>("");
+	const [loading, setLoading] = useState(false);
+	const isValidEmail = (email: string) => {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
+	};
+
 	return (
 		<View className="px-2 pt-6">
 			{/* Title */}
@@ -29,45 +38,67 @@ function SignInScreen() {
 
 			{/* Label */}
 			<Text className=" text-lg mb-2" style={{ color: textColor }}>
-				Phone number
+				Email Address
 			</Text>
 
-			{/* Input Row with +91 */}
+			{/* Input Row  */}
 			<View
 				className="flex-row items-center border-b border-white pb-1 mb-2"
 				style={{ borderColor: textColor }}
 			>
-				<Text className=" text-lg mr-2" style={{ color: textColor }}>
-					+91
-				</Text>
 				<TextInput
-					placeholder="Enter phone number"
+					placeholder="Enter email address"
 					placeholderTextColor={textColor}
-					keyboardType="phone-pad"
-					className="flex-1 text-lg "
-					value={phoneNo}
-					onChangeText={setPhoneNo}
-					maxLength={10}
+					keyboardType="email-address"
+					className="flex-1 text-lg"
+					autoCapitalize="none"
+					autoCorrect={false}
+					value={email}
+					onChangeText={setEmail}
 					style={{ color: textColor }}
 				/>
 			</View>
 
 			{/* Button */}
 			<TouchableOpacity
-				className=" rounded-full p-3 mt-6 items-center"
-				onPress={() => {
-					loginWithPhone(phoneNo);
-					router.replace("/(public)/sign-in/verify-otp");
+				className="rounded-full p-3 mt-6 items-center"
+				onPress={async () => {
+					setTempData("email", email);
+					if (loading) return;
+					setLoading(true);
 					Keyboard.dismiss();
+					const status = await sendOtpRToEmail({ email });
+					if (status) {
+						Toast.show({
+							type: "success",
+							text1: "OTP sent successfully.",
+						});
+						router.push("/(public)/sign-in/verify-otp");
+					} else {
+						Toast.show({
+							type: "error",
+							text1: "Unabled to sent OTP.",
+						});
+					}
+					setLoading(false);
 				}}
-				disabled={phoneNo.length !== 10}
+				disabled={!isValidEmail(email) || loading}
 				style={{
-					backgroundColor: primaryColor,
+					backgroundColor: isValidEmail(email)
+						? primaryColor
+						: "#aaa",
 				}}
 			>
-				<Text className=" font-semibold" style={{ color: textColor }}>
-					Get OTP
-				</Text>
+				{loading ? (
+					<ActivityIndicator color={secondaryColor} size={"small"} />
+				) : (
+					<Text
+						className="font-semibold"
+						style={{ color: textColor }}
+					>
+						Get OTP
+					</Text>
+				)}
 			</TouchableOpacity>
 		</View>
 	);

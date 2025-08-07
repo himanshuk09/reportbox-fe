@@ -79,6 +79,7 @@ const EmergencyContactScreen = () => {
 				renderItem={renderItem}
 				showsVerticalScrollIndicator={false}
 				contentContainerStyle={styles.list}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
 				estimatedItemSize={25}
 				recycleItems

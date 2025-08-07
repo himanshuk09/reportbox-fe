@@ -9,7 +9,6 @@ import {
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
-	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import MobileSvg from "./MobileSvg";
@@ -53,55 +52,54 @@ export default function WaveHeaderScreen({
 					{floatingOverlay}
 				</View>
 			)}
-			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-				<KeyboardAvoidingView
-					behavior={Platform.OS === "ios" ? "padding" : "height"}
-					style={{ flex: 1 }}
-					keyboardVerticalOffset={Platform.select({
-						ios: 40,
-						android: 10,
-					})}
-				>
-					<ScrollView
-						contentContainerStyle={[
-							styles.scrollViewContent,
-							{ flexGrow: 1, paddingBottom: 20 },
-						]}
-						keyboardShouldPersistTaps="handled"
-						showsVerticalScrollIndicator={false}
-						bounces={false}
-					>
-						<View
-							style={[
-								styles.headerWrapper,
-								{
-									height: defaultImageHeight,
-								},
-							]}
-						>
-							<ImageBackground
-								source={{ uri: headerImageUri }}
-								style={styles.imageBackground}
-								resizeMode="cover"
-							>
-								{imageOverlayContent || (
-									<MobileSvg style={svgStyle} />
-								)}
-							</ImageBackground>
-						</View>
 
-						<View
-							style={[
-								styles.bottomContent,
-								bottomContentStyle,
-								{ backgroundColor: secondaryColor },
-							]}
+			<KeyboardAvoidingView
+				behavior={Keyboard.isVisible() ? undefined : "height"}
+				style={{ flex: 1 }}
+				keyboardVerticalOffset={Platform.select({
+					ios: 40,
+					android: 10,
+				})}
+			>
+				<ScrollView
+					contentContainerStyle={[
+						styles.scrollViewContent,
+						{ flexGrow: 1, paddingBottom: 20 },
+					]}
+					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
+					bounces={false}
+				>
+					<View
+						style={[
+							styles.headerWrapper,
+							{
+								height: defaultImageHeight,
+							},
+						]}
+					>
+						<ImageBackground
+							source={{ uri: headerImageUri }}
+							style={styles.imageBackground}
+							resizeMode="cover"
 						>
-							{children}
-						</View>
-					</ScrollView>
-				</KeyboardAvoidingView>
-			</TouchableWithoutFeedback>
+							{imageOverlayContent || (
+								<MobileSvg style={svgStyle} />
+							)}
+						</ImageBackground>
+					</View>
+
+					<View
+						style={[
+							styles.bottomContent,
+							bottomContentStyle,
+							{ backgroundColor: secondaryColor },
+						]}
+					>
+						{children}
+					</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }

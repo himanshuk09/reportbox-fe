@@ -9,6 +9,7 @@ function WelcomeCard() {
 	const { primaryColor, textColor, secondaryColor, cardsColor } =
 		useAppTheme();
 	const router = useRouter();
+
 	return (
 		<View>
 			<Text

@@ -3,7 +3,9 @@ import ComplaintSuccessModal from "@/components/complaints/ComplaintSuccessModal
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { raisedComplaint } from "@/services/complaint.service";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -17,22 +19,51 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import Toast from "react-native-toast-message";
+const validateFormData = (complaintData: any) => {
+	const { beforeImage, type, message, location, tags } = complaintData;
 
+	if (!beforeImage.trim()) {
+		Toast.show({ type: "error", text1: "Plase upload a Image" });
+		return false;
+	}
+	if (!type.trim()) {
+		Toast.show({ type: "error", text1: "Complaint Type is required." });
+		return false;
+	}
+	if (!message.trim()) {
+		Toast.show({ type: "error", text1: "Explain your complaint." });
+		return false;
+	}
+	if (!location.trim()) {
+		Toast.show({ type: "error", text1: "Location is required." });
+		return false;
+	}
+	if (!Array.isArray(tags) || tags.length === 0) {
+		Toast.show({ type: "error", text1: "At least one tag is required." });
+		return false;
+	}
+
+	return true;
+};
 const Complaint = () => {
+	const { user } = useAuth();
 	const { primaryColor, secondaryColor, textColor } = useAppTheme();
 	const [showCamera, setShowCamera] = useState(false);
 	const [complaintData, setComplaintData] = useState({
-		image: "",
+		beforeImage: "",
 		type: "",
-		explaination: "",
+		subtype: "",
+		message: "",
 		location: "",
+		tags: "",
 	});
 	const [showSuccess, setShowSuccess] = useState(false);
 	const router = useRouter();
 	const handleSetImage = (newImage: string) => {
 		setComplaintData((prev) => ({
 			...prev,
-			image: newImage,
+			beforeImage: newImage,
 		}));
 	};
 	const handleSetLocation = (newLocation: string) => {
@@ -41,11 +72,31 @@ const Complaint = () => {
 			location: newLocation,
 		}));
 	};
-	const handleSetExplaination = (newExplan: string) => {
+	const handleSetMessage = (newExplan: string) => {
 		setComplaintData((prev) => ({
 			...prev,
-			explaination: newExplan,
+			message: newExplan,
 		}));
+	};
+	const handleSetTags = (newTags: string) => {
+		const tagsArray = newTags
+			.split(",") // split by comma
+			.map((tag) => tag.trim()) // remove extra spaces
+			.filter((tag) => tag.length); // remove empty strings
+
+		setComplaintData((prev: any) => ({
+			...prev,
+			tags: tagsArray,
+		}));
+	};
+	console.log(complaintData.tags);
+
+	const handleSubmit = async () => {
+		if (!validateFormData(complaintData)) return;
+
+		await raisedComplaint({ ...complaintData, userID: user?.user?._id });
+
+		// if (!validateFormData(complaintData)) return;
 	};
 	return (
 		<SafeAreaView
@@ -68,19 +119,29 @@ const Complaint = () => {
 						Raise a Complaint:
 					</Text>
 					<ImageCard
-						image={complaintData.image}
+						image={complaintData.beforeImage}
 						setShowCamera={setShowCamera}
 						setImage={handleSetImage}
 					/>
 					<ComplaintForm
 						location={complaintData.location}
 						setLocation={handleSetLocation}
-						explanation={complaintData.explaination}
-						setExplanation={handleSetExplaination}
+						message={complaintData.message}
+						setMessage={handleSetMessage}
+						tags={complaintData.tags}
+						setTags={handleSetTags}
+						setComplaintType={(type: string) =>
+							setComplaintData((prev) => ({ ...prev, type }))
+						}
+						setComplaintSubtype={(subtype: string) =>
+							setComplaintData((prev) => ({ ...prev, subtype }))
+						}
 					/>
 					<TouchableOpacity
 						className=" rounded-full my-3 p-3 mb-4 items-center"
-						onPress={() => setShowSuccess(true)}
+						onPress={handleSubmit}
+						// setShowSuccess(true)
+
 						style={{
 							backgroundColor: primaryColor,
 						}}

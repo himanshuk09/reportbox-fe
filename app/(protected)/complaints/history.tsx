@@ -89,6 +89,7 @@ const ComplaintHistoryScreen = () => {
 				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
+				extraData={[textColor, primaryColor]}
 				renderItem={({ item }) => (
 					<ComplaintCard
 						item={item}

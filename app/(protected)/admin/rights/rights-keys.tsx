@@ -97,6 +97,7 @@ const CreateRightsScreen = () => {
 				keyExtractor={(item, index) => item + index}
 				renderItem={renderGroupItem}
 				showsVerticalScrollIndicator={false}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ListEmptyComponent={
 					<Text className="text-gray-400">
 						No rights created yet.

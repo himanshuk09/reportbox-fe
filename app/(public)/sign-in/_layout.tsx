@@ -1,7 +1,9 @@
+import { HeaderBackButton } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import React from "react";
-
 const SignINayout = () => {
+	const navigation = useNavigation();
 	return (
 		<Stack>
 			<Stack.Screen
@@ -14,6 +16,14 @@ const SignINayout = () => {
 				name="verify-otp"
 				options={({ route }) => ({
 					headerShown: false,
+					title: "",
+					headerTransparent: true, // makes header background transparent
+					headerLeft: () => (
+						<HeaderBackButton
+							tintColor="#fff" // or any icon color
+							onPress={() => navigation.goBack()}
+						/>
+					),
 				})}
 			/>
 			<Stack.Screen

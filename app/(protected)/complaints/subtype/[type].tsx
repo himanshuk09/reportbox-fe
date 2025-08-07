@@ -64,6 +64,7 @@ const RenderComplaintList = () => {
 				renderItem={renderItem}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
+				extraData={[cardsColor, textColor, primaryColor]}
 				ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
 				ListEmptyComponent={
 					<View
