@@ -31,51 +31,55 @@ export default function ComplaintDetailModal({
 					</Pressable>
 					{/* Images */}
 					<View style={styles.imageRow}>
-						<TouchableOpacity
-							style={styles.imageHalfTouchable}
-							// onPress={() => openImageViewer(item.beforeImage)}
-							activeOpacity={0.7}
-						>
-							<Image
-								source={{ uri: complaint.beforeImage }}
-								style={styles.imageHalf}
-								resizeMode="cover"
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.imageHalfTouchable}
-							// onPress={() => openImageViewer(item.afterImage)}
-							activeOpacity={0.7}
-						>
-							<Image
-								source={{ uri: complaint.afterImage }}
-								style={styles.imageHalf}
-								resizeMode="cover"
-							/>
-						</TouchableOpacity>
+						{complaint?.beforeImage && (
+							<TouchableOpacity
+								style={styles.imageHalfTouchable}
+								// onPress={() => openImageViewer(item.beforeImage)}
+								activeOpacity={0.7}
+							>
+								<Image
+									source={{ uri: complaint?.beforeImage }}
+									style={styles.imageHalf}
+									resizeMode="cover"
+								/>
+							</TouchableOpacity>
+						)}
+						{complaint?.afterImage && (
+							<TouchableOpacity
+								style={styles.imageHalfTouchable}
+								// onPress={() => openImageViewer(item.afterImage)}
+								activeOpacity={0.7}
+							>
+								<Image
+									source={{ uri: complaint?.afterImage }}
+									style={styles.imageHalf}
+									resizeMode="cover"
+								/>
+							</TouchableOpacity>
+						)}
 					</View>
 
 					{/* Complaint Info */}
 					<Text className="font-bold text-sm text-gray-800">
 						Complaint ID:{" "}
-						<Text className="text-gray-900">{complaint.cid}</Text>
+						<Text className="text-gray-900">{complaint?.cid}</Text>
 					</Text>
 					<Text className="text-sm text-gray-700 mt-2">
 						Raised On:{" "}
 						<Text className="font-medium text-black">
-							{complaint.raisedDate}
+							{complaint?.raisedDate}
 						</Text>
 					</Text>
 					<Text className="text-sm text-gray-700">
 						Corporation Response:{" "}
 						<Text className="font-medium text-black">
-							{complaint.responseDate}
+							{complaint?.responseDate}
 						</Text>
 					</Text>
 					<Text className="text-sm text-gray-700">
 						Resolved On:{" "}
 						<Text className="font-medium text-black">
-							{complaint.resolvedDate}
+							{complaint?.resolvedDate}
 						</Text>
 					</Text>
 				</View>

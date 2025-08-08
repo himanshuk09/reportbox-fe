@@ -1,9 +1,11 @@
 import ComplaintDetailModal from "@/components/complaints/ComplaintDetailModal";
 import Blob from "@/components/on-bording/blob";
 import { complaintsPosts } from "@/constants/posts";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { getComplaintsByUserID } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
 const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
@@ -34,7 +36,7 @@ const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
 							color: textColor,
 						}}
 					>
-						#{item.cid}
+						#{item?.cid}
 					</Text>
 				</Text>
 				<Text
@@ -43,32 +45,44 @@ const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
 						color: textColor,
 					}}
 				>
-					Type: {item.type}
+					Type: {item?.type}
 				</Text>
 				<Text
 					className=" font-semibold mt-1"
 					style={{ color: primaryColor }}
 				>
-					Resolved
+					{item?.status}
 				</Text>
 			</View>
-			<Image
-				source={{ uri: item.beforeImage }}
-				resizeMode="cover"
-				style={{
-					width: "45%",
-					borderTopRightRadius: 12,
-					borderBottomRightRadius: 12,
-				}}
-			/>
+			{item?.beforeImage && (
+				<Image
+					source={{ uri: item?.beforeImage }}
+					resizeMode="cover"
+					style={{
+						width: "45%",
+						borderTopRightRadius: 12,
+						borderBottomRightRadius: 12,
+					}}
+				/>
+			)}
 		</Pressable>
 	);
 };
 
 const ComplaintHistoryScreen = () => {
+	const { logout, user } = useAuth();
+	const [complaintDetails, setComplaintDetails] = useState([]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [complaint, setComplaint] = useState([]);
+	const [complaintonModel, setComplaintModel] = useState([]);
 	const { textColor, primaryColor, secondaryColor } = useAppTheme();
+
+	useEffect(() => {
+		const fetchAllComplaints = async () => {
+			const response = await getComplaintsByUserID(user?.user?._id);
+			setComplaintDetails(response?.complaints);
+		};
+		fetchAllComplaints();
+	}, []);
 	return (
 		<View
 			className="flex-1  px-4 pt-6"
@@ -84,7 +98,7 @@ const ComplaintHistoryScreen = () => {
 			</Text>
 
 			<LegendList
-				data={complaintsPosts}
+				data={complaintDetails ?? complaintsPosts}
 				estimatedItemSize={25}
 				recycleItems
 				showsVerticalScrollIndicator={false}
@@ -93,7 +107,7 @@ const ComplaintHistoryScreen = () => {
 				renderItem={({ item }) => (
 					<ComplaintCard
 						item={item}
-						setComplaint={setComplaint}
+						setComplaint={setComplaintModel}
 						setIsModalOpen={setIsModalOpen}
 					/>
 				)}
@@ -113,7 +127,7 @@ const ComplaintHistoryScreen = () => {
 			<ComplaintDetailModal
 				visible={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				complaint={complaint}
+				complaint={complaintonModel}
 			/>
 		</View>
 	);

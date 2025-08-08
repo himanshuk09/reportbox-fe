@@ -62,7 +62,7 @@ const menuItems = [
 	},
 ];
 const CustomDrawer = (props: any) => {
-	const { logout } = useAuth();
+	const { logout, user } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 
@@ -71,15 +71,15 @@ const CustomDrawer = (props: any) => {
 			<View style={[styles.header, { borderBottomColor: textColor }]}>
 				<Image
 					source={{
-						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+						uri: user?.user?.avatar,
 					}}
 					style={styles.profileImage}
 				/>
 				<Text style={[styles.username, { color: textColor }]}>
-					John Doe
+					{user?.user?.name}
 				</Text>
 				<Text style={[styles.email, { color: textColor }]}>
-					john@example.com
+					{user?.user?.email}
 				</Text>
 			</View>
 
@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
 
 export default function RootDrawerLayout() {
 	const { secondaryColor } = useAppTheme();
+
 	return (
 		<Drawer
 			screenOptions={{
