@@ -60,30 +60,49 @@ export const updatedUserDetails = async (id: string, data: any) => {
 		return false;
 	}
 };
+
 export const updateProfile = async (
 	id: string,
 	data: any,
 	imageUri: string
 ) => {
 	try {
-		if (
-			!imageUri.startsWith('/uploads/user/') &&
-			!imageUri.startsWith('https://') &&
-			!imageUri.startsWith('http://')
-		) {
+		const shouldUploadImage = imageUri?.startsWith('file://');
+
+		if (shouldUploadImage) {
 			const response = await uploadImageToCloudinary(imageUri);
 
-			if (response.data) {
+			if (response?.data) {
 				await updatedUserDetails(id, {
 					...data,
 					avatar: response.data.url,
+					public_id: response.data.public_id,
 				});
+
+				Toast.show({
+					type: 'success',
+					text1: 'Profile updated successfully.',
+				});
+
+				return true;
+			} else {
+				Toast.show({
+					type: 'error',
+					text1: 'Image upload failed',
+				});
+
+				return false;
 			}
 		}
+
+		// Skip upload, update with existing data
+		await updatedUserDetails(id, data);
+
 		Toast.show({
 			type: 'success',
 			text1: 'Profile updated successfully.',
 		});
+
 		return true;
 	} catch (error) {
 		Toast.show({ type: 'error', text1: 'Update failed.' });

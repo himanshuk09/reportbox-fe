@@ -53,6 +53,7 @@ api.interceptors.response.use(
 );
 
 export default api;
+
 export const uploadImageToCloudinary = async (imageUri: string) => {
 	try {
 		if (!imageUri) {
@@ -79,9 +80,8 @@ export const uploadImageToCloudinary = async (imageUri: string) => {
 				'Content-Type': 'multipart/form-data',
 			},
 		});
-		console.log('res', JSON.stringify(res.data, null, 1));
+
 		return res.data;
-		return true;
 	} catch (err: any) {
 		console.log('Upload failed:', err.message);
 		return false;

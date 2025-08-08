@@ -104,18 +104,22 @@ const UserForm = ( { editable = true, onlyForm = false, id }: UserFormProps ) =>
       const handleFormSubmit = async () => {
             if ( !validateFormData( formData, avatar ) ) return;
 
-            console.log( "Updated user data:", {
-                  ...formData,
-            } );
-            if ( await updateProfile( id ?? user?.user?._id, formData, avatar ) ) {
+            const result = await updateProfile(
+                  id ?? user?.user?._id,
+                  formData,
+                  avatar
+            );
+
+            if ( result ) {
                   completeProfile( user?.user?._id );
             }
 
             setTimeout( () => {
                   if ( !onlyForm ) setEdit( false );
             }, 1000 );
-            // uploadImageToCloudinary( avatar )
       };
+
+
 
       return (
             <SafeAreaView style={ { flex: 1, backgroundColor: secondaryColor } }>
