@@ -12,7 +12,7 @@ export const raisedComplaint = async (payload: any) => {
 				await api.post('/complaints', {
 					...payload,
 					beforeImage: response.data.url,
-					public_id: response.data.public_id,
+					beforeImage_public_id: response.data.public_id,
 				});
 				Toast.show({
 					type: 'success',
