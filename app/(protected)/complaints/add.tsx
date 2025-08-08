@@ -93,8 +93,32 @@ const Complaint = () => {
 
 	const handleSubmit = async () => {
 		if (!validateFormData(complaintData)) return;
-
-		await raisedComplaint({ ...complaintData, userID: user?.user?._id });
+		try {
+			if (
+				await raisedComplaint({
+					...complaintData,
+					userID: user?.user?._id,
+				})
+			) {
+				setComplaintData({
+					beforeImage: "",
+					type: "",
+					subtype: "",
+					message: "",
+					location: "",
+					tags: "",
+				});
+			}
+		} catch (error) {
+			setComplaintData({
+				beforeImage: "",
+				type: "",
+				subtype: "",
+				message: "",
+				location: "",
+				tags: "",
+			});
+		}
 
 		// if (!validateFormData(complaintData)) return;
 	};

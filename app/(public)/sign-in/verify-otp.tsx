@@ -30,7 +30,7 @@ function VerificationScreen() {
 				});
 				setIsValidOtp(status);
 				setShowVerificationIcon(true);
-				console.log(userID);
+
 				if (status) {
 					setTempData("userID", userID);
 					Toast.show({

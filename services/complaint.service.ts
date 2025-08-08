@@ -18,8 +18,10 @@ export const raisedComplaint = async (payload: any) => {
 			await uploadRaisedImage(response.data._id, beforeImage);
 			console.log(JSON.stringify(response.data, null, 1));
 		}
+		return true;
 	} catch (error: any) {
 		console.log("Error while Raiser complaint", error.message);
+		return false;
 	}
 };
 export const uploadRaisedImage = async (id: string, imageUri: string) => {

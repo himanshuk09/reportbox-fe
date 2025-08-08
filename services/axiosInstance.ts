@@ -1,12 +1,13 @@
-import NetInfo from "@react-native-community/netinfo";
-import axios from "axios";
+import NetInfo from '@react-native-community/netinfo';
+import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
 
 const api = axios.create({
-	baseURL: "http://192.168.19.110:8080/api",
+	baseURL: 'http://192.168.19.110:8080/api',
 	timeout: 10000,
 	headers: {
-		"Content-Type": "application/json",
-		Accept: "application/json",
+		'Content-Type': 'application/json',
+		Accept: 'application/json',
 	},
 });
 
@@ -16,10 +17,9 @@ api.interceptors.request.use(
 		const state = await NetInfo.fetch();
 
 		if (!state.isConnected) {
-			console.warn("📴 Offline - blocking request:", config.url);
+			console.warn('📴 Offline - blocking request:', config.url);
 			return Promise.reject({
-				message:
-					"You are offline. Please check your internet connection.",
+				message: 'You are offline. Please check your internet connection.',
 				isOffline: true,
 			});
 		}
@@ -43,9 +43,9 @@ api.interceptors.response.use(
 		} else if (error.response) {
 			// console.error("❌ API error:", error.response.data);
 		} else if (error.request) {
-			console.error("❌ No response:", error.request);
+			console.error('❌ No response:', error.request);
 		} else {
-			console.error("❌ Axios error:", error.message);
+			console.error('❌ Axios error:', error.message);
 		}
 
 		return Promise.reject(error);
@@ -53,3 +53,37 @@ api.interceptors.response.use(
 );
 
 export default api;
+export const uploadImageToCloudinary = async (imageUri: string) => {
+	try {
+		if (!imageUri) {
+			console.log('Image URI is missing.');
+		}
+		const fileInfo = await FileSystem.getInfoAsync(imageUri);
+		if (!fileInfo.exists) {
+			console.log('File does not exist at URI: ' + imageUri);
+		}
+		const fileName = imageUri.split('/').pop() || 'photo.jpg';
+		const fileType = fileName.endsWith('.png')
+			? 'image/png'
+			: 'image/jpeg';
+
+		const formData = new FormData();
+		formData.append('image', {
+			uri: imageUri,
+			type: fileType,
+			name: fileName,
+		} as any);
+
+		const res = await api.post(`/upload`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		});
+		console.log('res', JSON.stringify(res.data, null, 1));
+		return res.data;
+		return true;
+	} catch (err: any) {
+		console.log('Upload failed:', err.message);
+		return false;
+	}
+};
