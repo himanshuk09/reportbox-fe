@@ -39,7 +39,6 @@ export default function App() {
 		if (cameraRef.current) {
 			const photo = await cameraRef.current.takePictureAsync();
 			setCapturedPhoto(photo.uri);
-			console.log("Captured photo URI:", photo.uri);
 		}
 	};
 

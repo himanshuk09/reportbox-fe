@@ -1,5 +1,11 @@
-import { getStatusStyle } from "@/constants/statuscode";
+import { formatCreatedAtTime, getStatusStyle } from "@/constants/statuscode";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import {
+	addComment,
+	deleteComplaintByID,
+	likeComplaint,
+} from "@/services/complaint.service";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -15,23 +21,27 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import Toast from "react-native-toast-message";
+import CustomAlert from "../ui/CustomAlert";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 export function PostCard({
 	item,
 	showviewMore = true,
-}: {
-	item: any;
-	showviewMore?: boolean;
-}) {
+	onLike,
+	onComment,
+}: any) {
 	const [menuVisible, setMenuVisible] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const animatedHeight = useRef(new Animated.Value(0)).current;
 	const [showImageViewer, setShowImageViewer] = useState(false);
 	const [currentImageUri, setCurrentImageUri] = useState("");
+	const [newCommentText, setNewCommentText] = useState("");
+	const router = useRouter();
 	const { primaryColor, cardsColor, textColor, secondaryColor } =
 		useAppTheme();
-	const router = useRouter();
+	const { user } = useAuth();
+
 	const toggleComments = () => {
 		setShowComments(!showComments);
 		Animated.timing(animatedHeight, {
@@ -41,38 +51,33 @@ export function PostCard({
 		}).start();
 	};
 
+	const handleLike = async () => {
+		await likeComplaint(item._id, user?.user?._id);
+		if (onLike) onLike(item._id);
+	};
+
+	const handleAddComment = async () => {
+		if (!newCommentText.trim()) return;
+		await addComment(item._id, user?.user?._id, newCommentText.trim());
+		setNewCommentText("");
+		if (onComment) onComment(item._id);
+	};
+
 	const commentsMaxHeight = animatedHeight.interpolate({
 		inputRange: [0, 1],
 		outputRange: [0, 300],
 	});
-	// Function to open the image viewer
-	const openImageViewer = (uri: string) => {
+
+	const openImageViewer = (uri: any) => {
 		setCurrentImageUri(uri);
 		setShowImageViewer(true);
 	};
 
-	// Function to close the image viewer
 	const closeImageViewer = () => {
 		setShowImageViewer(false);
 		setCurrentImageUri("");
 	};
-	//new comment
-	const [newCommentText, setNewCommentText] = useState("");
-	const [localComments, setLocalComments] = useState(item.comments || []);
-	const handleAddComment = () => {
-		if (!newCommentText.trim()) return;
 
-		const newComment = {
-			id: Date.now().toString(),
-			avatar: item.avatar,
-			user: item.user,
-			comment: newCommentText.trim(),
-		};
-
-		setLocalComments((prev: any) => [...prev, newComment]);
-		console.log("New comment added:", newComment);
-		setNewCommentText("");
-	};
 	return (
 		<Pressable
 			style={[styles.card, { backgroundColor: cardsColor }]}
@@ -80,7 +85,7 @@ export function PostCard({
 				if (!showviewMore) return;
 				router.push({
 					pathname: "/(protected)/complaints/view/[id]",
-					params: { id: "1" },
+					params: { id: item._id },
 				});
 			}}
 		>
@@ -88,16 +93,15 @@ export function PostCard({
 			<View style={styles.header}>
 				<View style={styles.userInfo}>
 					<Image
-						// source={{ uri: item.avatar }}
 						source={{
-							uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+							uri: item?.userID?.avatar,
 						}}
 						resizeMode="cover"
 						style={styles.avatar}
 					/>
 					<View>
 						<Text style={{ color: textColor, fontWeight: "600" }}>
-							{item.user}
+							{item?.userID?.name}
 						</Text>
 						<Text
 							style={{
@@ -105,16 +109,19 @@ export function PostCard({
 								fontSize: 12,
 							}}
 						>
-							{item.time}
+							{formatCreatedAtTime(item?.createdAt)}
 						</Text>
 					</View>
 				</View>
-				<Feather
-					name="more-vertical"
-					size={25}
-					color={textColor}
-					onPress={() => setMenuVisible(!menuVisible)}
-				/>
+				{showviewMore ||
+					(item?.userID?._id === user?.user?._id && (
+						<Feather
+							name="more-vertical"
+							size={25}
+							color={textColor}
+							onPress={() => setMenuVisible(!menuVisible)}
+						/>
+					))}
 				{menuVisible && (
 					<View
 						style={{
@@ -142,7 +149,7 @@ export function PostCard({
 								router.push({
 									pathname:
 										"/(protected)/complaints/edit/[id]",
-									params: { id: "1" },
+									params: { id: item._id },
 								});
 							}}
 							style={{ paddingVertical: 8 }}
@@ -161,7 +168,21 @@ export function PostCard({
 						<Pressable
 							onPress={() => {
 								setMenuVisible(false);
-								// Your delete logic here
+								CustomAlert({
+									title: "Are to sure to delete complaint?",
+									onConfirm: async () => {
+										await deleteComplaintByID(item._id);
+										Toast.show({
+											type: "success",
+											text1: "Complaint Deleted.",
+										});
+										router.replace(
+											"/(protected)/(tabs)/feed"
+										);
+									},
+									confirmText: "Delete",
+									cancelText: "cancel",
+								});
 							}}
 							style={{ paddingVertical: 8 }}
 						>
@@ -178,30 +199,29 @@ export function PostCard({
 					</View>
 				)}
 			</View>
-
 			{/* Images */}
 			<View style={styles.imageRow}>
-				{item.beforeImage && (
+				{item?.beforeImage && (
 					<TouchableOpacity
 						style={styles.imageHalfTouchable}
-						onPress={() => openImageViewer(item.beforeImage)}
+						onPress={() => openImageViewer(item?.beforeImage)}
 						activeOpacity={0.7}
 					>
 						<Image
-							source={{ uri: item.beforeImage }}
+							source={{ uri: item?.beforeImage }}
 							style={styles.imageHalf}
 							resizeMode="cover"
 						/>
 					</TouchableOpacity>
 				)}
-				{item.afterImage && (
+				{item?.afterImage && (
 					<TouchableOpacity
 						style={styles.imageHalfTouchable}
-						onPress={() => openImageViewer(item.afterImage)}
+						onPress={() => openImageViewer(item?.afterImage)}
 						activeOpacity={0.7}
 					>
 						<Image
-							source={{ uri: item.afterImage }}
+							source={{ uri: item?.afterImage }}
 							style={styles.imageHalf}
 							resizeMode="cover"
 						/>
@@ -211,24 +231,38 @@ export function PostCard({
 
 			{/* Message */}
 			<Text style={[styles.message, { color: textColor }]}>
-				{item.message}
+				{item?.message}
 			</Text>
-			<Text style={styles.tag}>{item.tag}</Text>
-
+			<View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+				{item?.tags?.map((tag: string, index: number) => (
+					<Text key={index} style={styles.tag}>
+						{tag.startsWith("#") ? tag : `#${tag}`}{" "}
+					</Text>
+				))}
+			</View>
 			<Text style={[styles.status, getStatusStyle(item.status)]}>
 				{item.status}
 			</Text>
-			{/* Actions */}
 			<View style={styles.actions}>
 				<View style={styles.actionIcons}>
-					<TouchableOpacity style={styles.actionButton}>
+					<TouchableOpacity
+						style={styles.actionButton}
+						onPress={handleLike}
+					>
 						<Ionicons
-							name={item.like ? "thumbs-up" : "thumbs-up-outline"}
+							name={
+								item.likes?.some(
+									(like: any) =>
+										like.userID?._id === user?.user?._id
+								)
+									? "thumbs-up"
+									: "thumbs-up-outline"
+							}
 							size={20}
-							color={item.like ? primaryColor : textColor}
+							color={primaryColor}
 						/>
 						<Text style={{ color: textColor, fontSize: 14 }}>
-							{1000}
+							{item.likes?.length || 0}
 						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
@@ -241,7 +275,7 @@ export function PostCard({
 							color={textColor}
 						/>
 						<Text style={{ color: textColor, fontSize: 14 }}>
-							1000
+							{item.comments?.length || 0}
 						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity>
@@ -253,62 +287,94 @@ export function PostCard({
 					</TouchableOpacity>
 				</View>
 			</View>
+
 			{/* Comments Section */}
 			<Animated.View
 				style={[
 					styles.commentsSection,
-					{ maxHeight: commentsMaxHeight },
+					{ maxHeight: commentsMaxHeight, overflow: "hidden" },
 				]}
 			>
 				{showComments && (
-					<View>
-						{/* Use the comments prop instead of dummyComments */}
+					<>
 						{item.comments.map((comment: any) => (
-							<CommentItem key={comment.id} {...comment} />
+							<View
+								style={styles.commentContainer}
+								key={comment._id}
+							>
+								<Image
+									source={{
+										uri: comment?.userID?.avatar,
+									}}
+									style={styles.commentAvatar}
+								/>
+								<View style={styles.commentContent}>
+									<Text
+										style={[
+											styles.commentUser,
+											{ color: textColor },
+										]}
+									>
+										{comment?.userID?.name}
+									</Text>
+									<Text
+										style={{
+											color: textColor,
+											fontSize: 13,
+										}}
+									>
+										{comment?.message}
+									</Text>
+								</View>
+							</View>
 						))}
-						<View style={styles.newCommentContainer}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								marginTop: 6,
+							}}
+						>
 							<TextInput
 								value={newCommentText}
 								onChangeText={setNewCommentText}
 								placeholder="Add a comment..."
-								placeholderTextColor="#aaa"
-								style={[
-									styles.commentInput,
-									{
-										color: textColor,
-										borderColor: primaryColor,
-									},
-								]}
+								style={{
+									flex: 1,
+									borderWidth: 1,
+									borderColor: primaryColor,
+									borderRadius: 20,
+									paddingHorizontal: 10,
+									color: textColor,
+								}}
 							/>
 							<TouchableOpacity
 								onPress={handleAddComment}
-								style={[
-									styles.commentButton,
-									{ backgroundColor: primaryColor },
-								]}
+								style={{ marginLeft: 8 }}
 							>
 								<FontAwesome
 									name="send"
 									size={18}
-									color={cardsColor}
+									color={primaryColor}
 								/>
 							</TouchableOpacity>
 						</View>
-					</View>
+					</>
 				)}
 			</Animated.View>
-			{/* Image Viewer Modal */}
+
+			{/* Image Viewer */}
 			<Modal
 				visible={showImageViewer}
-				transparent={true} // Makes the background translucent
-				onRequestClose={closeImageViewer} // For Android back button
+				transparent={true}
+				onRequestClose={closeImageViewer}
 				animationType="fade"
 			>
 				<View style={styles.imageViewerContainer}>
 					<Image
 						source={{ uri: currentImageUri }}
 						style={styles.fullScreenImage}
-						resizeMode="contain" // Use 'contain' to ensure the whole image is visible
+						resizeMode="contain"
 					/>
 					<TouchableOpacity
 						style={styles.closeButton}
@@ -322,37 +388,7 @@ export function PostCard({
 	);
 }
 
-const CommentItem = ({
-	avatar,
-	user,
-	comment,
-}: {
-	avatar: string;
-	user: string;
-	comment: string;
-}) => {
-	const { primaryColor, secondaryColor, textColor } = useAppTheme();
-
-	return (
-		<View style={styles.commentContainer}>
-			<Image
-				source={{
-					uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-				}}
-				style={styles.commentAvatar}
-			/>
-			<View style={styles.commentContent}>
-				<Text style={[styles.commentUser, { color: textColor }]}>
-					{user}
-				</Text>
-				<Text style={{ color: textColor, fontSize: 13 }}>
-					{comment}
-				</Text>
-			</View>
-		</View>
-	);
-};
-
+export default PostCard;
 const styles = StyleSheet.create({
 	card: {
 		padding: 16,
@@ -407,7 +443,7 @@ const styles = StyleSheet.create({
 		color: "#00bcd4",
 		fontWeight: "bold",
 		fontSize: 14,
-		marginBottom: 12,
+		marginBottom: 2,
 	},
 	actions: {
 		flexDirection: "row",

@@ -9,7 +9,7 @@ export const raisedComplaint = async (payload: any) => {
 		if (shouldUploadImage) {
 			const response = await uploadImageToCloudinary(beforeImage);
 			if (response?.data) {
-				await api.post("/complaints", {
+				const complaint: any = await api.post("/complaints", {
 					...payload,
 					beforeImage: response.data.url,
 					beforeImage_public_id: response.data.public_id,
@@ -19,7 +19,10 @@ export const raisedComplaint = async (payload: any) => {
 					text1: "Complaint Raised Successfully.",
 				});
 
-				return true;
+				return {
+					success: true,
+					complaint: complaint?.data,
+				};
 			} else {
 				Toast.show({
 					type: "error",
@@ -30,19 +33,14 @@ export const raisedComplaint = async (payload: any) => {
 		}
 	} catch (error: any) {
 		console.log("Error while Raiser complaint", error.message);
-		return false;
+		return {
+			success: false,
+		};
 	}
 };
-export const getAllComplaints = async (
-	page: number = 1,
-	limit: number = 10,
-	status?: string,
-	userId?: string
-) => {
+export const getAllComplaints = async () => {
 	try {
-		const response = await api.get("/complaints/", {
-			params: { page, limit, status, userId },
-		});
+		const response = await api.get("/complaints/");
 		return response.data;
 	} catch (error) {
 		console.log("Error on Get All Complaints");
@@ -54,7 +52,7 @@ export const getComplaintsByID = async (id: string) => {
 		const response = await api.get(`/complaints/${id}`);
 		return response.data;
 	} catch (error) {
-		console.log("Error on Get Complaints");
+		console.log("Error on Get Complaints by ID");
 	}
 };
 export const getComplaintsByUserID = async (userId: string) => {
@@ -84,8 +82,16 @@ export const updateComplaintByID = async (id: string, data: any) => {
 	try {
 		const response = await api.patch(`/complaints/${id}`, data);
 		return response.data;
-	} catch (error) {
-		console.log("Error on update Complaint ");
+	} catch (error: any) {
+		console.log("Error on update Complaint ", error.message);
+	}
+};
+export const deleteComplaintByID = async (id: string) => {
+	try {
+		const response = await api.delete(`/complaints/${id}`);
+		return response.data;
+	} catch (error: any) {
+		console.log("Error on delete Complaint ", error.message);
 	}
 };
 /* ----------------------------Using Multer--------------------------------- */
@@ -156,5 +162,33 @@ const raisedComplaintwithAvtarINUpload = async (payload: any) => {
 	} catch (error: any) {
 		console.log("Error while Raiser complaint", error.message);
 		return false;
+	}
+};
+
+/* ----------------------------Comments and like --------------------------------- */
+export const addComment = async (
+	complaintID: string,
+	userId: string,
+	comments: string
+) => {
+	try {
+		const res = await api.post(`/comment/${complaintID}/comments`, {
+			userId,
+			comments,
+		});
+		return res.data;
+	} catch (error) {
+		console.log("Error on comment ");
+	}
+};
+
+export const likeComplaint = async (complaintID: string, userId: string) => {
+	try {
+		const res = await api.post(`/like/${complaintID}/likes/toggle`, {
+			userId,
+		});
+		return res.data;
+	} catch (error) {
+		console.log("Error on Like ");
 	}
 };

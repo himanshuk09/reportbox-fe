@@ -4,6 +4,9 @@ import React from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 export default function ComplaintSuccessModal({
+	cID,
+	titleText = "Complaint Submitted!",
+	btntext = "Track Your Complaint",
 	visible,
 	onClose,
 	onTrack,
@@ -45,7 +48,7 @@ export default function ComplaintSuccessModal({
 							color: "#000",
 						}}
 					>
-						Complaint Submitted!
+						{titleText}
 					</Text>
 
 					{/* Description */}
@@ -56,8 +59,7 @@ export default function ComplaintSuccessModal({
 
 					{/* Complaint ID */}
 					<Text className="text-center text-lg my-2 font-medium text-gray-900">
-						Complaint ID:{" "}
-						<Text className="font-bold">MDU45632</Text>
+						Complaint ID: <Text className="font-bold">{cID}</Text>
 					</Text>
 
 					{/* Track Button */}
@@ -69,7 +71,7 @@ export default function ComplaintSuccessModal({
 						}}
 					>
 						<Text className="text-white font-semibold text-lg">
-							Track Your Complaint
+							{btntext}
 						</Text>
 					</Pressable>
 				</View>

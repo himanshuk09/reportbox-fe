@@ -1,17 +1,21 @@
 import { PostCard } from "@/components/complaints/PostCard";
-import { complaintsPosts } from "@/constants/posts";
+import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
+import { formateDate } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { getComplaintsByID } from "@/services/complaint.service";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function PostDetailsScreen() {
+	const [complaint, setComplaint] = useState<any>([]);
 	const { id } = useLocalSearchParams();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const post = complaintsPosts.find((p) => p.id === id);
 
-	if (!post) return <Text>Post not found</Text>;
+	const [loading, setLoading] = useState(false);
+
 	const buildTimeline = (post: {
 		raisedDate?: string;
 		responseDate?: string;
@@ -55,7 +59,23 @@ export default function PostDetailsScreen() {
 
 		return timeline;
 	};
+	const fetchComplaints = async () => {
+		try {
+			setLoading(true);
+			const data = await getComplaintsByID(id as string);
 
+			setComplaint(data);
+		} catch (err) {
+			console.error("Error fetching complaints:", err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchComplaints();
+	}, [id]);
+	if (loading) <FullScreenLoader />;
 	return (
 		<ScrollView
 			style={{
@@ -76,9 +96,18 @@ export default function PostDetailsScreen() {
 					paddingVertical: 15,
 				}}
 			>
-				<PostCard item={post} showviewMore={false} />
+				<PostCard
+					item={complaint}
+					showviewMore={false}
+					onLike={async (id: any) => {
+						await fetchComplaints();
+					}}
+					onComment={async (id: any) => {
+						await fetchComplaints();
+					}}
+				/>
 
-				{buildTimeline(post).map((step, index, arr) => (
+				{buildTimeline(complaint).map((step, index, arr) => (
 					<View key={index} style={styles.timelineItem}>
 						{/* Icon Circle & Lines */}
 						<View style={styles.iconContainerWrapper}>
@@ -123,33 +152,35 @@ export default function PostDetailsScreen() {
 								fontWeight: "500",
 							}}
 						>
-							{step.date}
+							{formateDate(step.date)}
 						</Text>
 					</View>
 				))}
 			</View>
 
 			{/* Feedback */}
-			<View
-				style={{
-					marginTop: 24,
-					backgroundColor: "#e0f7fa",
-					padding: 20,
-					borderRadius: 12,
-					alignItems: "center",
-				}}
-			>
-				<Text
+			{complaint?.feedback && (
+				<View
 					style={{
-						fontSize: 16,
-						fontWeight: "bold",
-						color: "#004d40",
-						textAlign: "center",
+						marginTop: 24,
+						backgroundColor: "#e0f7fa",
+						padding: 20,
+						borderRadius: 12,
+						alignItems: "center",
 					}}
 				>
-					{post.feedback}
-				</Text>
-			</View>
+					<Text
+						style={{
+							fontSize: 16,
+							fontWeight: "bold",
+							color: "#004d40",
+							textAlign: "center",
+						}}
+					>
+						{complaint?.feedback}
+					</Text>
+				</View>
+			)}
 		</ScrollView>
 	);
 }

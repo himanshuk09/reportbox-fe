@@ -9,7 +9,7 @@ import {
 	MaterialCommunityIcons,
 	MaterialIcons,
 } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Modal,
 	ScrollView,
@@ -43,9 +43,8 @@ export default function ComplaintForm({
 }: any) {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [expandedType, setExpandedType] = useState<string | null>(null);
-	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>(
-		subtypes ?? ""
-	);
+	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>([]);
+
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
 
@@ -58,13 +57,22 @@ export default function ComplaintForm({
 		);
 		setComplaintType(expandedType);
 		setComplaintSubtype(subtype);
-		//multi select
+		// multi select
 		// setSelectedSubtypes((prev: any) =>
 		// 	prev.includes(subtype)
 		// 		? prev.filter((s: any) => s !== subtype)
 		// 		: [...prev, subtype]
 		// );
 	};
+	useEffect(() => {
+		if (Array.isArray(subtypes)) {
+			setSelectedSubtypes(subtypes);
+		} else if (typeof subtypes === "string" && subtypes.trim() !== "") {
+			setSelectedSubtypes([subtypes]);
+		} else {
+			setSelectedSubtypes([]);
+		}
+	}, [subtypes]);
 	return (
 		<View style={{ flex: 1, padding: 10 }}>
 			{/* Complaint Type Field */}
@@ -80,7 +88,8 @@ export default function ComplaintForm({
 						color: selectedSubtypes?.length ? textColor : "#999",
 					}}
 				>
-					{selectedSubtypes?.length > 0
+					{Array.isArray(selectedSubtypes) &&
+					selectedSubtypes.length > 0
 						? selectedSubtypes.join(", ")
 						: "Select complaint type"}
 				</Text>
@@ -152,7 +161,10 @@ export default function ComplaintForm({
 							return (
 								<View key={index}>
 									<TouchableOpacity
-										style={styles.typeItem}
+										style={[
+											styles.typeItem,
+											{ backgroundColor: cardsColor },
+										]}
 										onPress={() =>
 											setExpandedType(
 												expandedType === item.label
@@ -175,7 +187,12 @@ export default function ComplaintForm({
 													style={{ marginRight: 10 }}
 												/>
 											)}
-											<Text style={styles.typeText}>
+											<Text
+												style={[
+													styles.typeText,
+													{ color: textColor },
+												]}
+											>
 												{item.label}
 											</Text>
 										</View>
@@ -206,11 +223,14 @@ export default function ComplaintForm({
 															key={i}
 															style={[
 																styles.subtypeItem,
-																selectedSubtypes.includes(
-																	sub.label
-																) && {
+																,
+																{
 																	backgroundColor:
-																		primaryColor,
+																		selectedSubtypes.includes(
+																			sub.label
+																		)
+																			? primaryColor
+																			: cardsColor,
 																},
 															]}
 															onPress={() =>
@@ -253,7 +273,7 @@ export default function ComplaintForm({
 																			sub.label
 																		)
 																			? secondaryColor
-																			: "#ccc",
+																			: textColor,
 																	}}
 																>
 																	{sub.label}
