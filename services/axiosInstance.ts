@@ -3,9 +3,10 @@ import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import Toast from "react-native-toast-message";
 var id: any;
-
+const BASEURl = "http://192.168.19.110:8080/api";
+const LIVEBASEURL = "https://reportbox-be-fnxt.vercel.app/api";
 const api = axios.create({
-	baseURL: "http://192.168.19.110:8080/api",
+	baseURL: BASEURl,
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",

@@ -1,52 +1,73 @@
 import Blob from "@/components/on-bording/blob";
-import { complaintsPosts, users } from "@/constants/posts";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { getUsersList } from "@/services/admin.service";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 import { Picker } from "@react-native-picker/picker";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserListScreen() {
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState("");
+	const [allUsers, setAllUsers] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const isFocused = useIsFocused();
 	const [statusFilter, setStatusFilter] = useState("");
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 	const router = useRouter();
 	const filteredUsers = useMemo(() => {
-		return users
-			.filter((user: any) => {
+		return allUsers
+			?.filter((user: any) => {
+				// ✅ Search by ID or phone
 				const matchesSearch =
-					user.userID.toLowerCase().includes(search.toLowerCase()) ||
-					user.phoneNo.includes(search);
+					user?._id
+						.toString()
+						.toLowerCase()
+						.includes(search.toLowerCase()) ||
+					user.phoneNo?.toString().includes(search);
 
-				const userComplaints = complaintsPosts.filter(
-					(c) => c.userID === user.userID
-				);
-
+				// ✅ Filter by complaint type
 				const matchesType = typeFilter
-					? userComplaints.some((c) => c.type === typeFilter)
+					? user.complaints.some((c: any) => c.type === typeFilter)
 					: true;
+
+				// ✅ Filter by complaint status
 				const matchesStatus = statusFilter
-					? userComplaints.some((c) => c.status === statusFilter)
+					? user.complaints.some(
+							(c: any) => c.status === statusFilter
+						)
 					: true;
 
 				return matchesSearch && matchesType && matchesStatus;
 			})
-			.map((user) => {
-				const userComplaints = complaintsPosts.filter(
-					(c) => c.userID === user.userID
-				);
-				return {
-					...user,
-					complaintCount: userComplaints.length,
-				};
-			});
-	}, [search, typeFilter, statusFilter]);
+			.map((user: any) => ({
+				...user,
+				complaintCount: user.complaints.length, // ✅ Precomputed here
+			}));
+	}, [allUsers, search, typeFilter, statusFilter]);
 
+	const fetchComplaints = async () => {
+		try {
+			setLoading(true);
+			const data = await getUsersList();
+			console.log(JSON.stringify(data, null, 2));
+
+			setAllUsers(data);
+		} catch (err) {
+			console.error("Error fetching complaints:", err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchComplaints();
+	}, [isFocused]);
 	return (
 		<SafeAreaView
 			style={{
@@ -81,6 +102,7 @@ export default function UserListScreen() {
 						style={{
 							color: textColor,
 						}}
+						placeholderTextColor={textColor}
 					/>
 				</View>
 			</View>
@@ -96,12 +118,21 @@ export default function UserListScreen() {
 						selectedValue={typeFilter}
 						onValueChange={(itemValue) => setTypeFilter(itemValue)}
 					>
-						<Picker.Item label="All Types" value="" />
+						<Picker.Item
+							label="All Types"
+							value=""
+							color={textColor}
+						/>
 						<Picker.Item
 							label="Drainage Leakage"
 							value="Drainage Leakage"
+							color={textColor}
 						/>
-						<Picker.Item label="Garbage" value="Garbage" />
+						<Picker.Item
+							label="Garbage"
+							value="Garbage"
+							color={textColor}
+						/>
 					</Picker>
 				</View>
 
@@ -117,11 +148,31 @@ export default function UserListScreen() {
 							setStatusFilter(itemValue)
 						}
 					>
-						<Picker.Item label="All Statuses" value="" />
-						<Picker.Item label="Raised" value="Raised" />
-						<Picker.Item label="Resolved" value="Resolved" />
-						<Picker.Item label="Assigned" value="Assigned" />
-						<Picker.Item label="Pending" value="Pending" />
+						<Picker.Item
+							label="All Statuses"
+							value=""
+							color={textColor}
+						/>
+						<Picker.Item
+							label="Raised"
+							value="Raised"
+							color={textColor}
+						/>
+						<Picker.Item
+							label="Resolved"
+							value="Resolved"
+							color={textColor}
+						/>
+						<Picker.Item
+							label="Assigned"
+							value="Assigned"
+							color={textColor}
+						/>
+						<Picker.Item
+							label="Pending"
+							value="Pending"
+							color={textColor}
+						/>
 					</Picker>
 				</View>
 			</View>
@@ -133,17 +184,26 @@ export default function UserListScreen() {
 				estimatedItemSize={25}
 				recycleItems
 				showsVerticalScrollIndicator={false}
-				keyExtractor={(item) => item.userID}
+				keyExtractor={(item: any) => item._id}
 				extraData={[cardsColor, textColor, primaryColor]}
 				renderItem={({ item }) => (
-					<View
-						className="flex-row items-center p-3 mb-3  rounded-xl"
+					<TouchableOpacity
+						onPress={() =>
+							router.push({
+								pathname:
+									"/(protected)/admin//users/[userID]" as any,
+								params: {
+									userID: item._id,
+								},
+							})
+						}
 						style={{
 							backgroundColor: cardsColor,
 						}}
+						className="flex-row items-center p-3 mb-3  rounded-xl"
 					>
 						<Image
-							source={{ uri: item.avtar }}
+							source={{ uri: item.avatar }}
 							className="w-14 h-14 rounded-full mr-4"
 						/>
 						<View className="flex-1">
@@ -153,41 +213,30 @@ export default function UserListScreen() {
 									color: textColor,
 								}}
 							>
-								{item.name}
+								{item?.name}
 							</Text>
 							<Text
 								style={{
 									color: textColor,
 								}}
 							>
-								User ID: {item.userID}
+								User ID: {item?.UID}
 							</Text>
 							<Text
 								style={{
 									color: textColor,
 								}}
 							>
-								Complaints: {item.complaintCount}
+								Complaints: {item?.complaints?.length}
 							</Text>
 						</View>
-						<TouchableOpacity
-							onPress={() =>
-								router.push({
-									pathname:
-										"/(protected)/admin//users/[userID]" as any,
-									params: {
-										userID: item.userID ?? "MTNHB30",
-									},
-								})
-							}
-						>
-							<MaterialIcons
-								name="arrow-forward-ios"
-								size={20}
-								color={textColor}
-							/>
-						</TouchableOpacity>
-					</View>
+
+						<MaterialIcons
+							name="arrow-forward-ios"
+							size={20}
+							color={textColor}
+						/>
+					</TouchableOpacity>
 				)}
 				ListEmptyComponent={
 					<View
