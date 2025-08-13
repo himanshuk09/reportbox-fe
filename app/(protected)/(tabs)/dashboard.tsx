@@ -2,6 +2,7 @@ import { getLocationDetails } from "@/components/native/Map";
 import { bannersImageUrls } from "@/constants/banners";
 import { Dashboard_Categories } from "@/constants/complaints";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -18,6 +19,74 @@ const getWeatherEmoji = (code: number) => {
 	if (code >= 71 && code <= 77) return "🌨";
 	if (code >= 95) return "⛈";
 	return "🌍";
+};
+
+const getWeatherIcon = (code: number, size = 24) => {
+	if (code === 0)
+		return (
+			<MaterialCommunityIcons
+				name="weather-sunny"
+				size={size}
+				color="#FDB813"
+			/>
+		); // sunny yellow
+	if (code === 1)
+		return (
+			<MaterialCommunityIcons
+				name="weather-partly-cloudy"
+				size={size}
+				color="#FFD966"
+			/>
+		); // partly cloudy
+	if (code === 2)
+		return (
+			<MaterialCommunityIcons
+				name="weather-cloudy"
+				size={size}
+				color="#A0AEC0"
+			/>
+		); // cloudy gray
+	if (code === 3)
+		return (
+			<MaterialCommunityIcons
+				name="weather-cloudy"
+				size={size}
+				color="#718096"
+			/>
+		); // darker cloudy
+	if (code >= 45 && code <= 48)
+		return (
+			<MaterialCommunityIcons
+				name="weather-fog"
+				size={size}
+				color="#CBD5E0"
+			/>
+		); // fog light gray
+	if (code >= 51 && code <= 67)
+		return (
+			<MaterialCommunityIcons
+				name="weather-rainy"
+				size={size}
+				color="#3182CE"
+			/>
+		); // rainy blue
+	if (code >= 71 && code <= 77)
+		return (
+			<MaterialCommunityIcons
+				name="weather-snowy"
+				size={size}
+				color="#E2E8F0"
+			/>
+		); // snowy white
+	if (code >= 95)
+		return (
+			<MaterialCommunityIcons
+				name="weather-lightning"
+				size={size}
+				color="#F6E05E"
+			/>
+		); // lightning yellow
+	return <MaterialCommunityIcons name="earth" size={size} color="#00EEFF" />; // default earth icon
 };
 
 async function getWeather({ latitude, longitude }: any) {
@@ -150,9 +219,10 @@ const ComplaintCategoriesScreen = () => {
 										justifyContent: "center",
 									}}
 								>
-									<Text style={{ fontSize: 18 }}>
+									{/* <Text style={{ fontSize: 18 }}>
 										{getWeatherEmoji(weather.weathercode)}
-									</Text>
+									</Text> */}
+									{getWeatherIcon(weather.weathercode)}
 									<Text
 										style={{
 											fontSize: 14,

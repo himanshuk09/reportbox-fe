@@ -1,3 +1,4 @@
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import React, { useState } from "react";
 import {
@@ -210,14 +211,11 @@ const AssignUsersToGroupScreen = () => {
 				/>
 
 				{/* Assign Button */}
-				<TouchableOpacity
-					className="bg-purple-700 mt-4 py-3 rounded-lg"
+
+				<RoundedButton
+					title={"Assign Selected Users"}
 					onPress={handleAssign}
-				>
-					<Text className="text-white text-center font-bold">
-						Assign Selected Users
-					</Text>
-				</TouchableOpacity>
+				/>
 
 				{/* Assignments Display */}
 				{Object.keys(groupAssignments).length > 0 && (

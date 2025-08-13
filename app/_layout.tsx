@@ -1,5 +1,5 @@
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LoadingProvider } from "@/contexts/LoadingContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -25,8 +25,9 @@ export default function RootLayout() {
 	return (
 		<AuthProvider>
 			<ThemeProvider>
-				<AuthGuard />
-				{false && <FullScreenLoader />}
+				<LoadingProvider>
+					<AuthGuard />
+				</LoadingProvider>
 			</ThemeProvider>
 		</AuthProvider>
 	);

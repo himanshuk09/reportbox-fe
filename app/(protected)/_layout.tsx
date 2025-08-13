@@ -10,10 +10,15 @@ import {
 } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import React from "react";
-const menuItems = [
+const menuItems: {
+	label: string;
+	icon: string;
+	path: Href;
+}[] = [
 	{
 		label: "Home",
 		icon: "home-outline",
@@ -28,7 +33,7 @@ const menuItems = [
 	{
 		label: "Complaint",
 		icon: "chatbubble-ellipses-outline",
-		path: "/(protected)/complaints",
+		path: "/(protected)/complaints/add",
 	},
 	{
 		label: "Progress",
@@ -62,7 +67,9 @@ const menuItems = [
 	},
 ];
 const CustomDrawer = (props: any) => {
+	const { navigation } = props;
 	const { logout, user } = useAuth();
+	const { globalLoading, setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 
@@ -91,7 +98,7 @@ const CustomDrawer = (props: any) => {
 					<TouchableOpacity
 						key={item.label}
 						style={styles.customItem}
-						onPress={() => router.push(item.path as any)}
+						onPress={() => router.push(item.path)}
 					>
 						<Ionicons
 							name={item.icon as any}
@@ -126,6 +133,25 @@ const CustomDrawer = (props: any) => {
 		</View>
 	);
 };
+
+export default function RootDrawerLayout() {
+	const { secondaryColor } = useAppTheme();
+
+	return (
+		<Drawer
+			screenOptions={{
+				headerShown: false,
+				drawerPosition: "left", // Optional: if you want right-side drawer
+				drawerStyle: {
+					width: "80%", // Control drawer width
+					backgroundColor: secondaryColor,
+				},
+				overlayColor: "rgba(0,0,0,0.5)", // Semi-transparent overlay
+			}}
+			drawerContent={(props) => <CustomDrawer {...props} />}
+		></Drawer>
+	);
+}
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -174,22 +200,3 @@ const styles = StyleSheet.create({
 		gap: 12,
 	},
 });
-
-export default function RootDrawerLayout() {
-	const { secondaryColor } = useAppTheme();
-
-	return (
-		<Drawer
-			screenOptions={{
-				headerShown: false,
-				drawerPosition: "left", // Optional: if you want right-side drawer
-				drawerStyle: {
-					width: "80%", // Control drawer width
-					backgroundColor: secondaryColor,
-				},
-				overlayColor: "rgba(0,0,0,0.5)", // Semi-transparent overlay
-			}}
-			drawerContent={(props) => <CustomDrawer {...props} />}
-		></Drawer>
-	);
-}

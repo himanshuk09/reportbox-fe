@@ -20,6 +20,7 @@ import {
 	View,
 } from "react-native";
 import { getLocationDetails } from "../native/Map";
+import RoundedButton from "../ui/RoundedButton";
 const ICON_MAP: any = {
 	AntDesign,
 	FontAwesome,
@@ -149,6 +150,7 @@ export default function ComplaintForm({
 						flex: 1,
 						padding: 10,
 						backgroundColor: secondaryColor,
+						paddingTop: 20,
 					}}
 				>
 					<Text style={[styles.modalTitle, { color: textColor }]}>
@@ -291,17 +293,11 @@ export default function ComplaintForm({
 					</ScrollView>
 
 					{/* Done Button */}
-					<TouchableOpacity
-						style={[
-							styles.closeButton,
-							{
-								backgroundColor: primaryColor,
-							},
-						]}
+
+					<RoundedButton
+						title={"Done"}
 						onPress={() => setModalVisible(false)}
-					>
-						<Text style={styles.closeButtonText}>Done</Text>
-					</TouchableOpacity>
+					/>
 				</View>
 			</Modal>
 		</View>

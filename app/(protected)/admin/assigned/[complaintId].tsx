@@ -1,5 +1,6 @@
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
@@ -209,19 +210,11 @@ const ResolveComplaintScreen = () => {
 					// onChangeText={setMessage}
 				/>
 				{/* Submit */}
-				<TouchableOpacity
+
+				<RoundedButton
+					title={"Mark as Resolved"}
 					onPress={handleSubmit}
-					className="bg-green-600 py-3 rounded-xl mb-10"
-				>
-					<Text
-						className="text-center font-bold"
-						style={{
-							color: "white",
-						}}
-					>
-						Mark as Resolved
-					</Text>
-				</TouchableOpacity>
+				/>
 
 				{/* Camera Modal */}
 				<Modal

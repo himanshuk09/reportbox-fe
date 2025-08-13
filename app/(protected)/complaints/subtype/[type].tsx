@@ -38,19 +38,6 @@ const RenderComplaintList = () => {
 	};
 
 	const complaintData = getComplaintData();
-	const renderItem = ({ item }: { item: any }) => (
-		<TouchableOpacity
-			style={[styles.itemContainer, { backgroundColor: cardsColor }]}
-			activeOpacity={0.8}
-		>
-			<View style={[styles.iconBox, { borderColor: primaryColor }]}>
-				{React.cloneElement(item.icon, { color: primaryColor })}
-			</View>
-			<Text style={[styles.label, { color: textColor }]}>
-				{item.label}
-			</Text>
-		</TouchableOpacity>
-	);
 
 	return (
 		<SafeAreaView
@@ -61,7 +48,29 @@ const RenderComplaintList = () => {
 				recycleItems
 				data={complaintData}
 				keyExtractor={(item, index) => index.toString()}
-				renderItem={renderItem}
+				renderItem={(item: any) => (
+					<TouchableOpacity
+						style={[
+							styles.itemContainer,
+							{ backgroundColor: cardsColor },
+						]}
+						activeOpacity={0.8}
+					>
+						<View
+							style={[
+								styles.iconBox,
+								{ borderColor: primaryColor },
+							]}
+						>
+							{React.cloneElement(item.icon, {
+								color: primaryColor,
+							})}
+						</View>
+						<Text style={[styles.label, { color: textColor }]}>
+							{item.label}
+						</Text>
+					</TouchableOpacity>
+				)}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
 				extraData={[cardsColor, textColor, primaryColor]}

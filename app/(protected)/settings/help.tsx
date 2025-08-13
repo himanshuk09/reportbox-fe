@@ -43,7 +43,8 @@ const CIRCLE_SIZE = 48;
 const LINE_WIDTH = 2;
 const ITEM_MARGIN_BOTTOM = 20;
 const ComplaintStepsTimeline = () => {
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
 	return (
 		<ScrollView
 			style={{
@@ -57,7 +58,9 @@ const ComplaintStepsTimeline = () => {
 			}}
 		>
 			<View style={{ flex: 1, paddingBottom: 20 }}>
-				<Text style={styles.title}>Steps to Raise a Complaint:</Text>
+				<Text style={[styles.title, { color: textColor }]}>
+					Steps to Raise a Complaint:
+				</Text>
 				<Image
 					source={{
 						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
@@ -67,11 +70,18 @@ const ComplaintStepsTimeline = () => {
 				/>
 			</View>
 			<View style={styles.container}>
-				<Text style={styles.title}>How to Raise Complaint?</Text>
+				<Text style={[styles.title, { color: textColor }]}>
+					How to Raise Complaint?
+				</Text>
 
 				{/* Initial top circle (turquoise dot) */}
 				<View style={styles.firstStepContainer}>
-					<View style={styles.firstStepDot} />
+					<View
+						style={[
+							styles.firstStepDot,
+							{ backgroundColor: primaryColor },
+						]}
+					/>
 					{/* Vertical line from dot to first numbered step */}
 					<View
 						style={[
@@ -90,8 +100,18 @@ const ComplaintStepsTimeline = () => {
 					<View key={step.id} style={styles.stepItem}>
 						{/* Circle and Number Container */}
 						<View style={styles.circleWrapper}>
-							<View style={styles.circle}>
-								<Text style={styles.circleText}>
+							<View
+								style={[
+									styles.circle,
+									{ backgroundColor: cardsColor },
+								]}
+							>
+								<Text
+									style={[
+										styles.circleText,
+										{ color: textColor },
+									]}
+								>
 									{step.id < 10 ? `0${step.id}` : step.id}
 								</Text>
 							</View>
@@ -116,7 +136,9 @@ const ComplaintStepsTimeline = () => {
 						</View>
 
 						{/* Step Description Text */}
-						<Text style={styles.stepText}>{step.text}</Text>
+						<Text style={[styles.stepText, { color: textColor }]}>
+							{step.text}
+						</Text>
 					</View>
 				))}
 				<View style={styles.firstStepContainer}>
@@ -131,7 +153,12 @@ const ComplaintStepsTimeline = () => {
 							},
 						]}
 					/>
-					<View style={styles.firstStepDot} />
+					<View
+						style={[
+							styles.firstStepDot,
+							{ backgroundColor: primaryColor },
+						]}
+					/>
 				</View>
 			</View>
 		</ScrollView>
@@ -148,7 +175,6 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 22,
 		fontWeight: "bold",
-		color: "#fff", // White text
 		marginBottom: 20,
 	},
 	firstStepContainer: {
@@ -163,7 +189,6 @@ const styles = StyleSheet.create({
 		width: CIRCLE_SIZE,
 		height: CIRCLE_SIZE,
 		borderRadius: CIRCLE_SIZE / 2,
-		backgroundColor: "#00BCD4",
 		marginRight: 15,
 		zIndex: 2,
 	},
@@ -185,7 +210,6 @@ const styles = StyleSheet.create({
 		width: CIRCLE_SIZE,
 		height: CIRCLE_SIZE,
 		borderRadius: CIRCLE_SIZE / 2,
-		backgroundColor: "#333333",
 		alignItems: "center",
 		justifyContent: "center",
 		borderWidth: 1,
@@ -193,7 +217,6 @@ const styles = StyleSheet.create({
 		zIndex: 2,
 	},
 	circleText: {
-		color: "#fff",
 		fontSize: 18,
 		fontWeight: "bold",
 	},
@@ -206,7 +229,6 @@ const styles = StyleSheet.create({
 	},
 	stepText: {
 		flex: 1,
-		color: "#fff",
 		fontSize: 16,
 		lineHeight: 24,
 	},

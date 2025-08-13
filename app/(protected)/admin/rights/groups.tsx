@@ -1,42 +1,139 @@
+import CustomAlert from "@/components/ui/CustomAlert";
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import {
+	createGroup,
+	deleteGroup,
+	getGroups,
+	updateGroup,
+} from "@/services/group.service";
+import { MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
-import React, { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 const CreateGroupScreen = () => {
-	const [groupName, setGroupName] = useState("");
-	const [groups, setGroups] = useState<string[]>([]);
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const handleCreate = () => {
-		const trimmed = groupName.trim();
-		if (!trimmed) {
-			Alert.alert("Error", "Group name is required");
-			return;
+
+	const [name, setName] = useState("");
+	const [description, setDescription] = useState("");
+	const [groups, setGroups] = useState<any[]>([]);
+	const [editingId, setEditingId] = useState<string | null>(null);
+
+	const handleCreateOrUpdate = async () => {
+		try {
+			if (editingId) {
+				// Update group
+				const response: any = await updateGroup(editingId, {
+					name,
+					description,
+				});
+				if (response.status) {
+					Toast.show({
+						type: "success",
+						text1: "Group updated successfully.",
+					});
+					setEditingId(null);
+					setName("");
+					setDescription("");
+					await fetchGroups();
+				}
+			} else {
+				// Create group
+				const response: any = await createGroup({ name, description });
+				if (response.status) {
+					Toast.show({
+						type: "success",
+						text1: "Group created successfully.",
+					});
+					setName("");
+					setDescription("");
+					await fetchGroups();
+				}
+			}
+		} catch (error) {
+			Toast.show({
+				type: "error",
+				text1: editingId
+					? "Unable to update group"
+					: "Unable to create group",
+			});
 		}
-		if (groups.includes(trimmed)) {
-			Alert.alert("Duplicate", "Group already exists");
-			return;
-		}
-		setGroups((prev) => [...prev, trimmed]);
-		Alert.alert("Success", `Group '${trimmed}' created`);
-		setGroupName("");
 	};
 
-	const renderGroupItem = ({ item }: { item: string }) => (
+	const fetchGroups = async () => {
+		try {
+			const response: any = await getGroups();
+			setGroups(response);
+		} catch (error) {
+			console.log("Error on fetching groups", error);
+		}
+	};
+
+	const handleEdit = (item: any) => {
+		setEditingId(item._id);
+		setName(item.name);
+		setDescription(item.description);
+	};
+
+	const handleDelete = (id: string) => {
+		CustomAlert({
+			title: "Delete Group",
+			description: "Are you sure you want to delete this group?",
+			confirmText: "Delete",
+			onConfirm: async () => {
+				try {
+					const response: any = await deleteGroup(id);
+					if (response.status) {
+						Toast.show({
+							type: "success",
+							text1: "Group deleted successfully.",
+						});
+						await fetchGroups();
+					}
+				} catch (error) {
+					Toast.show({
+						type: "error",
+						text1: "Unable to delete group",
+					});
+				}
+			},
+			cancelText: "Cancel",
+		});
+	};
+
+	useEffect(() => {
+		fetchGroups();
+	}, []);
+
+	const renderGroupItem = ({ item }: any) => (
 		<View
-			className=" p-3 rounded-lg mb-2"
+			className="p-3 rounded-lg mb-2"
 			style={{
 				backgroundColor: cardsColor,
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "space-between",
 			}}
 		>
-			<Text
-				style={{
-					color: textColor,
-				}}
-			>
-				{item}
-			</Text>
+			<View style={{ flex: 1, marginRight: 8 }}>
+				<Text style={{ color: textColor }}>{item?.name}</Text>
+				<Text style={{ color: "#ccc" }}>{item?.description}</Text>
+			</View>
+
+			<View style={{ flexDirection: "row" }}>
+				<TouchableOpacity
+					onPress={() => handleEdit(item)}
+					style={{ marginRight: 8 }}
+				>
+					<MaterialIcons name="edit" size={22} color={textColor} />
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => handleDelete(item._id)}>
+					<MaterialIcons name="delete" size={22} color="red" />
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 
@@ -51,43 +148,43 @@ const CreateGroupScreen = () => {
 		>
 			<Text
 				className="text-2xl font-bold mb-4"
-				style={{
-					color: textColor,
-				}}
+				style={{ color: textColor }}
 			>
-				Create New Group
+				{editingId ? "Edit Group" : "Create New Group"}
 			</Text>
 
 			<TextInput
 				className="rounded-lg p-3 mb-4"
 				placeholder="Enter group name"
-				value={groupName}
-				onChangeText={setGroupName}
+				placeholderTextColor={textColor}
+				value={name}
+				onChangeText={setName}
 				style={{
 					backgroundColor: cardsColor,
 					color: textColor,
 				}}
 			/>
+			<TextInput
+				className="rounded-lg p-3 mb-4"
+				placeholder="Add short description"
+				placeholderTextColor={textColor}
+				value={description}
+				onChangeText={setDescription}
+				style={{
+					backgroundColor: cardsColor,
+					color: textColor,
+				}}
+				numberOfLines={2}
+			/>
 
-			<TouchableOpacity
-				className="bg-blue-600 py-3 rounded-lg mb-6"
-				onPress={handleCreate}
-			>
-				<Text
-					className=" text-center font-bold"
-					style={{
-						color: textColor,
-					}}
-				>
-					Create Group
-				</Text>
-			</TouchableOpacity>
+			<RoundedButton
+				title={editingId ? "Update Group" : "Create Group"}
+				onPress={handleCreateOrUpdate}
+			/>
 
 			<Text
 				className="text-xl font-semibold mb-2"
-				style={{
-					color: textColor,
-				}}
+				style={{ color: textColor }}
 			>
 				Created Groups:
 			</Text>

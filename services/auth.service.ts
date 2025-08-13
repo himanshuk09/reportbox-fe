@@ -71,7 +71,7 @@ export const updateProfile = async (
 			if (response?.data) {
 				await updatedUserDetails(id, {
 					...data,
-					avatar: response.data.url,
+					avatar: response.data.secure_url,
 					public_id: response.data.public_id,
 				});
 			} else {

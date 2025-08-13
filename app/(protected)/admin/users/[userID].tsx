@@ -1,4 +1,5 @@
 import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersDetailsByID } from "@/services/admin.service";
@@ -35,6 +36,7 @@ export default function ComplaintListScreen() {
 	useEffect(() => {
 		fetchComplaints();
 	}, [isFocused]);
+	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
 			className="flex-1 px-4 pt-4"

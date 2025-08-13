@@ -1,6 +1,5 @@
 import PostCard from "@/components/complaints/PostCard";
 import Blob from "@/components/on-bording/blob";
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getAllComplaints } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
@@ -10,7 +9,7 @@ import { View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 
 const Feed = () => {
-	const { secondaryColor, primaryColor } = useAppTheme();
+	const { secondaryColor, primaryColor, textColor } = useAppTheme();
 	const [complaints, setComplaints] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const isFocused = useIsFocused();
@@ -29,16 +28,15 @@ const Feed = () => {
 
 	useEffect(() => {
 		fetchComplaints();
-	}, [isFocused]);
+	}, []);
 
-	const onRefresh = () => {
+	const onRefresh = async () => {
 		setRefreshing(true);
-		// do your data fetch
-		setTimeout(() => {
-			setRefreshing(false);
-		}, 1000);
+		await fetchComplaints();
+
+		setRefreshing(false);
 	};
-	if (loading) <FullScreenLoader />;
+	// if (loading) return <Loader />;
 	return (
 		<View
 			style={{
@@ -90,9 +88,9 @@ const Feed = () => {
 				}
 				refreshControl={
 					<RefreshControl
-						colors={[primaryColor, secondaryColor]}
+						colors={[primaryColor, textColor]}
 						refreshing={refreshing}
-						onRefresh={fetchComplaints}
+						onRefresh={onRefresh}
 					/>
 				}
 			/>

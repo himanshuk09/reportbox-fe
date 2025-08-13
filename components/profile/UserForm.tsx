@@ -27,6 +27,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import CameraScreen, { handleImageChoice } from "../native/CameraScreen";
 import CustomAlert from "../ui/CustomAlert";
+import RoundedButton from "../ui/RoundedButton";
 
 interface UserFormProps {
 	editable?: boolean;
@@ -416,19 +417,10 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 							}
 						/>
 
-						<TouchableOpacity
-							style={[
-								styles.button,
-								{ backgroundColor: primaryColor },
-							]}
+						<RoundedButton
+							title={onlyForm ? "Submit" : "Update"}
 							onPress={handleFormSubmit}
-						>
-							<Text
-								style={[styles.buttonText, { color: "#fff" }]}
-							>
-								{onlyForm ? "Submit" : "Update"}
-							</Text>
-						</TouchableOpacity>
+						/>
 					</View>
 				) : (
 					<View

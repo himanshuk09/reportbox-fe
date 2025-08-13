@@ -1,5 +1,5 @@
 import { PostCard } from "@/components/complaints/PostCard";
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
+import Loader from "@/components/ui/Loader";
 import { formateDate } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByID } from "@/services/complaint.service";
@@ -75,7 +75,7 @@ export default function PostDetailsScreen() {
 	useEffect(() => {
 		fetchComplaints();
 	}, [id]);
-	if (loading) <FullScreenLoader />;
+	if (loading) <Loader />;
 	return (
 		<ScrollView
 			style={{

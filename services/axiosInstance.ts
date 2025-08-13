@@ -6,7 +6,7 @@ var id: any;
 const BASEURl = "http://192.168.19.110:8080/api";
 const LIVEBASEURL = "https://reportbox-be-fnxt.vercel.app/api";
 const api = axios.create({
-	baseURL: BASEURl,
+	baseURL: LIVEBASEURL,
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",

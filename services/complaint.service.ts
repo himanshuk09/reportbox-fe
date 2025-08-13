@@ -11,7 +11,7 @@ export const raisedComplaint = async (payload: any) => {
 			if (response?.data) {
 				const complaint: any = await api.post("/complaints", {
 					...payload,
-					beforeImage: response.data.url,
+					beforeImage: response.data.secure_url,
 					beforeImage_public_id: response.data.public_id,
 				});
 				Toast.show({

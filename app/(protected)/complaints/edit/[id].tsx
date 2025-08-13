@@ -3,6 +3,7 @@ import ComplaintSuccessModal from "@/components/complaints/ComplaintSuccessModal
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	getComplaintsByID,
@@ -18,7 +19,6 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
@@ -180,18 +180,7 @@ const ComplaintEdit = () => {
 						}
 					/>
 
-					<TouchableOpacity
-						className="rounded-full my-3 p-3 mb-4 items-center"
-						onPress={onSubmit}
-						style={{ backgroundColor: primaryColor }}
-					>
-						<Text
-							className="font-bold text-lg"
-							style={{ color: textColor }}
-						>
-							Submit
-						</Text>
-					</TouchableOpacity>
+					<RoundedButton title={"Submit"} onPress={onSubmit} />
 
 					<View
 						style={{ height: 200, width: "100%", borderRadius: 20 }}

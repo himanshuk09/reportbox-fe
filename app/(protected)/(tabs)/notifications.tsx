@@ -1,19 +1,20 @@
 import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 const Notifications = () => {
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 	const router = useRouter();
-	const [complaintsPost, setComplaintsPost] = useState<any>(
-		complaintsPosts[0]
-	);
+	const [complaintsPost, setComplaintsPost] = useState<any>(complaintsPosts);
+	const [loading, setLoading] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
 
 	const handleDelete = (rowKey: string) => {
 		const newData = complaintsPost.filter(
@@ -21,31 +22,41 @@ const Notifications = () => {
 		);
 		setComplaintsPost(newData);
 	};
+	const onRefresh = async () => {
+		setRefreshing(true);
+		setTimeout(() => {
+			setRefreshing(false);
+		}, 2000);
+	};
+	if (loading) return <Loader />;
 	return (
 		<View
 			className="flex-1  px-4"
 			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
-			<View className="flex-row items-center justify-between mb-4">
-				<Text
-					className="text-3xl  text-center font-bold"
-					style={{
-						color: textColor,
-					}}
-				>
-					Notifications
-				</Text>
-				<Ionicons
-					name="notifications-outline"
-					size={27}
-					color={textColor}
-				/>
-			</View>
-
 			<SwipeListView
 				data={complaintsPost}
 				keyExtractor={(item: any) => item.id}
-				contentContainerStyle={{ paddingBottom: 20 }}
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 100 }}
+				ListHeaderComponent={
+					<View className="flex-row items-center justify-between mb-4">
+						<Text
+							className="text-3xl  text-center font-bold"
+							style={{
+								color: textColor,
+							}}
+						>
+							Notifications
+						</Text>
+						<Ionicons
+							name="notifications-outline"
+							size={27}
+							color={textColor}
+						/>
+					</View>
+				}
 				renderItem={({ item }: any) => (
 					<Pressable
 						className="flex-row rounded-xl shadow p-2 mb-3"
@@ -133,6 +144,13 @@ const Notifications = () => {
 							iconName={"notifications"}
 						/>
 					</View>
+				}
+				refreshControl={
+					<RefreshControl
+						colors={[primaryColor, textColor]}
+						refreshing={refreshing}
+						onRefresh={onRefresh}
+					/>
 				}
 			/>
 		</View>

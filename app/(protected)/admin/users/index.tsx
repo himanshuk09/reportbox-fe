@@ -1,4 +1,5 @@
 import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersList } from "@/services/admin.service";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -68,6 +69,7 @@ export default function UserListScreen() {
 	useEffect(() => {
 		fetchComplaints();
 	}, [isFocused]);
+	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
 			style={{
@@ -77,106 +79,6 @@ export default function UserListScreen() {
 				flex: 1,
 			}}
 		>
-			<Text
-				className="text-xl font-semibold  mb-2"
-				style={{
-					color: textColor,
-				}}
-			>
-				User Complaints
-			</Text>
-
-			{/* Filters */}
-			<View className="flex-row gap-2 mb-3">
-				<View
-					className="flex-1  rounded-lg px-3"
-					style={{
-						backgroundColor: cardsColor,
-					}}
-				>
-					<TextInput
-						placeholder="Search by User ID or Phone"
-						value={search}
-						onChangeText={setSearch}
-						className="py-4 "
-						style={{
-							color: textColor,
-						}}
-						placeholderTextColor={textColor}
-					/>
-				</View>
-			</View>
-
-			<View className="flex-row gap-2 mb-4">
-				<View
-					className="flex-1  rounded-lg"
-					style={{
-						backgroundColor: cardsColor,
-					}}
-				>
-					<Picker
-						selectedValue={typeFilter}
-						onValueChange={(itemValue) => setTypeFilter(itemValue)}
-					>
-						<Picker.Item
-							label="All Types"
-							value=""
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Drainage Leakage"
-							value="Drainage Leakage"
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Garbage"
-							value="Garbage"
-							color={textColor}
-						/>
-					</Picker>
-				</View>
-
-				<View
-					className="flex-1  rounded-lg"
-					style={{
-						backgroundColor: cardsColor,
-					}}
-				>
-					<Picker
-						selectedValue={statusFilter}
-						onValueChange={(itemValue) =>
-							setStatusFilter(itemValue)
-						}
-					>
-						<Picker.Item
-							label="All Statuses"
-							value=""
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Raised"
-							value="Raised"
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Resolved"
-							value="Resolved"
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Assigned"
-							value="Assigned"
-							color={textColor}
-						/>
-						<Picker.Item
-							label="Pending"
-							value="Pending"
-							color={textColor}
-						/>
-					</Picker>
-				</View>
-			</View>
-
 			{/* User List */}
 
 			<LegendList
@@ -186,6 +88,111 @@ export default function UserListScreen() {
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(item: any) => item._id}
 				extraData={[cardsColor, textColor, primaryColor]}
+				ListHeaderComponent={
+					<>
+						<Text
+							className="text-xl font-semibold  mb-2"
+							style={{
+								color: textColor,
+							}}
+						>
+							User Complaints
+						</Text>
+
+						{/* Filters */}
+						<View className="flex-row gap-2 mb-3">
+							<View
+								className="flex-1  rounded-lg px-3"
+								style={{
+									backgroundColor: cardsColor,
+								}}
+							>
+								<TextInput
+									placeholder="Search by User ID or Phone"
+									value={search}
+									onChangeText={setSearch}
+									className="py-4 "
+									style={{
+										color: textColor,
+									}}
+									placeholderTextColor={textColor}
+								/>
+							</View>
+						</View>
+
+						<View className="flex-row gap-2 mb-4">
+							<View
+								className="flex-1  rounded-lg"
+								style={{
+									backgroundColor: cardsColor,
+								}}
+							>
+								<Picker
+									selectedValue={typeFilter}
+									onValueChange={(itemValue) =>
+										setTypeFilter(itemValue)
+									}
+								>
+									<Picker.Item
+										label="All Types"
+										value=""
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Drainage Leakage"
+										value="Drainage Leakage"
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Garbage"
+										value="Garbage"
+										color={textColor}
+									/>
+								</Picker>
+							</View>
+
+							<View
+								className="flex-1  rounded-lg"
+								style={{
+									backgroundColor: cardsColor,
+								}}
+							>
+								<Picker
+									selectedValue={statusFilter}
+									onValueChange={(itemValue) =>
+										setStatusFilter(itemValue)
+									}
+								>
+									<Picker.Item
+										label="All Statuses"
+										value=""
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Raised"
+										value="Raised"
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Resolved"
+										value="Resolved"
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Assigned"
+										value="Assigned"
+										color={textColor}
+									/>
+									<Picker.Item
+										label="Pending"
+										value="Pending"
+										color={textColor}
+									/>
+								</Picker>
+							</View>
+						</View>
+					</>
+				}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>

@@ -1,12 +1,13 @@
 import ComplaintDetailModal from "@/components/complaints/ComplaintDetailModal";
 import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import { complaintsPosts } from "@/constants/posts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByUserID } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 
 const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
@@ -75,28 +76,29 @@ const ComplaintHistoryScreen = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [complaintonModel, setComplaintModel] = useState([]);
 	const { textColor, primaryColor, secondaryColor } = useAppTheme();
+	const [loading, setLoading] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
 
+	const fetchAllComplaints = async () => {
+		setLoading(true);
+		const response = await getComplaintsByUserID(user?.user?._id);
+		setComplaintDetails(response?.complaints);
+		setLoading(false);
+	};
 	useEffect(() => {
-		const fetchAllComplaints = async () => {
-			const response = await getComplaintsByUserID(user?.user?._id);
-			setComplaintDetails(response?.complaints);
-		};
 		fetchAllComplaints();
 	}, []);
+	const onRefresh = async () => {
+		setRefreshing(true);
+		await fetchAllComplaints();
+		setRefreshing(false);
+	};
+	if (loading) return <Loader />;
 	return (
 		<View
 			className="flex-1  px-4 pt-6"
 			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
-			<Text
-				className=" text-3xl text-center font-bold mb-4 "
-				style={{
-					color: primaryColor,
-				}}
-			>
-				Complaint History
-			</Text>
-
 			<LegendList
 				data={complaintDetails ?? complaintsPosts}
 				estimatedItemSize={25}
@@ -111,6 +113,16 @@ const ComplaintHistoryScreen = () => {
 						setIsModalOpen={setIsModalOpen}
 					/>
 				)}
+				ListHeaderComponent={
+					<Text
+						className=" text-3xl text-center font-bold mb-4 "
+						style={{
+							color: primaryColor,
+						}}
+					>
+						Complaint History
+					</Text>
+				}
 				ListEmptyComponent={
 					<View
 						style={{
@@ -122,6 +134,13 @@ const ComplaintHistoryScreen = () => {
 					>
 						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
 					</View>
+				}
+				refreshControl={
+					<RefreshControl
+						colors={[primaryColor, textColor]}
+						refreshing={refreshing}
+						onRefresh={onRefresh}
+					/>
 				}
 			/>
 			<ComplaintDetailModal

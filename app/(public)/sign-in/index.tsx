@@ -1,17 +1,11 @@
 import WaveHeaderScreen from "@/components/on-bording/WaveHeaderScreen";
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { sendOtpRToEmail } from "@/services/auth.service";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-	ActivityIndicator,
-	Keyboard,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Keyboard, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 function SignInScreen() {
@@ -25,7 +19,26 @@ function SignInScreen() {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
 	};
-
+	const handleSignIn = async () => {
+		setTempData("email", email);
+		if (loading) return;
+		setLoading(true);
+		Keyboard.dismiss();
+		const status = await sendOtpRToEmail({ email });
+		if (status) {
+			Toast.show({
+				type: "success",
+				text1: "OTP sent successfully.",
+			});
+			router.push("/(public)/sign-in/verify-otp");
+		} else {
+			Toast.show({
+				type: "error",
+				text1: "Unabled to sent OTP.",
+			});
+		}
+		setLoading(false);
+	};
 	return (
 		<View className="px-2 pt-6">
 			{/* Title */}
@@ -60,43 +73,17 @@ function SignInScreen() {
 			</View>
 
 			{/* Button */}
-			<TouchableOpacity
-				className="rounded-full p-3 mt-6 items-center"
-				onPress={async () => {
-					setTempData("email", email);
-					if (loading) return;
-					setLoading(true);
-					Keyboard.dismiss();
-					const status = await sendOtpRToEmail({ email });
-					if (status) {
-						Toast.show({
-							type: "success",
-							text1: "OTP sent successfully.",
-						});
-						router.push("/(public)/sign-in/verify-otp");
-					} else {
-						Toast.show({
-							type: "error",
-							text1: "Unabled to sent OTP.",
-						});
-					}
-					setLoading(false);
-				}}
-				disabled={!isValidEmail(email) || loading}
+			<RoundedButton
+				title={"Get OTP"}
+				onPress={handleSignIn}
 				style={{
 					backgroundColor: isValidEmail(email)
 						? primaryColor
 						: "#aaa",
 				}}
-			>
-				{loading ? (
-					<ActivityIndicator color={secondaryColor} size={"small"} />
-				) : (
-					<Text className="font-semibold" style={{ color: "#fff" }}>
-						Get OTP
-					</Text>
-				)}
-			</TouchableOpacity>
+				disabled={!isValidEmail(email) || loading}
+				loading={loading}
+			/>
 		</View>
 	);
 }

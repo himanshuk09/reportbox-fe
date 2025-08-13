@@ -1,4 +1,5 @@
 import Blob from "@/components/on-bording/blob";
+import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { LegendList } from "@legendapp/list";
 import React, { useState } from "react";
@@ -143,14 +144,10 @@ const AssignRightsToGroupScreen = () => {
 						</TouchableOpacity>
 					))}
 
-					<TouchableOpacity
-						className="bg-green-700 mt-4 py-3 rounded-lg"
+					<RoundedButton
+						title={"Assign Rights"}
 						onPress={handleSubmit}
-					>
-						<Text className="text-white text-center font-bold">
-							Assign Rights
-						</Text>
-					</TouchableOpacity>
+					/>
 				</>
 			)}
 
