@@ -92,10 +92,7 @@ function SignInScreen() {
 				{loading ? (
 					<ActivityIndicator color={secondaryColor} size={"small"} />
 				) : (
-					<Text
-						className="font-semibold"
-						style={{ color: textColor }}
-					>
+					<Text className="font-semibold" style={{ color: "#fff" }}>
 						Get OTP
 					</Text>
 				)}

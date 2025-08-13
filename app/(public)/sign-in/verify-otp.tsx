@@ -97,7 +97,7 @@ function VerificationScreen() {
 				className="text-gray-300  mb-6 text-center text-lg"
 				style={{ color: textColor }}
 			>
-				Please enter verification code sent to +91 9876543210
+				Please enter verification code sent to {data?.email}
 			</Text>
 
 			<View className="flex-row items-center justify-between w-full px-6 mb-2">
