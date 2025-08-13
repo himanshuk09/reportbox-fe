@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ComplaintListScreen() {
 	const { userID } = useLocalSearchParams();
-	const [userDetails, setUserDetails] = useState<any>({});
+	const [userDetails, setUserDetails] = useState<any>(null);
 	const [loading, setLoading] = useState(false);
 
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
@@ -35,7 +35,7 @@ export default function ComplaintListScreen() {
 
 	useEffect(() => {
 		fetchComplaints();
-	}, [isFocused]);
+	}, []);
 	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
@@ -128,7 +128,9 @@ export default function ComplaintListScreen() {
 								<View className="flex-row items-center">
 									{userDetails?.avatar && (
 										<Image
-											source={{ uri: userDetails.avatar }}
+											source={{
+												uri: userDetails.avatar,
+											}}
 											className="w-20 h-20 rounded-full mr-4 border-2"
 											style={{
 												borderColor: primaryColor,
@@ -163,7 +165,9 @@ export default function ComplaintListScreen() {
 							{/* Divider */}
 							<View
 								className="h-[1px] my-3"
-								style={{ backgroundColor: primaryColor }}
+								style={{
+									backgroundColor: primaryColor,
+								}}
 							/>
 
 							{/* Contact Info */}
@@ -200,7 +204,10 @@ export default function ComplaintListScreen() {
 									style={{ marginRight: 6 }}
 								/>
 								<Text
-									style={{ color: textColor, flexShrink: 1 }}
+									style={{
+										color: textColor,
+										flexShrink: 1,
+									}}
 								>
 									{userDetails?.doorNo}, {userDetails?.street}
 									, {userDetails?.city}, {userDetails?.state}
@@ -241,7 +248,7 @@ export default function ComplaintListScreen() {
 								</View>
 							)}
 						</View>
-						{/* COMPLAINTS LIST */}
+
 						<Text
 							className="text-xl font-semibold mb-3"
 							style={{
@@ -255,98 +262,6 @@ export default function ComplaintListScreen() {
 			/>
 		</SafeAreaView>
 	);
-	// return (
-	// 	<SafeAreaView
-	// 		className="flex-1 px-4 pt-4"
-	// 		style={{
-	// 			padding: 16,
-	// 			backgroundColor: secondaryColor,
-	// 			marginTop: 100,
-	// 		}}
-	// 	>
-	// 		<Text
-	// 			className="text-xl font-semibold mb-3 "
-	// 			style={{
-	// 				color: textColor,
-	// 			}}
-	// 		>
-	// 			Complaints for: {userDetails?.UID}
-	// 		</Text>
-
-	// 		<LegendList
-	// 			estimatedItemSize={25}
-	// 			recycleItems
-	// 			data={userDetails?.complaints || []}
-	// 			keyExtractor={(item: any) => item._id}
-	// 			showsVerticalScrollIndicator={false}
-	// 			extraData={[cardsColor, textColor, primaryColor]}
-	// 			ItemSeparatorComponent={() => <View className="h-3" />}
-	// 			renderItem={({ item }) => (
-	// 				<Pressable
-	// 					className="p-4 rounded-xl"
-	// 					style={{ backgroundColor: cardsColor }}
-	// 					onPress={() =>
-	// 						router.push({
-	// 							pathname:
-	// 								"/(protected)/admin/users/edit-complaint/[id]",
-	// 							params: { id: item?._id },
-	// 						})
-	// 					}
-	// 				>
-	// 					<Text
-	// 						className="text-lg font-semibold mb-2"
-	// 						style={{ color: textColor }}
-	// 					>
-	// 						{item?.type}
-	// 					</Text>
-
-	// 					{item?.beforeImage && (
-	// 						<Image
-	// 							source={{ uri: item?.beforeImage }}
-	// 							className="w-full h-40 rounded-lg mb-3"
-	// 							resizeMode="cover"
-	// 						/>
-	// 					)}
-
-	// 					<Text
-	// 						style={[styles.status, getStatusStyle(item.status)]}
-	// 					>
-	// 						Status: {item.status}
-	// 					</Text>
-	// 					<Text style={{ color: textColor }}>
-	// 						Complaint ID: {item.cid}
-	// 					</Text>
-	// 					<Text style={{ color: textColor }}>
-	// 						Date: {new Date(item?.raisedDate).toLocaleString()}
-	// 					</Text>
-
-	// 					{item.status === "Resolved" && (
-	// 						<Text style={{ color: textColor }}>
-	// 							Resolved By: {item.resolvedBy}
-	// 						</Text>
-	// 					)}
-	// 					{item.status === "Assigned" && (
-	// 						<Text style={{ color: textColor }}>
-	// 							Assigned To: {item?.assignedTo}
-	// 						</Text>
-	// 					)}
-	// 				</Pressable>
-	// 			)}
-	// 			ListEmptyComponent={
-	// 				<View
-	// 					style={{
-	// 						flex: 1,
-	// 						backgroundColor: secondaryColor,
-	// 						justifyContent: "center",
-	// 						alignItems: "center",
-	// 					}}
-	// 				>
-	// 					<Blob text={"Not Found !"} iconName={"alert-sharp"} />
-	// 				</View>
-	// 			}
-	// 		/>
-	// 	</SafeAreaView>
-	// );
 }
 const styles = StyleSheet.create({
 	status: {

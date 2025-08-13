@@ -68,7 +68,7 @@ export default function UserListScreen() {
 
 	useEffect(() => {
 		fetchComplaints();
-	}, [isFocused]);
+	}, []);
 	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
