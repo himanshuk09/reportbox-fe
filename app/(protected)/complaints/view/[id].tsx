@@ -8,8 +8,8 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-export default function PostDetailsScreen() {
-	const [complaint, setComplaint] = useState<any>([]);
+const PostDetailsScreen = () => {
+	const [complaint, setComplaint] = useState<any>(null); // default null
 	const { id } = useLocalSearchParams();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
@@ -22,48 +22,19 @@ export default function PostDetailsScreen() {
 		resolvedDate?: string;
 	}) => {
 		const timeline = [];
-
-		if (post.raisedDate) {
-			timeline.push({
-				date: post.raisedDate,
-				icon: "handshake",
-			});
-		} else {
-			timeline.push({
-				date: "-",
-				icon: "handshake",
-			});
-		}
-		if (post.responseDate) {
-			timeline.push({
-				date: post.responseDate,
-				icon: "checkmark-done",
-			});
-		} else {
-			timeline.push({
-				date: "-",
-				icon: "checkmark-done",
-			});
-		}
-		if (post.resolvedDate) {
-			timeline.push({
-				date: post.resolvedDate,
-				icon: "award",
-			});
-		} else {
-			timeline.push({
-				date: "-",
-				icon: "award",
-			});
-		}
-
+		timeline.push({ date: post.raisedDate || "-", icon: "handshake" });
+		timeline.push({
+			date: post.responseDate || "-",
+			icon: "checkmark-done",
+		});
+		timeline.push({ date: post.resolvedDate || "-", icon: "award" });
 		return timeline;
 	};
+
 	const fetchComplaints = async () => {
 		try {
 			setLoading(true);
 			const data = await getComplaintsByID(id as string);
-
 			setComplaint(data);
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
@@ -75,7 +46,38 @@ export default function PostDetailsScreen() {
 	useEffect(() => {
 		fetchComplaints();
 	}, [id]);
-	if (loading) <Loader />;
+
+	if (loading) {
+		return (
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+					marginTop: 100,
+				}}
+			>
+				<Loader />
+			</View>
+		);
+	}
+
+	if (!complaint) {
+		// optional: show empty state if complaint not found
+		return (
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+					marginTop: 100,
+				}}
+			>
+				<Text style={{ color: textColor }}>Complaint not found</Text>
+			</View>
+		);
+	}
+
 	return (
 		<ScrollView
 			style={{
@@ -83,12 +85,10 @@ export default function PostDetailsScreen() {
 				backgroundColor: secondaryColor,
 				marginTop: 100,
 			}}
-			contentContainerStyle={{
-				paddingBottom: 100,
-			}}
+			contentContainerStyle={{ paddingBottom: 100 }}
 			showsVerticalScrollIndicator={false}
 		>
-			{/* Timeline */}
+			{/* Timeline and PostCard */}
 			<View
 				style={{
 					backgroundColor: cardsColor,
@@ -99,17 +99,12 @@ export default function PostDetailsScreen() {
 				<PostCard
 					item={complaint}
 					showviewMore={false}
-					onLike={async (id: any) => {
-						await fetchComplaints();
-					}}
-					onComment={async (id: any) => {
-						await fetchComplaints();
-					}}
+					onLike={async () => await fetchComplaints()}
+					onComment={async () => await fetchComplaints()}
 				/>
 
 				{buildTimeline(complaint).map((step, index, arr) => (
 					<View key={index} style={styles.timelineItem}>
-						{/* Icon Circle & Lines */}
 						<View style={styles.iconContainerWrapper}>
 							{index > 0 && (
 								<View style={styles.verticalLineTop} />
@@ -117,7 +112,6 @@ export default function PostDetailsScreen() {
 							{index < arr.length - 1 && (
 								<View style={styles.verticalLineBottom} />
 							)}
-
 							<View style={styles.circle}>
 								{step.icon === "handshake" && (
 									<FontAwesome5
@@ -142,12 +136,9 @@ export default function PostDetailsScreen() {
 								)}
 							</View>
 						</View>
-
-						{/* Label + Date */}
-
 						<Text
 							style={{
-								color: textColor, // White text for date/time
+								color: textColor,
 								fontSize: 16,
 								fontWeight: "500",
 							}}
@@ -158,7 +149,6 @@ export default function PostDetailsScreen() {
 				))}
 			</View>
 
-			{/* Feedback */}
 			{complaint?.feedback && (
 				<View
 					style={{
@@ -177,13 +167,14 @@ export default function PostDetailsScreen() {
 							textAlign: "center",
 						}}
 					>
-						{complaint?.feedback}
+						{complaint.feedback}
 					</Text>
 				</View>
 			)}
 		</ScrollView>
 	);
-}
+};
+export default PostDetailsScreen;
 const styles = StyleSheet.create({
 	timelineItem: {
 		flexDirection: "row",

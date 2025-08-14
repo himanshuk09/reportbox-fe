@@ -73,7 +73,7 @@ function VerificationScreen() {
 						/>
 					) : (
 						<Text
-							className="text-2xl font-semibold italic "
+							className="text-2xl font-semibold "
 							style={{ color: textColor }}
 						>
 							{digit}

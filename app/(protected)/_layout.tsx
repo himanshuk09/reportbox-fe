@@ -24,27 +24,13 @@ const menuItems: {
 		icon: "home-outline",
 		path: "/(protected)/(tabs)/dashboard",
 	},
-	{ label: "Profile", icon: "person-outline", path: "/(protected)/profile" },
+
 	{
 		label: "Settings",
 		icon: "settings-outline",
 		path: "/(protected)/settings",
 	},
-	{
-		label: "Complaint",
-		icon: "chatbubble-ellipses-outline",
-		path: "/(protected)/complaints/add",
-	},
-	{
-		label: "Progress",
-		icon: "trending-up-outline",
-		path: "/(protected)/complaints/progress",
-	},
-	{
-		label: "History",
-		icon: "time-outline",
-		path: "/(protected)/complaints/history",
-	},
+
 	{
 		label: "All Users",
 		icon: "people-outline",
@@ -60,11 +46,6 @@ const menuItems: {
 		icon: "shield-checkmark-outline",
 		path: "/(protected)/admin/rights",
 	},
-	{
-		label: "About US",
-		icon: "information-circle",
-		path: "/(protected)/admin/rights",
-	},
 ];
 const CustomDrawer = (props: any) => {
 	const { navigation } = props;
@@ -75,7 +56,15 @@ const CustomDrawer = (props: any) => {
 
 	return (
 		<View style={[styles.container, { backgroundColor: secondaryColor }]}>
-			<View style={[styles.header, { borderBottomColor: textColor }]}>
+			<TouchableOpacity
+				style={[styles.header, { borderBottomColor: textColor }]}
+				onPress={() => {
+					router.push("/(protected)/profile");
+					if (navigation?.closeDrawer) {
+						navigation.closeDrawer();
+					}
+				}}
+			>
 				<Image
 					source={{
 						uri: user?.user?.avatar,
@@ -88,7 +77,7 @@ const CustomDrawer = (props: any) => {
 				<Text style={[styles.email, { color: textColor }]}>
 					{user?.user?.email}
 				</Text>
-			</View>
+			</TouchableOpacity>
 
 			<ScrollView
 				contentContainerStyle={styles.menuContainer}
@@ -98,7 +87,13 @@ const CustomDrawer = (props: any) => {
 					<TouchableOpacity
 						key={item.label}
 						style={styles.customItem}
-						onPress={() => router.push(item.path)}
+						onPress={() => {
+							router.push(item.path);
+
+							if (navigation?.closeDrawer) {
+								navigation.closeDrawer();
+							}
+						}}
 					>
 						<Ionicons
 							name={item.icon as any}

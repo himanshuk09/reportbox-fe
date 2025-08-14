@@ -112,41 +112,39 @@ const TabLayout = () => {
 					tabBarButton: SpecialTabButton,
 				}}
 			/>
-			<Tabs.Protected guard={true}>
-				<Tabs.Screen
-					name="notifications"
-					listeners={{
-						tabPress: (e) => {
-							// e.preventDefault();
-							// navigation.dispatch(DrawerActions.openDrawer());
-							// route.push("/");
-						},
 
-						tabLongPress: () => {},
-					}}
-					options={{
-						title: "",
-						headerShown: true,
-						tabBarIcon: ({ color, size }) => (
-							<Ionicons
-								name="notifications"
-								color={color}
-								size={size}
-								activeOpacity={1}
-							/>
-						),
-						tabBarActiveTintColor: primaryColor,
-						headerTransparent: true,
-						header: () => (
-							<SafeAreaView
-								style={{ backgroundColor: primaryColor }}
-							>
-								<MemoizedStackHeader showThreeDots={false} />
-							</SafeAreaView>
-						),
-					}}
-				/>
-			</Tabs.Protected>
+			<Tabs.Screen
+				name="notifications"
+				listeners={{
+					tabPress: (e) => {
+						// e.preventDefault();
+						// navigation.dispatch(DrawerActions.openDrawer());
+						// route.push("/");
+					},
+
+					tabLongPress: () => {},
+				}}
+				options={{
+					title: "",
+					headerShown: true,
+					tabBarIcon: ({ color, size }) => (
+						<Ionicons
+							name="notifications"
+							color={color}
+							size={size}
+							activeOpacity={1}
+						/>
+					),
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+				}}
+			/>
+
 			<Tabs.Screen
 				name="my-complaints"
 				options={{
@@ -180,3 +178,13 @@ const TabLayout = () => {
 };
 
 export default TabLayout;
+{
+	/* <Tabs.Screen
+				name="test"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarStyle: { display: "none" },
+				}}
+			/> */
+}
