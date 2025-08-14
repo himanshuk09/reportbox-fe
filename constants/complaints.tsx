@@ -54,6 +54,7 @@ export const Dashboard_Categories = [
 	{
 		label: "Green Waste",
 		icon: <MaterialCommunityIcons name="leaf" size={28} color="#00F0FF" />,
+		route: "/(protected)/complaints/subtype/green-waste",
 	},
 	{
 		label: "Public Works Dept",
@@ -64,6 +65,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
+		route: "/(protected)/complaints/subtype/works",
 	},
 	{
 		label: "C & D Waste",
@@ -74,6 +76,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
+		route: "/(protected)/complaints/subtype/c-d",
 	},
 	{
 		label: "Food Safety",
@@ -84,12 +87,14 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
+		route: "/(protected)/complaints/subtype/food-safety",
 	},
 	{
 		label: "IBUS Transport",
 		icon: (
 			<MaterialCommunityIcons name="bus-side" size={28} color="#00F0FF" />
 		),
+		route: "/(protected)/complaints/subtype/bus",
 	},
 	{
 		label: "Noise Pollution",
@@ -100,6 +105,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
+		route: "/(protected)/complaints/subtype/noise",
 	},
 	{
 		label: "Emergency Contact",
@@ -113,7 +119,7 @@ export const Dashboard_Categories = [
 		icon: (
 			<MaterialCommunityIcons name="recycle" size={28} color="#00F0FF" />
 		),
-		route: "/(protected)/complaints/1234/view",
+		route: "/(protected)/complaints/subtype/env",
 	},
 ];
 

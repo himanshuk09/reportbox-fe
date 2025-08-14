@@ -84,7 +84,7 @@ export function PostCard({
 			onPress={() => {
 				if (!showviewMore) return;
 				router.push({
-					pathname: "/(protected)/complaints/view/[id]",
+					pathname: "/(protected)/(tabs)/complaints/view/[id]",
 					params: { id: item._id },
 				});
 			}}
@@ -148,7 +148,7 @@ export function PostCard({
 								setMenuVisible(false);
 								router.push({
 									pathname:
-										"/(protected)/complaints/edit/[id]",
+										"/(protected)/(tabs)/complaints/edit/[id]",
 									params: { id: item._id },
 								});
 							}}
@@ -177,7 +177,7 @@ export function PostCard({
 											text1: "Complaint Deleted.",
 										});
 										router.replace(
-											"/(protected)/(tabs)/feed"
+											"/(protected)/(tabs)/dashboard"
 										);
 									},
 									confirmText: "Delete",

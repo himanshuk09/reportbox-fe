@@ -130,7 +130,7 @@ const ComplaintCategoriesScreen = () => {
 						style={styles.item}
 						onPress={() => {
 							if (item.route) {
-								router.replace(item?.route);
+								router.push(item.route);
 							}
 						}}
 					>

@@ -41,6 +41,8 @@ export const raisedComplaint = async (payload: any) => {
 export const getAllComplaints = async () => {
 	try {
 		const response = await api.get("/complaints/");
+		console.log(JSON.stringify(response.data, null, 1));
+
 		return response.data;
 	} catch (error) {
 		console.log("Error on Get All Complaints");

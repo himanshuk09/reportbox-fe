@@ -79,11 +79,11 @@ const TabLayout = () => {
 					),
 				}}
 			/>
-
 			<Tabs.Screen
-				name="feed"
+				name="complaints/index"
 				options={{
 					title: "",
+
 					headerShown: true,
 					tabBarIcon: ({ color, size }) => (
 						// <Ionicons name="search" color={color} size={size} />
@@ -101,6 +101,52 @@ const TabLayout = () => {
 							<MemoizedStackHeader showThreeDots={false} />
 						</SafeAreaView>
 					),
+				}}
+			/>
+
+			<Tabs.Screen
+				name="complaints/create"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
+				}}
+			/>
+			<Tabs.Screen
+				name="complaints/view/[id]"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
+				}}
+			/>
+			<Tabs.Screen
+				name="complaints/edit/[id]"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
 				}}
 			/>
 
@@ -144,9 +190,8 @@ const TabLayout = () => {
 					),
 				}}
 			/>
-
 			<Tabs.Screen
-				name="my-complaints"
+				name="complaints/progress"
 				options={{
 					title: "",
 					headerShown: true,
@@ -165,12 +210,42 @@ const TabLayout = () => {
 							<MemoizedStackHeader
 								onmenuTitlePress={() =>
 									router.push(
-										"/(protected)/complaints/history"
+										"/(protected)/(tabs)/complaints/history"
 									)
 								}
 							/>
 						</SafeAreaView>
 					),
+				}}
+			/>
+			<Tabs.Screen
+				name="complaints/history"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
+				}}
+			/>
+			<Tabs.Screen
+				name="complaints/type/[id]"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
 				}}
 			/>
 		</Tabs>

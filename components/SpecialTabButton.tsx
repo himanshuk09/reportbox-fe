@@ -7,7 +7,8 @@ export const SpecialTabButton = () => {
 	const { primaryColor } = useAppTheme();
 	const router = useRouter();
 	const handlePress = () => {
-		router.push("/(protected)/complaints/add");
+		// router.push("/(protected)/complaints/add");
+		router.push("/(protected)/(tabs)/complaints/create");
 	};
 	return (
 		<TouchableOpacity
