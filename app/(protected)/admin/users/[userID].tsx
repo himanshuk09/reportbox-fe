@@ -1,14 +1,23 @@
 import Blob from "@/components/on-bording/blob";
+import CustomAlert from "@/components/ui/CustomAlert";
 import Loader from "@/components/ui/Loader";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersDetailsByID } from "@/services/admin.service";
+import { deleteUser } from "@/services/auth.service";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+	Image,
+	Pressable,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ComplaintListScreen() {
@@ -39,11 +48,11 @@ export default function ComplaintListScreen() {
 	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
-			className="flex-1 px-4 pt-4"
+			className="flex-1 px-4 "
 			style={{
 				padding: 16,
 				backgroundColor: secondaryColor,
-				marginTop: 100,
+				marginTop: 60,
 			}}
 		>
 			<LegendList
@@ -73,14 +82,32 @@ export default function ComplaintListScreen() {
 							{item?.type}
 						</Text>
 
-						{item?.beforeImage && (
-							<Image
-								source={{ uri: item?.beforeImage }}
-								className="w-full h-40 rounded-lg mb-3"
-								resizeMode="cover"
-							/>
-						)}
-
+						<View style={styles.imageRow}>
+							{item?.beforeImage && (
+								<TouchableOpacity
+									style={styles.imageHalfTouchable}
+									activeOpacity={0.7}
+								>
+									<Image
+										source={{ uri: item?.beforeImage }}
+										style={styles.imageHalf}
+										resizeMode="cover"
+									/>
+								</TouchableOpacity>
+							)}
+							{item?.afterImage && (
+								<TouchableOpacity
+									style={styles.imageHalfTouchable}
+									activeOpacity={0.7}
+								>
+									<Image
+										source={{ uri: item?.afterImage }}
+										style={styles.imageHalf}
+										resizeMode="cover"
+									/>
+								</TouchableOpacity>
+							)}
+						</View>
 						<Text
 							style={[styles.status, getStatusStyle(item.status)]}
 						>
@@ -159,6 +186,25 @@ export default function ComplaintListScreen() {
 									name="delete-forever"
 									size={30}
 									color="#ff4d4d"
+									onPress={() => {
+										CustomAlert({
+											title: "Delete User !",
+											description:
+												"Are you sure to delete user ? All the data of this user has deleted .",
+											onConfirm: async () => {
+												try {
+													await deleteUser(
+														userID.toString()
+													);
+													router.back();
+												} catch (error) {
+													console.log(
+														"error on delete "
+													);
+												}
+											},
+										});
+									}}
 								/>
 							</View>
 
@@ -273,5 +319,20 @@ const styles = StyleSheet.create({
 		paddingVertical: 4,
 		overflow: "hidden",
 		marginBottom: 8,
+	},
+	imageHalf: {
+		flex: 1,
+		height: "100%",
+		width: "100%",
+	},
+	imageHalfTouchable: {
+		flex: 1, // Ensure touchable area fills its half
+	},
+	imageRow: {
+		flexDirection: "row",
+		height: 160,
+		borderRadius: 12,
+		overflow: "hidden",
+		marginBottom: 12,
 	},
 });

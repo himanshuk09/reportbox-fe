@@ -161,6 +161,7 @@ import Toast from "react-native-toast-message";
 
 const CreateRightsScreen = () => {
 	const [name, setName] = useState("");
+	const [key, setKey] = useState("");
 	const [description, setDescription] = useState("");
 	const [rights, setRights] = useState<any[]>([]);
 	const [editingId, setEditingId] = useState<string | null>(null);
@@ -185,10 +186,12 @@ const CreateRightsScreen = () => {
 		if (editingId) {
 			// Update
 			try {
-				await updateRight(editingId, { name, description });
+				await updateRight(editingId, { name, key, description });
 				setRights((prev) =>
 					prev.map((r) =>
-						r._id === editingId ? { ...r, name, description } : r
+						r._id === editingId
+							? { ...r, name, key, description }
+							: r
 					)
 				);
 				setEditingId(null);
@@ -205,7 +208,11 @@ const CreateRightsScreen = () => {
 		} else {
 			// Create
 			try {
-				const response: any = await createRights({ name, description });
+				const response: any = await createRights({
+					name,
+					key,
+					description,
+				});
 				if (response.status) {
 					Toast.show({
 						type: "success",
@@ -257,6 +264,7 @@ const CreateRightsScreen = () => {
 		>
 			<View style={{ flex: 1, marginRight: 8 }}>
 				<Text style={{ color: textColor }}>{item?.name}</Text>
+				<Text style={{ color: "#ddd" }}>{item?.key}</Text>
 				<Text style={{ color: "#ccc" }}>{item?.description}</Text>
 			</View>
 			<View style={{ flexDirection: "row" }}>
@@ -299,6 +307,14 @@ const CreateRightsScreen = () => {
 				placeholderTextColor={textColor}
 				value={name}
 				onChangeText={setName}
+				style={{ backgroundColor: cardsColor, color: textColor }}
+			/>
+			<TextInput
+				className="rounded-lg p-3 mb-4"
+				placeholder="Enter rights key"
+				placeholderTextColor={textColor}
+				value={key}
+				onChangeText={setKey}
 				style={{ backgroundColor: cardsColor, color: textColor }}
 			/>
 			<TextInput

@@ -29,32 +29,32 @@ export const Dashboard_Categories = [
 	{
 		label: "Sanitation Module",
 		icon: <FontAwesome6 name="broom-ball" size={24} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/sanitation",
+		route: "/(protected)/(tabs)/complaints/type/sanitation",
 	},
 	{
 		label: "Water & Sewerage",
 		icon: <MaterialCommunityIcons name="pipe" size={28} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/water",
+		route: "/(protected)/(tabs)/complaints/type/water",
 	},
 	{
 		label: "Health & Safety",
 		icon: <FontAwesome5 name="first-aid" size={28} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/health",
+		route: "/(protected)/(tabs)/complaints/type/health",
 	},
 	{
 		label: "Street & Infrastructure",
 		icon: <MaterialIcons name="construction" size={28} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/street",
+		route: "/(protected)/(tabs)/complaints/type/street",
 	},
 	{
 		label: "Animal Control",
 		icon: <MaterialCommunityIcons name="paw" size={28} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/animal",
+		route: "/(protected)/(tabs)/complaints/type/animal",
 	},
 	{
 		label: "Green Waste",
 		icon: <MaterialCommunityIcons name="leaf" size={28} color="#00F0FF" />,
-		route: "/(protected)/complaints/subtype/green-waste",
+		route: "/(protected)/(tabs)/complaints/type/green-waste",
 	},
 	{
 		label: "Public Works Dept",
@@ -65,7 +65,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
-		route: "/(protected)/complaints/subtype/works",
+		route: "/(protected)/(tabs)/complaints/type/works",
 	},
 	{
 		label: "C & D Waste",
@@ -76,7 +76,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
-		route: "/(protected)/complaints/subtype/c-d",
+		route: "/(protected)/(tabs)/complaints/type/c-d",
 	},
 	{
 		label: "Food Safety",
@@ -87,14 +87,14 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
-		route: "/(protected)/complaints/subtype/food-safety",
+		route: "/(protected)/(tabs)/complaints/type/food-safety",
 	},
 	{
 		label: "IBUS Transport",
 		icon: (
 			<MaterialCommunityIcons name="bus-side" size={28} color="#00F0FF" />
 		),
-		route: "/(protected)/complaints/subtype/bus",
+		route: "/(protected)/(tabs)/complaints/type/bus",
 	},
 	{
 		label: "Noise Pollution",
@@ -105,7 +105,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
-		route: "/(protected)/complaints/subtype/noise",
+		route: "/(protected)/(tabs)/complaints/type/noise",
 	},
 	{
 		label: "Emergency Contact",
@@ -119,7 +119,7 @@ export const Dashboard_Categories = [
 		icon: (
 			<MaterialCommunityIcons name="recycle" size={28} color="#00F0FF" />
 		),
-		route: "/(protected)/complaints/subtype/env",
+		route: "/(protected)/(tabs)/complaints/type/env",
 	},
 ];
 

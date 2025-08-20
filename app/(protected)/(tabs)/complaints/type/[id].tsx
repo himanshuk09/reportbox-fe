@@ -39,57 +39,11 @@ const RenderComplaintList = () => {
 	};
 
 	const complaintData = getComplaintData();
-	console.log(JSON.stringify(complaintData, null, 1));
 
 	return (
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			{/* <LegendList
-				estimatedItemSize={80}
-				recycleItems
-				data={complaintData}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						style={[
-							styles.itemContainer,
-							{ backgroundColor: cardsColor },
-						]}
-						activeOpacity={0.8}
-					>
-						<View
-							style={[
-								styles.iconBox,
-								{ borderColor: primaryColor },
-							]}
-						>
-							{item.icon &&
-								React.cloneElement(item.icon, {
-									color: primaryColor,
-								})}
-						</View>
-						<Text style={[styles.label, { color: textColor }]}>
-							{item.label}
-						</Text>
-					</TouchableOpacity>
-				)}
-				contentContainerStyle={styles.list}
-				showsVerticalScrollIndicator={false}
-				extraData={[cardsColor, textColor, primaryColor]}
-				ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-				ListEmptyComponent={
-					<View
-						style={{
-							flex: 1,
-							backgroundColor: secondaryColor,
-							justifyContent: "center",
-							alignItems: "center",
-						}}
-					>
-						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
-					</View>
-				}
-			/> */}
 			<FlashList
 				data={complaintData}
 				estimatedItemSize={60} // ✅ this is correct for FlashList

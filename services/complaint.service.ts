@@ -65,22 +65,8 @@ export const getComplaintsByUserID = async (userId: string) => {
 		console.log("Error on Get Complaints by USER ID");
 	}
 };
-export const updateComplaintStatus = async (
-	id: string,
-	status: string,
-	assignedTo?: string
-) => {
-	try {
-		const response = await api.patch(`/complaints/${id}/status`, {
-			status,
-			assignedTo,
-		});
-		return response.data;
-	} catch (error) {
-		console.log("Error on update Complaint Status");
-	}
-};
-export const updateComplaintByID = async (id: string, data: any) => {
+
+const updateComplaintByID = async (id: string, data: any) => {
 	try {
 		const response = await api.patch(`/complaints/${id}`, data);
 		return response.data;
@@ -192,5 +178,63 @@ export const likeComplaint = async (complaintID: string, userId: string) => {
 		return res.data;
 	} catch (error) {
 		console.log("Error on Like ");
+	}
+};
+
+export const updateComplaint = async (id: string, data: any) => {
+	try {
+		const updatedData: any = { ...data };
+
+		// Handle beforeImage
+		if (data.beforeImage?.startsWith("file://")) {
+			const res = await uploadImageToCloudinary(data.beforeImage);
+			if (res?.data) {
+				updatedData.beforeImage = res.data.secure_url;
+				updatedData.beforeImage_public_id = res.data.public_id;
+			}
+		} else if (
+			data.beforeImage?.startsWith("http") ||
+			data.beforeImage?.startsWith("https")
+		) {
+			// keep as is
+			updatedData.beforeImage = data.beforeImage;
+		}
+
+		// Handle afterImage
+		if (data.afterImage?.startsWith("file://")) {
+			const res = await uploadImageToCloudinary(data.afterImage);
+			if (res?.data) {
+				updatedData.afterImage = res.data.secure_url;
+				updatedData.afterImage_public_id = res.data.public_id;
+			}
+		} else if (
+			data.afterImage?.startsWith("http") ||
+			data.afterImage?.startsWith("https")
+		) {
+			updatedData.afterImage = data.afterImage;
+		}
+
+		// finally update complaint
+		await updateComplaintByID(id, updatedData);
+
+		Toast.show({
+			type: "success",
+			text1: "Complaint updated successfully.",
+		});
+
+		return true;
+	} catch (error) {
+		console.error("Update complaint error:", error);
+		Toast.show({ type: "error", text1: "Update failed." });
+		return false;
+	}
+};
+
+export const getAssignedComplaintsByUser = async (id: string) => {
+	try {
+		const response = await api.get(`/complaints/assigned/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error on Get Assigned by ID");
 	}
 };

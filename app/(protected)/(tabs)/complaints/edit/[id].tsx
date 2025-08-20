@@ -7,7 +7,7 @@ import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	getComplaintsByID,
-	updateComplaintByID,
+	updateComplaint,
 } from "@/services/complaint.service";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -119,10 +119,7 @@ const ComplaintEdit = () => {
 
 		try {
 			setLoading(true);
-			const response = await updateComplaintByID(
-				id as string,
-				complaintData
-			);
+			await updateComplaint(id as string, complaintData);
 
 			Toast.show({
 				type: "success",

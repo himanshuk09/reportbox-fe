@@ -91,7 +91,7 @@ function SignInScreen() {
 export default function LoginScreen() {
 	return (
 		<WaveHeaderScreen
-			headerImageUri="https://images.pexels.com/photos/1154059/pexels-photo-1154059.jpeg"
+			headerImageUri="https://images.unsplash.com/photo-1580893246395-52aead8960dc?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 			imageContainerHeight={0.5}
 			svgStyle={{ opacity: 1 }}
 		>

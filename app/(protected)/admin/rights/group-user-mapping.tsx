@@ -1,8 +1,17 @@
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import React, { useState } from "react";
+import { getUsersList } from "@/services/admin.service";
 import {
+	assignUsersToGroup,
+	getUsersByGroupId,
+} from "@/services/group-user.service";
+import { getGroups } from "@/services/group.service";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+	ActivityIndicator,
 	Image,
+	Modal,
 	ScrollView,
 	Text,
 	TextInput,
@@ -12,49 +21,92 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Mock Data
-const groups = ["Sanitation Team", "Water Team", "Admin Group"];
-
-const allUsers = [
-	{
-		id: "u1",
-		name: "Ravi",
-		userID: "C101",
-		phone: "9876543210",
-		avatar: "https://i.pravatar.cc/150?u=u1",
-	},
-	{
-		id: "u2",
-		name: "Meena",
-		userID: "C102",
-		phone: "9876500011",
-		avatar: "https://i.pravatar.cc/150?u=u2",
-	},
-	{
-		id: "u3",
-		name: "Ajay",
-		userID: "C103",
-		phone: "9998887776",
-		avatar: "https://i.pravatar.cc/150?u=u3",
-	},
-	{
-		id: "u4",
-		name: "Priya",
-		userID: "C104",
-		phone: "7776665554",
-		avatar: "https://i.pravatar.cc/150?u=u4",
-	},
-];
-
 const AssignUsersToGroupScreen = () => {
-	const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+	const [groups, setGroups] = useState<any[]>([]);
+	const [allUsers, setAllUsers] = useState<any[]>([]);
+	const [selectedGroup, setSelectedGroup] = useState<any | null>(null);
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [groupAssignments, setGroupAssignments] = useState<{
-		[groupName: string]: string[];
-	}>({});
+	const [loading, setLoading] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
+	const [addedUsers, setAddedUsers] = useState<any[]>([]);
+	const [removedUsers, setRemovedUsers] = useState<any[]>([]);
+	const [groupUsers, setGroupUsers] = useState<string[]>([]);
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+
+	// Fetch Users
+	const fetchUsersList = async () => {
+		try {
+			setLoading(true);
+			const data = await getUsersList();
+			setAllUsers(data || []);
+		} catch (err) {
+			console.error("Error fetching users:", err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// Fetch Groups
+	const fetchGroups = async () => {
+		try {
+			const response: any = await getGroups();
+			setGroups(response || []);
+		} catch (error) {
+			console.log("Error on fetching groups", error);
+		}
+	};
+
+	const fetchUserByGroupID = async (groupId: string) => {
+		try {
+			const response: any = await getUsersByGroupId(groupId);
+			const ids = response.map((u: any) => u._id);
+			setSelectedUsers(ids); // current state
+			setGroupUsers(ids); // original state
+		} catch (error) {
+			console.log("Error on fetching group users", error);
+		}
+	};
+
+	const handlePreviewChanges = () => {
+		if (!selectedGroup) return alert("Please select a group");
+
+		// Calculate added/removed
+		const added = allUsers.filter(
+			(u) => selectedUsers.includes(u._id) && !groupUsers.includes(u._id)
+		);
+		const removed = allUsers.filter(
+			(u) => !selectedUsers.includes(u._id) && groupUsers.includes(u._id)
+		);
+
+		setAddedUsers(added);
+		setRemovedUsers(removed);
+		setShowConfirm(true);
+	};
+
+	// Final Confirm
+	const handleConfirmUpdate = async () => {
+		setShowConfirm(false);
+		try {
+			const payload = {
+				groupId: selectedGroup._id,
+				userIds: selectedUsers,
+			};
+			const response: any = await assignUsersToGroup(payload);
+			alert("Users updated successfully!");
+			setGroupUsers([...selectedUsers]); // update local state
+			console.log(response);
+		} catch (error) {
+			console.log("Error on assigning users", error);
+		}
+	};
+	// On Mount
+	useEffect(() => {
+		fetchUsersList();
+		fetchGroups();
+	}, []);
+
 	const toggleUser = (userId: string) => {
 		setSelectedUsers((prev) =>
 			prev.includes(userId)
@@ -63,24 +115,21 @@ const AssignUsersToGroupScreen = () => {
 		);
 	};
 
-	const handleAssign = () => {
-		if (!selectedGroup) return alert("Please select a group");
-		setGroupAssignments((prev) => ({
-			...prev,
-			[selectedGroup]: selectedUsers,
-		}));
-		alert(`Assigned to ${selectedGroup}`);
-		setSelectedUsers([]);
-	};
-
 	const filteredUsers = allUsers.filter((u) => {
 		const q = searchTerm.toLowerCase();
 		return (
-			u.userID.toLowerCase().includes(q) ||
-			u.phone.includes(q) ||
-			u.name.toLowerCase().includes(q)
+			u.UID?.toLowerCase().includes(q) ||
+			String(u.phoneNo ?? "").includes(q) || // safely handle undefined / number
+			u.name?.toLowerCase().includes(q)
 		);
 	});
+
+	const presentUsers = filteredUsers.filter((u) =>
+		selectedUsers.includes(u._id)
+	);
+	const nonPresentUsers = filteredUsers.filter(
+		(u) => !selectedUsers.includes(u._id)
+	);
 
 	return (
 		<SafeAreaView
@@ -92,165 +141,231 @@ const AssignUsersToGroupScreen = () => {
 				marginTop: 90,
 			}}
 		>
-			<ScrollView
-				contentContainerStyle={{
-					paddingBottom: 30,
-					padding: 6,
-				}}
-				showsVerticalScrollIndicator={false}
-			>
-				{/* Group Filter */}
-				<Text
-					className="text-lg font-semibold mt-6 mb-2"
-					style={{
-						color: textColor,
+			{loading ? (
+				<View className="flex-1 justify-center items-center">
+					<ActivityIndicator size="large" color={primaryColor} />
+				</View>
+			) : (
+				<ScrollView
+					contentContainerStyle={{
+						paddingBottom: 30,
+						padding: 6,
 					}}
+					showsVerticalScrollIndicator={false}
 				>
-					Select Group:
-				</Text>
-				<View className="flex-row flex-wrap gap-2 mb-10">
-					{groups.map((group) => (
-						<TouchableOpacity
-							key={group}
-							onPress={() => {
-								setSelectedGroup(group);
-								setSelectedUsers(groupAssignments[group] || []);
-							}}
-							className={`px-4 py-2 rounded-full `}
-							style={{
-								backgroundColor:
-									selectedGroup === group
-										? primaryColor
-										: cardsColor,
-							}}
-						>
-							<Text
-								className=" font-bold"
+					{/* Group Selector */}
+					<Text
+						className="text-lg font-semibold mt-6 mb-2"
+						style={{ color: textColor }}
+					>
+						Select Group:
+					</Text>
+					<View className="flex-row flex-wrap gap-2 mb-10">
+						{groups.map((group) => (
+							<TouchableOpacity
+								key={group._id}
+								onPress={() => {
+									setSelectedGroup(group);
+									fetchUserByGroupID(group._id);
+								}}
+								className="px-4 py-2 rounded-full"
 								style={{
-									color: textColor,
+									backgroundColor:
+										selectedGroup?._id === group._id
+											? primaryColor
+											: cardsColor,
 								}}
 							>
-								{group}
-							</Text>
-						</TouchableOpacity>
-					))}
-				</View>
-				<Text
-					className=" text-2xl font-bold mb-4"
-					style={{
-						color: textColor,
-					}}
-				>
-					Assign Users to Group
-				</Text>
-
-				{/* Search */}
-				<TextInput
-					placeholder="Search by CID, phone or name..."
-					placeholderTextColor="#999"
-					className="bg-white text-black p-3 rounded-lg mb-4"
-					value={searchTerm}
-					onChangeText={setSearchTerm}
-				/>
-
-				{/* User List */}
-				<Text
-					className=" font-semibold text-lg mb-2"
-					style={{
-						color: textColor,
-					}}
-				>
-					Select Users:
-				</Text>
-
-				<FlatList
-					data={filteredUsers}
-					showsVerticalScrollIndicator={false}
-					keyExtractor={(item) => item.id}
-					scrollEnabled={false}
-					renderItem={({ item }) => (
-						<TouchableOpacity
-							onPress={() => toggleUser(item.id)}
-							className={`flex-row items-center gap-3 p-3 rounded-lg mb-3 `}
-							style={{
-								backgroundColor: selectedUsers.includes(item.id)
-									? primaryColor
-									: cardsColor,
-							}}
-						>
-							<Image
-								source={{ uri: item.avatar }}
-								className="w-10 h-10 rounded-full"
-							/>
-							<View className="flex-1">
 								<Text
-									className=" font-semibold"
+									className="font-bold"
 									style={{
-										color: textColor,
+										color:
+											selectedGroup?._id === group._id
+												? cardsColor
+												: textColor,
 									}}
 								>
-									{item.name}
+									{group.name}
 								</Text>
-								<Text
-									className=" text-xs"
-									style={{
-										color: textColor,
-									}}
-								>
-									UserID: {item.userID}
-								</Text>
-								<Text className="text-gray-500 text-xs">
-									Phone: {item.phone}
-								</Text>
-							</View>
-						</TouchableOpacity>
-					)}
-					ListEmptyComponent={
-						<Text className="text-gray-400">No users found.</Text>
-					}
-				/>
+							</TouchableOpacity>
+						))}
+					</View>
 
-				{/* Assign Button */}
-
-				<RoundedButton
-					title={"Assign Selected Users"}
-					onPress={handleAssign}
-				/>
-
-				{/* Assignments Display */}
-				{Object.keys(groupAssignments).length > 0 && (
-					<View className="mt-6">
-						<Text className="text-white text-xl font-semibold mb-2">
-							Group Assignments
-						</Text>
-						{Object.entries(groupAssignments).map(
-							([group, users]) => (
-								<View
-									key={group}
-									className="bg-[#292929] p-3 mb-2 rounded-lg"
-								>
-									<Text className="text-white font-bold">
-										{group}
-									</Text>
-									<Text className="text-gray-300 text-sm">
-										{users.length > 0
-											? users
-													.map(
-														(id) =>
-															allUsers.find(
-																(u) =>
-																	u.id === id
-															)?.name || id
-													)
-													.join(", ")
-											: "No users assigned"}
-									</Text>
-								</View>
-							)
+					{/* Search */}
+					<View className="relative">
+						<TextInput
+							placeholder="Search by UID, phone or name..."
+							placeholderTextColor="#999"
+							className="bg-white text-black p-3 rounded-lg mb-4 pr-10"
+							value={searchTerm}
+							onChangeText={setSearchTerm}
+						/>
+						{searchTerm.length > 0 && (
+							<TouchableOpacity
+								className="absolute right-3 top-3"
+								onPress={() => setSearchTerm("")}
+							>
+								<Ionicons
+									name="close-circle"
+									size={20}
+									color="#999"
+								/>
+							</TouchableOpacity>
 						)}
 					</View>
-				)}
-			</ScrollView>
+					{/* Non-Present Users */}
+					<Text
+						className="font-semibold text-lg mb-2"
+						style={{ color: textColor }}
+					>
+						Non-Present Users:
+					</Text>
+					<FlatList
+						data={nonPresentUsers}
+						keyExtractor={(item) => item._id}
+						scrollEnabled={false}
+						renderItem={({ item }) => (
+							<TouchableOpacity
+								onPress={() => toggleUser(item._id)}
+								className="flex-row items-center gap-3 p-3 rounded-lg mb-3"
+								style={{ backgroundColor: cardsColor }}
+							>
+								<Image
+									source={{ uri: item.avatar }}
+									className="w-10 h-10 rounded-full"
+								/>
+								<View className="flex-1">
+									<Text
+										className="font-semibold"
+										style={{ color: textColor }}
+									>
+										{item.name}
+									</Text>
+									<Text
+										className="text-xs"
+										style={{ color: textColor }}
+									>
+										UID: {item.UID}
+									</Text>
+									<Text className="text-gray-500 text-xs">
+										Phone: {item.phoneNo}
+									</Text>
+								</View>
+							</TouchableOpacity>
+						)}
+						ListEmptyComponent={
+							<Text className="text-gray-400">
+								No users found.
+							</Text>
+						}
+					/>
+
+					{/* Present Users */}
+					<Text
+						className="font-semibold text-lg mb-2 mt-6"
+						style={{ color: textColor }}
+					>
+						Present Users:
+					</Text>
+					<FlatList
+						data={presentUsers}
+						keyExtractor={(item) => item._id}
+						scrollEnabled={false}
+						renderItem={({ item }) => (
+							<TouchableOpacity
+								onPress={() => toggleUser(item._id)}
+								className="flex-row items-center gap-3 p-3 rounded-lg mb-3"
+								style={{ backgroundColor: primaryColor }}
+							>
+								<Image
+									source={{ uri: item.avatar }}
+									className="w-10 h-10 rounded-full"
+								/>
+								<View className="flex-1">
+									<Text
+										className="font-semibold"
+										style={{ color: cardsColor }}
+									>
+										{item.name}
+									</Text>
+									<Text
+										className="text-xs"
+										style={{ color: cardsColor }}
+									>
+										UID: {item.UID}
+									</Text>
+									<Text className="text-gray-700 text-xs">
+										Phone: {item.phoneNo}
+									</Text>
+								</View>
+							</TouchableOpacity>
+						)}
+						ListEmptyComponent={
+							<Text className="text-gray-400">
+								No users assigned yet.
+							</Text>
+						}
+					/>
+				</ScrollView>
+			)}
+			{/* Update Button */}
+			<RoundedButton title={"Update"} onPress={handlePreviewChanges} />
+
+			{/* Confirmation Modal */}
+			<Modal
+				visible={showConfirm}
+				animationType="slide"
+				transparent={true}
+			>
+				<View className="flex-1 justify-center items-center bg-black/60">
+					<View className="bg-white p-5 rounded-2xl w-4/5">
+						<Text className="text-lg font-bold mb-3">
+							Confirm Changes
+						</Text>
+
+						<Text className="font-semibold text-green-600">
+							Users to Add:
+						</Text>
+						{addedUsers.length > 0 ? (
+							addedUsers.map((u) => (
+								<Text key={u._id}>
+									+ {u.name} ({u.UID})
+								</Text>
+							))
+						) : (
+							<Text className="text-gray-400">No new users</Text>
+						)}
+
+						<Text className="font-semibold text-red-600 mt-3">
+							Users to Remove:
+						</Text>
+						{removedUsers.length > 0 ? (
+							removedUsers.map((u) => (
+								<Text key={u._id}>
+									- {u.name} ({u.UID})
+								</Text>
+							))
+						) : (
+							<Text className="text-gray-400">
+								No users removed
+							</Text>
+						)}
+
+						<View className="flex-row justify-end gap-4 mt-5">
+							<TouchableOpacity
+								onPress={() => setShowConfirm(false)}
+							>
+								<Text className="text-gray-500">Cancel</Text>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={handleConfirmUpdate}>
+								<Text className="text-blue-600 font-bold">
+									Confirm
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
 		</SafeAreaView>
 	);
 };

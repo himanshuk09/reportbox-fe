@@ -1,188 +1,370 @@
-import Blob from "@/components/on-bording/blob";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { LegendList } from "@legendapp/list";
-import React, { useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
-
-const allGroups = ["Sanitation Team", "Water Team"];
-const availableRights = ["View", "Resolve", "Delete", "Assign"];
-
-type GroupRightsMap = { [groupName: string]: string[] };
-
+import {
+	assignRightsToGroup,
+	getRightsByGroupId,
+} from "@/services/group-rights.service";
+import { getGroups } from "@/services/group.service";
+import { getRights } from "@/services/rights.service";
+import { Ionicons } from "@expo/vector-icons"; // your custom theme hook
+import Checkbox from "expo-checkbox";
+import React, { useEffect, useState } from "react";
+import {
+	ActivityIndicator,
+	FlatList,
+	Modal,
+	SafeAreaView,
+	ScrollView,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 const AssignRightsToGroupScreen = () => {
-	const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+	const [groups, setGroups] = useState<any[]>([]);
+	const [allRights, setAllRights] = useState<any[]>([]);
+	const [selectedGroup, setSelectedGroup] = useState<any | null>(null);
 	const [selectedRights, setSelectedRights] = useState<string[]>([]);
-	const [groupRights, setGroupRights] = useState<GroupRightsMap>({});
+	const [searchTerm, setSearchTerm] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
+	const [addedRights, setAddedRights] = useState<any[]>([]);
+	const [removedRights, setRemovedRights] = useState<any[]>([]);
+	const [groupRights, setGroupRights] = useState<string[]>([]);
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const toggleRight = (right: string) => {
-		setSelectedRights((prev) =>
-			prev.includes(right)
-				? prev.filter((r) => r !== right)
-				: [...prev, right]
-		);
-	};
 
-	const handleSubmit = () => {
-		if (!selectedGroup) {
-			Alert.alert("Error", "Please select a group");
-			return;
+	const [selectAll, setSelectAll] = useState(false);
+	// Fetch Rights
+	const fetchRightsList = async () => {
+		try {
+			setLoading(true);
+			const data = await getRights();
+			setAllRights(data || []);
+		} catch (err) {
+			console.error("Error fetching rights:", err);
+		} finally {
+			setLoading(false);
 		}
-		setGroupRights((prev) => ({
-			...prev,
-			[selectedGroup]: selectedRights,
-		}));
-		Alert.alert("Assigned", `Rights updated for '${selectedGroup}'`);
-		setSelectedRights([]);
 	};
 
-	const renderGroupRightsItem = ({ item }: { item: string }) => {
-		const rights = groupRights[item] || [];
-		return (
-			<View
-				className=" p-3 rounded-lg mb-2"
-				style={{
-					backgroundColor: cardsColor,
-				}}
-			>
-				<Text
-					className=" font-bold mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					{item}
-				</Text>
-				<Text className="text-gray-300">
-					Rights:{" "}
-					{rights.length > 0 ? rights.join(", ") : "None assigned"}
-				</Text>
-			</View>
+	// Fetch Groups
+	const fetchGroups = async () => {
+		try {
+			const response: any = await getGroups();
+			setGroups(response || []);
+		} catch (error) {
+			console.log("Error on fetching groups", error);
+		}
+	};
+
+	// Fetch Rights by Group ID
+	const fetchRightsByGroupID = async (groupId: string) => {
+		try {
+			const response: any = await getRightsByGroupId(groupId);
+			const ids = response.map((r: any) => r._id);
+			setSelectedRights(ids); // current state
+			setGroupRights(ids); // original state
+		} catch (error) {
+			console.log("Error on fetching group rights", error);
+		}
+	};
+
+	const handlePreviewChanges = () => {
+		if (!selectedGroup) return alert("Please select a group");
+
+		// Calculate added/removed
+		const added = allRights.filter(
+			(r) =>
+				selectedRights.includes(r._id) && !groupRights.includes(r._id)
+		);
+		const removed = allRights.filter(
+			(r) =>
+				!selectedRights.includes(r._id) && groupRights.includes(r._id)
+		);
+
+		setAddedRights(added);
+		setRemovedRights(removed);
+		setShowConfirm(true);
+	};
+
+	// Final Confirm
+	const handleConfirmUpdate = async () => {
+		setShowConfirm(false);
+		try {
+			const payload = {
+				groupId: selectedGroup._id,
+				rightIds: selectedRights,
+			};
+			const response: any = await assignRightsToGroup(payload);
+			alert("Rights updated successfully!");
+			setGroupRights([...selectedRights]); // update local state
+			console.log(response);
+		} catch (error) {
+			console.log("Error on assigning rights", error);
+		}
+	};
+
+	// On Mount
+	useEffect(() => {
+		fetchRightsList();
+		fetchGroups();
+	}, []);
+
+	const toggleRight = (rightId: string) => {
+		setSelectedRights((prev) =>
+			prev.includes(rightId)
+				? prev.filter((id) => id !== rightId)
+				: [...prev, rightId]
 		);
 	};
 
+	const filteredRights = allRights.filter((r) => {
+		const q = searchTerm.toLowerCase();
+		return (
+			r.code?.toLowerCase().includes(q) || // assuming rights have code/name
+			r.name?.toLowerCase().includes(q)
+		);
+	});
+
+	const presentRights = filteredRights.filter((r) =>
+		selectedRights.includes(r._id)
+	);
+	const nonPresentRights = filteredRights.filter(
+		(r) => !selectedRights.includes(r._id)
+	);
+	const toggleSelectAll = () => {
+		if (selectAll) {
+			setSelectedRights([]);
+			setSelectAll(false);
+		} else {
+			setSelectedRights(allRights.map((r) => r._id));
+			setSelectAll(true);
+		}
+	};
 	return (
-		<View
+		<SafeAreaView
 			style={{
 				flex: 1,
-				padding: 16,
 				backgroundColor: secondaryColor,
+				paddingVertical: 6,
+				paddingHorizontal: 6,
 				marginTop: 90,
 			}}
 		>
-			<Text
-				className=" text-2xl font-bold mb-4"
-				style={{
-					color: textColor,
-				}}
-			>
-				Assign Rights
-			</Text>
-
-			{/* Group Selection */}
-			<Text
-				className=" mb-2"
-				style={{
-					color: textColor,
-				}}
-			>
-				Select Group:
-			</Text>
-			{allGroups.map((group) => (
-				<TouchableOpacity
-					key={group}
-					onPress={() => {
-						setSelectedGroup(group);
-						setSelectedRights(groupRights[group] || []);
+			{loading ? (
+				<View className="flex-1 justify-center items-center">
+					<ActivityIndicator size="large" color={primaryColor} />
+				</View>
+			) : (
+				<ScrollView
+					contentContainerStyle={{
+						paddingBottom: 30,
+						padding: 6,
 					}}
-					className={`p-3 rounded-lg mb-2`}
-					style={{
-						backgroundColor:
-							selectedGroup === group ? primaryColor : cardsColor,
-					}}
+					showsVerticalScrollIndicator={false}
 				>
+					{/* Group Selector */}
 					<Text
-						style={{
-							color: textColor,
-						}}
+						className="text-lg font-semibold mt-6 mb-2"
+						style={{ color: textColor }}
 					>
-						{group}
+						Select Group:
 					</Text>
-				</TouchableOpacity>
-			))}
-
-			{/* Rights Selection */}
-			{selectedGroup && (
-				<>
-					<Text
-						className=" mt-4 mb-2"
-						style={{
-							color: textColor,
-						}}
-					>
-						Select Rights:
-					</Text>
-					{availableRights.map((right) => (
-						<TouchableOpacity
-							key={right}
-							onPress={() => toggleRight(right)}
-							className={`p-3 rounded-lg mb-2 `}
-							style={{
-								backgroundColor: selectedRights.includes(right)
-									? primaryColor
-									: cardsColor,
-							}}
-						>
-							<Text
+					<View className="flex-row flex-wrap gap-2 mb-10">
+						{groups.map((group) => (
+							<TouchableOpacity
+								key={group._id}
+								onPress={() => {
+									setSelectedGroup(group);
+									fetchRightsByGroupID(group._id);
+								}}
+								className="px-4 py-2 rounded-full"
 								style={{
-									color: textColor,
+									backgroundColor:
+										selectedGroup?._id === group._id
+											? primaryColor
+											: cardsColor,
 								}}
 							>
-								{right}
-							</Text>
-						</TouchableOpacity>
-					))}
+								<Text
+									className="font-bold"
+									style={{
+										color:
+											selectedGroup?._id === group._id
+												? cardsColor
+												: textColor,
+									}}
+								>
+									{group.name}
+								</Text>
+							</TouchableOpacity>
+						))}
+					</View>
 
-					<RoundedButton
-						title={"Assign Rights"}
-						onPress={handleSubmit}
+					{/* Search */}
+					<View className="relative">
+						<TextInput
+							placeholder="Search by right code or name..."
+							placeholderTextColor="#999"
+							className="bg-white text-black p-3 rounded-lg mb-4 pr-10"
+							value={searchTerm}
+							onChangeText={setSearchTerm}
+						/>
+						{searchTerm.length > 0 && (
+							<TouchableOpacity
+								className="absolute right-3 top-3"
+								onPress={() => setSearchTerm("")}
+							>
+								<Ionicons
+									name="close-circle"
+									size={20}
+									color="#999"
+								/>
+							</TouchableOpacity>
+						)}
+					</View>
+					<View className="flex-row items-center mb-4">
+						<Checkbox
+							value={selectAll}
+							onValueChange={toggleSelectAll}
+							color={primaryColor}
+							disabled={false}
+						/>
+						<Text className="ml-2 font-semibold text-lg">
+							Select All Rights
+						</Text>
+					</View>
+					{/* Non-Present Rights */}
+					<Text
+						className="font-semibold text-lg mb-2"
+						style={{ color: textColor }}
+					>
+						Non-Present Rights:
+					</Text>
+
+					<FlatList
+						data={nonPresentRights}
+						keyExtractor={(item) => item._id}
+						scrollEnabled={false}
+						renderItem={({ item }) => (
+							<TouchableOpacity
+								onPress={() => toggleRight(item._id)}
+								className="flex-row items-center gap-3 p-3 rounded-lg mb-3"
+								style={{ backgroundColor: cardsColor }}
+							>
+								<View className="flex-1">
+									<Text
+										className="font-semibold"
+										style={{ color: textColor }}
+									>
+										{item.name}
+									</Text>
+								</View>
+							</TouchableOpacity>
+						)}
+						ListEmptyComponent={
+							<Text className="text-gray-400">
+								No rights found.
+							</Text>
+						}
 					/>
-				</>
+
+					{/* Present Rights */}
+					<Text
+						className="font-semibold text-lg mb-2 mt-6"
+						style={{ color: textColor }}
+					>
+						Present Rights:
+					</Text>
+					<FlatList
+						data={presentRights}
+						keyExtractor={(item) => item._id}
+						scrollEnabled={false}
+						renderItem={({ item }) => (
+							<TouchableOpacity
+								onPress={() => toggleRight(item._id)}
+								className="flex-row items-center gap-3 p-3 rounded-lg mb-3"
+								style={{ backgroundColor: primaryColor }}
+							>
+								<View className="flex-1">
+									<Text
+										className="font-semibold"
+										style={{ color: cardsColor }}
+									>
+										{item.name}
+									</Text>
+								</View>
+							</TouchableOpacity>
+						)}
+						ListEmptyComponent={
+							<Text className="text-gray-400">
+								No rights assigned yet.
+							</Text>
+						}
+					/>
+				</ScrollView>
 			)}
 
-			{/* Group Rights Display Section */}
-			<Text
-				className=" text-xl mt-8 mb-2 font-semibold"
-				style={{
-					color: textColor,
-				}}
-			>
-				Groups & Assigned Rights
-			</Text>
+			{/* Update Button */}
+			<RoundedButton title={"Update"} onPress={handlePreviewChanges} />
 
-			<LegendList
-				data={Object.keys(groupRights)}
-				estimatedItemSize={25}
-				recycleItems
-				showsVerticalScrollIndicator={false}
-				keyExtractor={(_, index) => index.toString()}
-				renderItem={renderGroupRightsItem}
-				extraData={[cardsColor, textColor, primaryColor]}
-				ListEmptyComponent={
-					<View
-						style={{
-							flex: 1,
-							backgroundColor: secondaryColor,
-							justifyContent: "center",
-							alignItems: "center",
-						}}
-					>
-						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+			{/* Confirmation Modal */}
+			<Modal
+				visible={showConfirm}
+				animationType="slide"
+				transparent={true}
+			>
+				<View className="flex-1 justify-center items-center bg-black/60">
+					<View className="bg-white p-5 rounded-2xl w-4/5">
+						<Text className="text-lg font-bold mb-3">
+							Confirm Changes
+						</Text>
+
+						<Text className="font-semibold text-green-600">
+							Rights to Add:
+						</Text>
+						{addedRights.length > 0 ? (
+							addedRights.map((r) => (
+								<Text key={r._id}>
+									+ {r.name} ({r.code})
+								</Text>
+							))
+						) : (
+							<Text className="text-gray-400">No new rights</Text>
+						)}
+
+						<Text className="font-semibold text-red-600 mt-3">
+							Rights to Remove:
+						</Text>
+						{removedRights.length > 0 ? (
+							removedRights.map((r) => (
+								<Text key={r._id}>
+									- {r.name} ({r.code})
+								</Text>
+							))
+						) : (
+							<Text className="text-gray-400">
+								No rights removed
+							</Text>
+						)}
+
+						<View className="flex-row justify-end gap-4 mt-5">
+							<TouchableOpacity
+								onPress={() => setShowConfirm(false)}
+							>
+								<Text className="text-gray-500">Cancel</Text>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={handleConfirmUpdate}>
+								<Text className="text-blue-600 font-bold">
+									Confirm
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
-				}
-			/>
-		</View>
+				</View>
+			</Modal>
+		</SafeAreaView>
 	);
 };
 

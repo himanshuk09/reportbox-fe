@@ -1,14 +1,20 @@
+import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import WebViewComponent from "@/components/WebViewComponent";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import React, { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { getComplaintsByUserID } from "@/services/complaint.service";
+import { LegendList } from "@legendapp/list";
+import React, { useEffect, useState } from "react";
+import { Image, RefreshControl, Text, View } from "react-native";
 
-const html = `
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <style>
+// Function to generate ApexChart HTML with dynamic progress
+const getChartHtml = (progress: any) => `
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <style>
            body, html, #chart {
             margin: 0;
             padding: 0;
@@ -23,224 +29,234 @@ const html = `
             left: 0;
         }
         </style>
-      </head>
-      <body>
-        <div id="chart" style="width: 100%; height: 95%;"></div>
-        <script>
-          var options = {
-            chart: {
-              type: 'radialBar',
-              height: 300,
-              sparkline: { enabled: true },
-              animations: { enabled: false }
-            },
-            series: [50],
-            plotOptions: {
-              radialBar: {
-                hollow: { size: '50%' },
-                track: { background: '#e6e6e6' },
-                dataLabels: {
-                  name: { show: false },
-                  value: {
-                    show: true,
-                    fontSize: '28px',
-                    fontWeight: 'bold',
-                    color: '#ccc',
-                    offsetY: 8,
-                  }
-                }
+    </head>
+    <body>
+      <div id="chart"></div>
+      <script>
+        var options = {
+          chart: { type: 'radialBar',  height: 250,sparkline: { enabled: true }, animations: { enabled: true } },
+          series: [${progress}],
+          plotOptions: {
+            radialBar: {
+              hollow: { size: '45%' },
+              track: { background: '#e6e6e6' },
+              dataLabels: {
+                name: { show: false },
+                value: { show: true, fontSize: '28px', fontWeight: 'bold', color: '#ccc', offsetY: 8 }
               }
-            },
-            colors: ['#00eeff'],
-            labels: ['Progress']
-          };
+            }
+          },
+          colors: ['#00eeff'],
+          labels: ['Progress']
+        };
+        new ApexCharts(document.querySelector("#chart"), options).render();
+      </script>
+    </body>
+  </html>
+`;
+const getProgressFromStatus = (status: string) => {
+	switch (status) {
+		case "Raised":
+			return 25;
+		case "In Progress":
+			return 50;
+		case "Resolved":
+			return 75;
+		case "Closed":
+			return 100;
+		default:
+			return 0;
+	}
+};
 
-          var chart = new ApexCharts(document.querySelector("#chart"), options);
-          chart.render();
-        </script>
-      </body>
-    </html>
-  `;
 const MyComplaintsScreen = () => {
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
+	const [loading, setLoading] = useState(true);
+	const { user } = useAuth();
+	const [complaints, setComplaints] = useState<any[]>([]);
+	const [refreshing, setRefreshing] = useState(false);
 
-	const [complaint, setComplaints] = useState([]);
-	const [loaded, setLoaded] = useState(false);
-	if (complaint.length != 0) {
-		return (
-			<View
-				style={{
-					flex: 1,
-					backgroundColor: secondaryColor,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			></View>
-		);
+	const fetchComplaints = async () => {
+		try {
+			const res = await getComplaintsByUserID(user?.user?._id);
+			setComplaints(res.complaints ?? []);
+		} catch (error) {
+			console.error("Error fetching complaints:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
+		fetchComplaints();
+	}, []);
+	const onRefresh = async () => {
+		try {
+			setRefreshing(true);
+			await fetchComplaints(); // your API call
+		} catch (error) {
+			console.error("Error refreshing complaints:", error);
+		} finally {
+			setRefreshing(false);
+		}
+	};
+	if (loading) {
+		return <Loader />;
 	}
 	return (
-		<ScrollView
-			className="flex-1  px-4 py-6"
-			showsVerticalScrollIndicator={false}
-			style={{ marginTop: 110, backgroundColor: secondaryColor }}
+		<View
+			style={{
+				flex: 1,
+				backgroundColor: secondaryColor,
+				paddingHorizontal: 6,
+				paddingVertical: 6,
+				marginTop: 100,
+			}}
 		>
-			{/* Header */}
-			<View className="mb-4">
-				<Text
-					className=" text-xl font-semibold"
-					style={{
-						color: textColor,
-					}}
-				>
-					My Complaints
-				</Text>
-				<Text
-					className=" mt-1 font-medium"
-					style={{
-						color: primaryColor,
-					}}
-				>
-					My Progress
-				</Text>
-			</View>
+			<LegendList
+				data={complaints}
+				recycleItems
+				keyExtractor={(item: any) => item._id}
+				renderItem={({ item }) => {
+					const progress = getProgressFromStatus(item.status);
+					const statusTimeline = item.statusTimeline ?? [item.status];
 
-			{/* Chart and Status Row */}
-			<View className="flex-row justify-between mb-4">
-				{/* Donut Chart */}
-				<View
-					className=" rounded-xl  w-[48%] items-center justify-center"
-					style={{
-						backgroundColor: cardsColor,
-					}}
-				>
+					return (
+						<View className="mb-6">
+							{/* Chart + Timeline Row */}
+							<View className="flex-row justify-between mb-4">
+								{/* Donut Chart */}
+								<View
+									className="rounded-xl w-[48%] items-center justify-center"
+									style={{ backgroundColor: cardsColor }}
+								>
+									<View
+										style={{
+											width: 180,
+											height: 160,
+											borderRadius: 10,
+											overflow: "hidden",
+										}}
+									>
+										<WebViewComponent
+											htmlcontent={getChartHtml(progress)}
+											setLoaded={() => {}}
+										/>
+									</View>
+									<Text
+										className="mt-2 text-center font-semibold text-sm"
+										style={{ color: textColor }}
+									>
+										Complaint ID:
+									</Text>
+									<Text
+										className="text-center font-bold text-sm mb-4"
+										style={{ color: textColor }}
+									>
+										#{item?.cid}
+									</Text>
+								</View>
+
+								{/* Status Timeline */}
+								<View
+									className="rounded-xl p-4 w-[48%]"
+									style={{ backgroundColor: cardsColor }}
+								>
+									<Text
+										className="font-semibold mb-2"
+										style={{ color: primaryColor }}
+									>
+										Status Timeline
+									</Text>
+									{statusTimeline.map(
+										(step: string, idx: number) => (
+											<Text
+												key={idx}
+												className="mb-1"
+												style={{ color: textColor }}
+											>
+												✓ {step}
+											</Text>
+										)
+									)}
+									<Text style={{ color: textColor }}>
+										Estimated Resolution: 2 days
+									</Text>
+								</View>
+							</View>
+
+							{/* Complaint Details */}
+							<View
+								className="rounded-xl p-4 flex-row"
+								style={{ backgroundColor: cardsColor }}
+							>
+								<View className="flex-1 pr-3">
+									<Text
+										className="font-semibold mb-2"
+										style={{ color: primaryColor }}
+									>
+										Details
+									</Text>
+									<Text style={{ color: textColor }}>
+										Type: {item?.type}
+									</Text>
+									<Text style={{ color: textColor }}>
+										Date:{" "}
+										{new Date(
+											item?.raisedDate
+										).toLocaleDateString()}
+									</Text>
+									<Text style={{ color: textColor }}>
+										Location: {item?.location}
+									</Text>
+									<Text style={{ color: textColor }}>
+										Mode: {item?.mode ?? "App"}
+									</Text>
+								</View>
+
+								{item?.beforeImage && (
+									<Image
+										source={{ uri: item.beforeImage }}
+										className="w-20 h-20 rounded-lg"
+										resizeMode="cover"
+									/>
+								)}
+							</View>
+						</View>
+					);
+				}}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{
+					marginTop: 20,
+					padding: 6,
+					paddingBottom: 100,
+				}}
+				automaticallyAdjustKeyboardInsets
+				keyboardShouldPersistTaps={"handled"}
+				ListEmptyComponent={
 					<View
 						style={{
-							width: 180,
-							height: 160,
-							borderRadius: 10,
-							overflow: "hidden",
+							flex: 1,
+							backgroundColor: secondaryColor,
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
-						<WebViewComponent
-							// webviewRef={webviewRef}
-							htmlcontent={html}
-							// onMessage={onMessage}
-							setLoaded={setLoaded}
+						<Blob
+							text={"No complaints raised yet 🚫"}
+							iconName={""}
 						/>
 					</View>
-					<Text
-						className=" mt-2 text-center font-semibold text-sm"
-						style={{
-							color: textColor,
-						}}
-					>
-						Complaint ID:
-					</Text>
-					<Text
-						className=" text-center font-bold text-sm mb-4"
-						style={{
-							color: textColor,
-						}}
-					>
-						#MDU45632
-					</Text>
-				</View>
-
-				{/* Status Timeline */}
-				<View
-					className="rounded-xl p-4 w-[48%]"
-					style={{
-						backgroundColor: cardsColor,
-					}}
-				>
-					<Text
-						className="font-semibold mb-2"
-						style={{
-							color: primaryColor,
-						}}
-					>
-						Status Timeline
-					</Text>
-					<Text
-						className=" mb-1"
-						style={{
-							color: textColor,
-						}}
-					>
-						✓ Submitted
-					</Text>
-					<Text
-						className=" mb-1"
-						style={{
-							color: textColor,
-						}}
-					>
-						✓ Assigned to Officer
-					</Text>
-					<Text
-						className=" mb-1"
-						style={{
-							color: textColor,
-						}}
-					>
-						✓ In Progress
-					</Text>
-					<Text
-						style={{
-							color: textColor,
-						}}
-					>
-						Estimated Resolution: 2 days
-					</Text>
-				</View>
-			</View>
-
-			{/* Details Section */}
-			<View
-				className=" rounded-xl p-4"
-				style={{
-					backgroundColor: cardsColor,
-				}}
-			>
-				<Text
-					className=" font-semibold mb-2"
-					style={{
-						color: primaryColor,
-					}}
-				>
-					Details
-				</Text>
-				<Text
-					style={{
-						color: textColor,
-					}}
-				>
-					Type: Garbage Collection
-				</Text>
-				<Text
-					style={{
-						color: textColor,
-					}}
-				>
-					Date: 28 May 2025
-				</Text>
-				<Text
-					style={{
-						color: textColor,
-					}}
-				>
-					Location: Villapuram TNHB colony
-				</Text>
-				<Text
-					style={{
-						color: textColor,
-					}}
-				>
-					Mode: App
-				</Text>
-			</View>
-		</ScrollView>
+				}
+				refreshControl={
+					<RefreshControl
+						colors={[primaryColor, textColor]}
+						refreshing={refreshing}
+						onRefresh={onRefresh}
+					/>
+				}
+			/>
+		</View>
 	);
 };
 

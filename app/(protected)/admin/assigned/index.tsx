@@ -1,8 +1,10 @@
 import Blob from "@/components/on-bording/blob";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { getAssignedComplaintsByUser } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const mockAssignedComplaints = [
@@ -26,58 +28,22 @@ const mockAssignedComplaints = [
 ];
 
 const WorkerAssignedComplaintsScreen = () => {
+	const { logout, user } = useAuth();
+	const [assignedComplaints, setAssignedComplaints] = useState([]);
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 	const handleComplaintPress = (complaint: any) => {
 		router.push("/(protected)/admin/assigned/[complaintId]");
 	};
 	const router = useRouter();
-	const renderComplaintCard = ({ item }: { item: any }) => (
-		<TouchableOpacity
-			onPress={() => handleComplaintPress(item)}
-			className=" p-4 rounded-xl mb-3 flex-row items-center"
-			style={{
-				backgroundColor: cardsColor,
-			}}
-		>
-			<Image
-				source={{ uri: item.beforeImage }}
-				style={{
-					width: 60,
-					height: 60,
-					borderRadius: 10,
-					marginRight: 10,
-				}}
-			/>
-			<View style={{ flex: 1 }}>
-				<Text
-					className=" font-bold text-lg"
-					style={{
-						color: textColor,
-					}}
-				>
-					{item.type}
-				</Text>
-				<Text
-					className=" text-sm"
-					style={{
-						color: textColor,
-					}}
-				>
-					Assigned: {item.assignedBy}
-				</Text>
-				<Text
-					className=" text-xs"
-					style={{
-						color: textColor,
-					}}
-				>
-					Raised on: {new Date(item.raisedDate).toLocaleString()}
-				</Text>
-			</View>
-		</TouchableOpacity>
-	);
 
+	const fetchAssignedComplaints = async () => {
+		const response = await getAssignedComplaintsByUser(user.user._id);
+		setAssignedComplaints(response);
+	};
+	useEffect(() => {
+		fetchAssignedComplaints();
+	}, [user]);
 	return (
 		<View
 			className="flex-1  p-4 pt-10"
@@ -97,12 +63,65 @@ const WorkerAssignedComplaintsScreen = () => {
 			</Text>
 
 			<LegendList
-				data={mockAssignedComplaints}
+				data={assignedComplaints}
 				estimatedItemSize={25}
 				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
-				renderItem={renderComplaintCard}
+				renderItem={({ item }: any) => (
+					<TouchableOpacity
+						onPress={() => {
+							router.push({
+								pathname:
+									"/(protected)/admin/assigned/[complaintId]",
+								params: {
+									complaintId: item._id,
+								},
+							});
+						}}
+						className=" p-4 rounded-xl mb-3 flex-row items-center"
+						style={{
+							backgroundColor: cardsColor,
+						}}
+					>
+						<Image
+							source={{ uri: item.beforeImage }}
+							style={{
+								width: 60,
+								height: 60,
+								borderRadius: 10,
+								marginRight: 10,
+							}}
+						/>
+						<View style={{ flex: 1 }}>
+							<Text
+								className=" font-bold text-lg"
+								style={{
+									color: textColor,
+								}}
+							>
+								{item.type}
+							</Text>
+							<Text
+								className=" text-sm"
+								style={{
+									color: textColor,
+								}}
+							>
+								Assigned: {item.assignedBy.name}
+							</Text>
+							<Text
+								className=" text-xs"
+								style={{
+									color: textColor,
+								}}
+							>
+								Raised on:{" "}
+								{new Date(item.raisedDate).toLocaleString()}
+							</Text>
+						</View>
+					</TouchableOpacity>
+				)}
 				extraData={[cardsColor, textColor, primaryColor]}
 				ListEmptyComponent={
 					<View

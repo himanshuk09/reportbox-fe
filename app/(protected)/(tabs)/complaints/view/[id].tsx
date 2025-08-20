@@ -48,18 +48,7 @@ const PostDetailsScreen = () => {
 	}, [id]);
 
 	if (loading) {
-		return (
-			<View
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					alignItems: "center",
-					marginTop: 100,
-				}}
-			>
-				<Loader />
-			</View>
-		);
+		return <Loader />;
 	}
 
 	if (!complaint) {

@@ -1,9 +1,15 @@
 import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
+import Loader from "@/components/ui/Loader";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import {
+	getComplaintsByID,
+	updateComplaint,
+} from "@/services/complaint.service";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
 	Alert,
 	Modal,
@@ -15,54 +21,41 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const ResolveComplaintScreen = () => {
-	const initialData = {
-		id: "1",
-		userID: "MTNHB30",
-		beforeImage:
-			"https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-		afterImage: "",
-		type: "Drainage Leakage",
-		status: "Assigned",
-		date: "2025-07-30",
-		raisedDate: new Date("2025-05-28T09:15:00"),
-		responseDate: new Date("2025-05-29T11:00:00"),
-		resolvedDate: null,
-		assignedTo: "Worker Ravi",
-		resolvedBy: "Worker Ravi",
-		assignedBy: "Officer Sharma",
-	};
+	const { complaintId } = useLocalSearchParams(); // passed from previous screen
 
-	const [form, setForm] = useState<any>(initialData);
+	const [form, setForm] = useState<any>(null);
+	const [loading, setLoading] = useState(true);
 	const [showCamera, setShowCamera] = useState(false);
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
+	const [resolvedMessage, setResolvedMessage] = useState("");
+
+	const { textColor, secondaryColor, cardsColor } = useAppTheme();
+
 	const updateField = (key: string, value: any) =>
 		setForm((prev: any) => ({ ...prev, [key]: value }));
 
-	const handleSubmit = () => {
-		if (!form.afterImage || !form.resolvedDate) {
-			Alert.alert(
-				"Error",
-				"Please upload image and select resolved date."
-			);
-			return;
-		}
-		updateField("status", "Resolved");
-		Alert.alert(
-			"Resolved",
-			JSON.stringify({ ...form, status: "Resolved" }, null, 2)
-		);
-	};
+	useEffect(() => {
+		(async () => {
+			try {
+				const data = await getComplaintsByID(complaintId as string);
+				setForm(data);
+			} catch (err) {
+				Alert.alert("Error", "Failed to load complaint.");
+			} finally {
+				setLoading(false);
+			}
+		})();
+	}, [complaintId]);
 
 	const showDatePicker = () => {
 		DateTimePickerAndroid.open({
-			value: form.resolvedDate || new Date(),
+			value: form?.resolvedDate
+				? new Date(form.resolvedDate)
+				: new Date(),
 			onChange: (_, selectedDate) => {
-				if (selectedDate) {
-					updateField("resolvedDate", selectedDate);
-				}
+				if (selectedDate) updateField("resolvedDate", selectedDate);
 			},
 			mode: "date",
 			is24Hour: true,
@@ -73,6 +66,32 @@ const ResolveComplaintScreen = () => {
 		updateField("afterImage", uri);
 	};
 
+	const handleSubmit = async () => {
+		if (!form.afterImage || !form.resolvedDate) {
+			Alert.alert(
+				"Error",
+				"Please upload after image and select resolved date."
+			);
+			return;
+		}
+		try {
+			setLoading(true);
+			await updateComplaint(complaintId as string, form);
+
+			Toast.show({
+				type: "success",
+				text1: "Complaint updated successfully",
+			});
+		} catch (err) {
+			console.error("Error updating complaint:", err);
+			Toast.show({ type: "error", text1: "Failed to update complaint" });
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	if (loading) return <Loader />;
+
 	return (
 		<SafeAreaView
 			style={{
@@ -82,91 +101,41 @@ const ResolveComplaintScreen = () => {
 				marginTop: 90,
 			}}
 		>
-			<ScrollView
-				contentContainerStyle={{ paddingBottom: 16 }}
-				showsVerticalScrollIndicator={false}
-			>
+			<ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
 				<Text
-					className="text-2xl  font-bold mb-4"
-					style={{
-						color: textColor,
-					}}
+					className="text-2xl font-bold mb-4"
+					style={{ color: textColor }}
 				>
 					Resolve Complaint
 				</Text>
 
-				{/* Read-Only Info */}
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Type: {form.type}
+				{/* Read Only Info */}
+				<Text style={{ color: textColor }}>
+					Type: {form?.type?.name || form?.type}
 				</Text>
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Status: {form.status}
+				<Text style={{ color: textColor }}>Status: {form?.status}</Text>
+				<Text style={{ color: textColor }}>
+					Assigned By: {form?.assignedBy?.name || form?.assignedBy}
 				</Text>
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Assigned By: {form.assignedBy}
+				<Text style={{ color: textColor }}>
+					Assigned To: {form?.assignedTo?.name || form?.assignedTo}
 				</Text>
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Assigned To: {form.assignedTo}
-				</Text>
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Raised On: {form.raisedDate.toLocaleString()}
-				</Text>
-				<Text
-					className=" mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
-					Response On: {form.responseDate.toLocaleString()}
+				<Text style={{ color: textColor }}>
+					Raised On: {new Date(form?.raisedDate).toLocaleString()}
 				</Text>
 
-				{/* Before Image (read-only) */}
-				<Text
-					className="text-xl mt-4 mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
+				{/* Before Image */}
+				<Text style={{ color: textColor, marginTop: 12 }}>
 					Before Image
 				</Text>
-				<ImageCard image={form.beforeImage} showCaptureIcon={false} />
+				<ImageCard image={form?.beforeImage} showCaptureIcon={false} />
 
 				{/* After Image */}
-				<Text
-					className="text-xl mt-4 mb-1"
-					style={{
-						color: textColor,
-					}}
-				>
+				<Text style={{ color: textColor, marginTop: 12 }}>
 					After Image
 				</Text>
 				<ImageCard
-					image={form.afterImage}
+					image={form?.afterImage}
 					setShowCamera={setShowCamera}
 					setImage={handleSetAfterImage}
 					showCaptureIcon={true}
@@ -175,44 +144,49 @@ const ResolveComplaintScreen = () => {
 				{/* Resolved Date Picker */}
 				<TouchableOpacity
 					onPress={showDatePicker}
-					className="mt-4 mb-4"
+					style={{ marginTop: 16 }}
 				>
 					<View
-						className=" p-3 rounded-lg"
 						style={{
+							padding: 12,
+							borderRadius: 8,
 							backgroundColor: cardsColor,
 						}}
 					>
-						<Text
-							style={{
-								color: textColor,
-							}}
-						>
+						<Text style={{ color: textColor }}>
 							Resolved On:{" "}
-							{form.resolvedDate
-								? form.resolvedDate.toLocaleString()
+							{form?.resolvedDate
+								? new Date(
+										form.resolvedDate
+									).toLocaleDateString()
 								: "Select Date"}
 						</Text>
 					</View>
 				</TouchableOpacity>
-				<Text style={[styles.label, { color: textColor }]}>
-					Resolved message
+
+				{/* Resolved Message */}
+				<Text style={{ color: textColor, marginTop: 16 }}>
+					Resolved Message
 				</Text>
 				<TextInput
 					multiline
 					numberOfLines={4}
-					placeholder="Describe your resolved complaint here"
-					style={[
-						styles.textArea,
-						{ color: textColor, backgroundColor: cardsColor },
-					]}
-					// value={message}
-					// onChangeText={setMessage}
+					placeholder="Describe resolution..."
+					value={resolvedMessage}
+					onChangeText={setResolvedMessage}
+					placeholderTextColor={textColor}
+					style={{
+						marginTop: 8,
+						padding: 12,
+						borderRadius: 8,
+						backgroundColor: cardsColor,
+						color: textColor,
+					}}
 				/>
-				{/* Submit */}
 
+				{/* Submit */}
 				<RoundedButton
-					title={"Mark as Resolved"}
+					title="Mark as Resolved"
 					onPress={handleSubmit}
 				/>
 
@@ -233,6 +207,7 @@ const ResolveComplaintScreen = () => {
 };
 
 export default ResolveComplaintScreen;
+
 const styles = StyleSheet.create({
 	label: {
 		fontSize: 16,

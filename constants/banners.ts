@@ -3,3 +3,5 @@ export const bannersImageUrls = [
 	"https://images.unsplash.com/photo-1519681393784-d120267933ba",
 	"https://images.unsplash.com/photo-1519681393784-d120267933ba",
 ];
+
+export const Status = ["Raised", "Assigned", "In Progress", "Resolved"];

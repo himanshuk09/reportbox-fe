@@ -52,7 +52,7 @@ export default function UserListScreen() {
 			}));
 	}, [allUsers, search, typeFilter, statusFilter]);
 
-	const fetchComplaints = async () => {
+	const fetchUsersList = async () => {
 		try {
 			setLoading(true);
 			const data = await getUsersList();
@@ -67,7 +67,7 @@ export default function UserListScreen() {
 	};
 
 	useEffect(() => {
-		fetchComplaints();
+		fetchUsersList();
 	}, []);
 	if (loading) return <Loader />;
 	return (

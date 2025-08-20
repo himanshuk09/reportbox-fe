@@ -103,7 +103,14 @@ export const updateProfile = async (
 		return false;
 	}
 };
-
+export const deleteUser = async (id: string) => {
+	try {
+		const response = await api.delete(`/users/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error on delete user", error);
+	}
+};
 /* -------------------------------------------------------------------------- */
 
 const uploadImageToUploadFolder = async (id: string, imageUri: string) => {

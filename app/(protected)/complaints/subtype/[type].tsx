@@ -62,9 +62,10 @@ const RenderComplaintList = () => {
 								{ borderColor: primaryColor },
 							]}
 						>
-							{React.cloneElement(item.icon, {
-								color: primaryColor,
-							})}
+							{item.icon &&
+								React.cloneElement(item.icon, {
+									color: primaryColor,
+								})}
 						</View>
 						<Text style={[styles.label, { color: textColor }]}>
 							{item.label}
