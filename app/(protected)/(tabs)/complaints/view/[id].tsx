@@ -1,9 +1,12 @@
 import { PostCard } from "@/components/complaints/PostCard";
+import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
 import { formateDate } from "@/constants/statuscode";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByID } from "@/services/complaint.service";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -43,10 +46,14 @@ const PostDetailsScreen = () => {
 		}
 	};
 
+	const isFocused = useIsFocused();
 	useEffect(() => {
 		fetchComplaints();
-	}, [id]);
-
+	}, [id, isFocused]);
+	const { setGlobalLoading } = useLoading();
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	if (loading) {
 		return <Loader />;
 	}
@@ -57,12 +64,12 @@ const PostDetailsScreen = () => {
 			<View
 				style={{
 					flex: 1,
+					backgroundColor: secondaryColor,
 					justifyContent: "center",
 					alignItems: "center",
-					marginTop: 100,
 				}}
 			>
-				<Text style={{ color: textColor }}>Complaint not found</Text>
+				<Blob text={"Not Found !"} iconName={"alert-sharp"} />
 			</View>
 		);
 	}

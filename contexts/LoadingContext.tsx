@@ -1,4 +1,4 @@
-import { FullScreenLoader } from "@/components/ui/FullScreenLoader";
+import HoneycombLoader from "@/components/ui/HoneycombLoader";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 type LoadingContextType = {
@@ -13,7 +13,8 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
 
 	return (
 		<LoadingContext.Provider value={{ globalLoading, setGlobalLoading }}>
-			{globalLoading && <FullScreenLoader />}
+			{/* {globalLoading && <FullScreenLoader />} */}
+			{globalLoading && <HoneycombLoader />}
 			{children}
 		</LoadingContext.Provider>
 	);

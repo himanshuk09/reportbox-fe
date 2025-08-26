@@ -4,14 +4,17 @@ import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	getComplaintsByID,
 	updateComplaint,
 } from "@/services/complaint.service";
+import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+	Keyboard,
 	KeyboardAvoidingView,
 	Modal,
 	Platform,
@@ -50,12 +53,14 @@ const validateFormData = (complaintData: any) => {
 };
 const ComplaintEdit = () => {
 	const { id } = useLocalSearchParams();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+
+	/* -------------------------------------------------------------------------- */
 	const [CID, setCID] = useState("");
 	const [showCamera, setShowCamera] = useState(false);
 	const [showSuccess, setShowSuccess] = useState(false);
-	const [loading, setLoading] = useState(false);
-
 	const [complaintData, setComplaintData] = useState({
 		beforeImage: "",
 		type: "",
@@ -65,10 +70,10 @@ const ComplaintEdit = () => {
 		tags: [],
 	});
 
-	// Fetch complaint by ID
+	/* -------------------------------------------------------------------------- */
+
 	const fetchComplaints = async () => {
 		try {
-			setLoading(true);
 			const data = await getComplaintsByID(id as string);
 
 			if (data) {
@@ -86,13 +91,8 @@ const ComplaintEdit = () => {
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
 		} finally {
-			setLoading(false);
 		}
 	};
-
-	useEffect(() => {
-		if (id) fetchComplaints();
-	}, [id]);
 
 	// Handle form field updates
 	const handleSetImage = (newImage: string) =>
@@ -113,12 +113,12 @@ const ComplaintEdit = () => {
 		setComplaintData((prev: any) => ({ ...prev, tags: tagsArray }));
 	};
 
-	// Submit updated complaint
 	const onSubmit = async () => {
 		if (!validateFormData(complaintData)) return;
-
 		try {
-			setLoading(true);
+			setGlobalLoading(true);
+			Keyboard.dismiss();
+
 			await updateComplaint(id as string, complaintData);
 
 			Toast.show({
@@ -130,10 +130,17 @@ const ComplaintEdit = () => {
 			console.error("Error updating complaint:", err);
 			Toast.show({ type: "error", text1: "Failed to update complaint" });
 		} finally {
-			setLoading(false);
+			setGlobalLoading(false);
 		}
 	};
 
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		if (id) fetchComplaints();
+	}, [id]);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<SafeAreaView
 			style={{

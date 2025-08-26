@@ -7,18 +7,21 @@ import {
 	Street_Infrastructure,
 	Water_Sewage,
 } from "@/constants/complaints";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 const RenderComplaintList = () => {
+	const { id } = useLocalSearchParams();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { cardsColor, primaryColor, textColor, secondaryColor } =
 		useAppTheme();
-	const { id } = useLocalSearchParams();
-	console.log(id);
-
+	/* -------------------------------------------------------------------------- */
 	const getComplaintData = () => {
 		switch (id) {
 			case "sanitation":
@@ -37,16 +40,20 @@ const RenderComplaintList = () => {
 				return [];
 		}
 	};
-
+	/* -------------------------------------------------------------------------- */
 	const complaintData = getComplaintData();
-
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
 			<FlashList
 				data={complaintData}
-				estimatedItemSize={60} // ✅ this is correct for FlashList
+				estimatedItemSize={60}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						style={[

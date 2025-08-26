@@ -1,4 +1,5 @@
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersList } from "@/services/admin.service";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@/services/group-user.service";
 import { getGroups } from "@/services/group.service";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
@@ -32,9 +34,14 @@ const AssignUsersToGroupScreen = () => {
 	const [addedUsers, setAddedUsers] = useState<any[]>([]);
 	const [removedUsers, setRemovedUsers] = useState<any[]>([]);
 	const [groupUsers, setGroupUsers] = useState<string[]>([]);
+
+	/* -------------------------------------------------------------------------- */
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 
+	/* -------------------------------------------------------------------------- */
 	// Fetch Users
 	const fetchUsersList = async () => {
 		try {
@@ -89,23 +96,20 @@ const AssignUsersToGroupScreen = () => {
 	const handleConfirmUpdate = async () => {
 		setShowConfirm(false);
 		try {
+			setGlobalLoading(true);
 			const payload = {
 				groupId: selectedGroup._id,
 				userIds: selectedUsers,
 			};
-			const response: any = await assignUsersToGroup(payload);
+			await assignUsersToGroup(payload);
 			alert("Users updated successfully!");
 			setGroupUsers([...selectedUsers]); // update local state
-			console.log(response);
 		} catch (error) {
 			console.log("Error on assigning users", error);
+		} finally {
+			setGlobalLoading(false);
 		}
 	};
-	// On Mount
-	useEffect(() => {
-		fetchUsersList();
-		fetchGroups();
-	}, []);
 
 	const toggleUser = (userId: string) => {
 		setSelectedUsers((prev) =>
@@ -130,7 +134,17 @@ const AssignUsersToGroupScreen = () => {
 	const nonPresentUsers = filteredUsers.filter(
 		(u) => !selectedUsers.includes(u._id)
 	);
+	/* -------------------------------------------------------------------------- */
+	// On Mount
+	useEffect(() => {
+		fetchUsersList();
+		fetchGroups();
+	}, []);
 
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
 			style={{

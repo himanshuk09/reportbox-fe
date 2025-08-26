@@ -1,12 +1,18 @@
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import React from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AboutUsScreen = () => {
 	const { primaryColor, textColor, cardsColor, secondaryColor } =
 		useAppTheme();
-
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}

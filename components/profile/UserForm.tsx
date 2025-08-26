@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { updateProfile } from "@/services/auth.service";
 import {
@@ -8,8 +9,9 @@ import {
 	Ionicons,
 	MaterialIcons,
 } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Dimensions,
 	Image,
@@ -96,7 +98,12 @@ const validateFormData = (formData: any, avatar: any, setAvatar: any) => {
 	return true;
 };
 const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { user, data, completeProfile } = useAuth();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+	/* -------------------------------------------------------------------------- */
 	const [edit, setEdit] = useState(onlyForm);
 	const [showCamera, setShowCamera] = useState(false);
 	const [showImageViewer, setShowImageViewer] = useState(false);
@@ -113,26 +120,33 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 	});
 	const [avatar, setAvatar] = useState(user?.user?.avatar || "");
 
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
-
+	/* -------------------------------------------------------------------------- */
 	const handleFormSubmit = async () => {
 		if (!validateFormData(formData, avatar, setAvatar)) return;
+		try {
+			setGlobalLoading(true);
+			const result = await updateProfile(
+				id ?? user?.user?._id,
+				formData,
+				avatar
+			);
 
-		const result = await updateProfile(
-			id ?? user?.user?._id,
-			formData,
-			avatar
-		);
+			if (result) {
+				completeProfile(user?.user?._id);
+			}
 
-		if (result) {
-			completeProfile(user?.user?._id);
+			setTimeout(() => {
+				if (!onlyForm) setEdit(false);
+			}, 1000);
+		} catch (error) {
+		} finally {
+			setGlobalLoading(false);
 		}
-
-		setTimeout(() => {
-			if (!onlyForm) setEdit(false);
-		}, 1000);
 	};
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: secondaryColor }}>
 			<ScrollView

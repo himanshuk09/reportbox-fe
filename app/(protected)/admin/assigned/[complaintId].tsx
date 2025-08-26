@@ -2,12 +2,14 @@ import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import Loader from "@/components/ui/Loader";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	getComplaintsByID,
 	updateComplaint,
 } from "@/services/complaint.service";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -25,29 +27,20 @@ import Toast from "react-native-toast-message";
 
 const ResolveComplaintScreen = () => {
 	const { complaintId } = useLocalSearchParams(); // passed from previous screen
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	const { textColor, secondaryColor, cardsColor } = useAppTheme();
 
+	/* -------------------------------------------------------------------------- */
 	const [form, setForm] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [showCamera, setShowCamera] = useState(false);
 	const [resolvedMessage, setResolvedMessage] = useState("");
 
-	const { textColor, secondaryColor, cardsColor } = useAppTheme();
+	/* -------------------------------------------------------------------------- */
 
 	const updateField = (key: string, value: any) =>
 		setForm((prev: any) => ({ ...prev, [key]: value }));
-
-	useEffect(() => {
-		(async () => {
-			try {
-				const data = await getComplaintsByID(complaintId as string);
-				setForm(data);
-			} catch (err) {
-				Alert.alert("Error", "Failed to load complaint.");
-			} finally {
-				setLoading(false);
-			}
-		})();
-	}, [complaintId]);
 
 	const showDatePicker = () => {
 		DateTimePickerAndroid.open({
@@ -75,9 +68,8 @@ const ResolveComplaintScreen = () => {
 			return;
 		}
 		try {
-			setLoading(true);
+			setGlobalLoading(true);
 			await updateComplaint(complaintId as string, form);
-
 			Toast.show({
 				type: "success",
 				text1: "Complaint updated successfully",
@@ -86,10 +78,29 @@ const ResolveComplaintScreen = () => {
 			console.error("Error updating complaint:", err);
 			Toast.show({ type: "error", text1: "Failed to update complaint" });
 		} finally {
-			setLoading(false);
+			setGlobalLoading(false);
 		}
 	};
 
+	/* -------------------------------------------------------------------------- */
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const data = await getComplaintsByID(complaintId as string);
+				setForm(data);
+			} catch (err) {
+				Alert.alert("Error", "Failed to load complaint.");
+			} finally {
+				setLoading(false);
+			}
+		})();
+	}, [complaintId]);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
+	/* -------------------------------------------------------------------------- */
 	if (loading) return <Loader />;
 
 	return (
@@ -98,7 +109,7 @@ const ResolveComplaintScreen = () => {
 				flex: 1,
 				padding: 16,
 				backgroundColor: secondaryColor,
-				marginTop: 90,
+				marginTop: 55,
 			}}
 		>
 			<ScrollView contentContainerStyle={{ paddingBottom: 16 }}>

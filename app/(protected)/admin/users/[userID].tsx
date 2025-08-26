@@ -2,6 +2,7 @@ import Blob from "@/components/on-bording/blob";
 import CustomAlert from "@/components/ui/CustomAlert";
 import Loader from "@/components/ui/Loader";
 import { getStatusStyle } from "@/constants/statuscode";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersDetailsByID } from "@/services/admin.service";
 import { deleteUser } from "@/services/auth.service";
@@ -21,15 +22,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ComplaintListScreen() {
-	const { userID } = useLocalSearchParams();
-	const [userDetails, setUserDetails] = useState<any>(null);
-	const [loading, setLoading] = useState(false);
-
-	const { primaryColor, secondaryColor, cardsColor, textColor } =
-		useAppTheme();
 	const router = useRouter();
 	const isFocused = useIsFocused();
-
+	const { userID } = useLocalSearchParams();
+	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
+	/* -------------------------------------------------------------------------- */
+	const [userDetails, setUserDetails] = useState<any>(null);
+	const [loading, setLoading] = useState(false);
+	/* -------------------------------------------------------------------------- */
 	const fetchComplaints = async () => {
 		try {
 			setLoading(true);
@@ -41,10 +43,16 @@ export default function ComplaintListScreen() {
 			setLoading(false);
 		}
 	};
-
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchComplaints();
 	}, []);
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
+
 	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
@@ -262,33 +270,20 @@ export default function ComplaintListScreen() {
 
 							{/* Groups */}
 							{userDetails?.groups?.length > 0 && (
-								<View className="mb-2 flex-row items-center">
-									<MaterialIcons
-										name="group"
-										size={18}
-										color="#8e44ad"
-										style={{ marginRight: 6 }}
-									/>
-									<Text style={{ color: textColor }}>
-										{userDetails.groups
-											.map((g: any) => g.name)
-											.join(", ")}
-									</Text>
-								</View>
-							)}
-
-							{/* Rights */}
-							{userDetails?.rights?.length > 0 && (
-								<View className="flex-row items-center">
+								<View className="mb-2 flex-row items-center ">
 									<FontAwesome5
 										name="user-shield"
 										size={16}
 										color="#2980b9"
 										style={{ marginRight: 6 }}
 									/>
-									<Text style={{ color: textColor }}>
-										{userDetails.rights
-											.map((r: any) => r.name)
+									<Text
+										style={{ color: textColor }}
+										numberOfLines={1} // show only 1 line
+										ellipsizeMode="tail"
+									>
+										{userDetails.groups
+											.map((g: any) => g.name)
 											.join(", ")}
 									</Text>
 								</View>

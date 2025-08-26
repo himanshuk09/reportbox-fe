@@ -1,8 +1,10 @@
 import Blob from "@/components/on-bording/blob";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getAssignedComplaintsByUser } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -29,21 +31,28 @@ const mockAssignedComplaints = [
 
 const WorkerAssignedComplaintsScreen = () => {
 	const { logout, user } = useAuth();
-	const [assignedComplaints, setAssignedComplaints] = useState([]);
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
-	const handleComplaintPress = (complaint: any) => {
-		router.push("/(protected)/admin/assigned/[complaintId]");
-	};
 	const router = useRouter();
 
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+	/* -------------------------------------------------------------------------- */
+	const [assignedComplaints, setAssignedComplaints] = useState([]);
+	/* -------------------------------------------------------------------------- */
 	const fetchAssignedComplaints = async () => {
 		const response = await getAssignedComplaintsByUser(user.user._id);
 		setAssignedComplaints(response);
 	};
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchAssignedComplaints();
 	}, [user]);
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			className="flex-1  p-4 pt-10"

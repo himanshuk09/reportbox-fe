@@ -2,9 +2,11 @@ import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
 import WebViewComponent from "@/components/WebViewComponent";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByUserID } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Image, RefreshControl, Text, View } from "react-native";
 
@@ -72,11 +74,15 @@ const getProgressFromStatus = (status: string) => {
 const MyComplaintsScreen = () => {
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
-	const [loading, setLoading] = useState(true);
 	const { user } = useAuth();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	/* -------------------------------------------------------------------------- */
+	const [loading, setLoading] = useState(true);
 	const [complaints, setComplaints] = useState<any[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 
+	/* -------------------------------------------------------------------------- */
 	const fetchComplaints = async () => {
 		try {
 			const res = await getComplaintsByUserID(user?.user?._id);
@@ -87,9 +93,6 @@ const MyComplaintsScreen = () => {
 			setLoading(false);
 		}
 	};
-	useEffect(() => {
-		fetchComplaints();
-	}, []);
 	const onRefresh = async () => {
 		try {
 			setRefreshing(true);
@@ -100,6 +103,16 @@ const MyComplaintsScreen = () => {
 			setRefreshing(false);
 		}
 	};
+
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchComplaints();
+	}, []);
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
 	if (loading) {
 		return <Loader />;
 	}

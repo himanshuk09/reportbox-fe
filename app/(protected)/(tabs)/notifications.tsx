@@ -1,20 +1,20 @@
 import Blob from "@/components/on-bording/blob";
-import Loader from "@/components/ui/Loader";
 import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 const Notifications = () => {
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const router = useRouter();
-	const [complaintsPost, setComplaintsPost] = useState<any>(complaintsPosts);
-	const [loading, setLoading] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
+	const [complaintsPost, setComplaintsPost] = useState<any>(complaintsPosts);
 
 	const handleDelete = (rowKey: string) => {
 		const newData = complaintsPost.filter(
@@ -22,13 +22,18 @@ const Notifications = () => {
 		);
 		setComplaintsPost(newData);
 	};
+
 	const onRefresh = async () => {
 		setRefreshing(true);
 		setTimeout(() => {
 			setRefreshing(false);
 		}, 2000);
 	};
-	if (loading) return <Loader />;
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
 	return (
 		<View
 			className="flex-1  px-4"
@@ -123,8 +128,8 @@ const Notifications = () => {
 						</Pressable>
 					</View>
 				)}
-				rightOpenValue={-75} // how much to swipe left
-				stopRightSwipe={-200} // stops at full swipe
+				rightOpenValue={-75}
+				stopRightSwipe={-200}
 				onRowOpen={(rowKey, rowMap) => {
 					// Delete immediately when fully swiped
 					// handleDelete(rowKey);

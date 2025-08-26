@@ -1,4 +1,5 @@
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	assignRightsToGroup,
@@ -7,6 +8,7 @@ import {
 import { getGroups } from "@/services/group.service";
 import { getRights } from "@/services/rights.service";
 import { Ionicons } from "@expo/vector-icons"; // your custom theme hook
+import { useIsFocused } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import React, { useEffect, useState } from "react";
 import {
@@ -31,10 +33,14 @@ const AssignRightsToGroupScreen = () => {
 	const [addedRights, setAddedRights] = useState<any[]>([]);
 	const [removedRights, setRemovedRights] = useState<any[]>([]);
 	const [groupRights, setGroupRights] = useState<string[]>([]);
+	const [selectAll, setSelectAll] = useState(false);
+
+	/* -------------------------------------------------------------------------- */
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-
-	const [selectAll, setSelectAll] = useState(false);
+	/* -------------------------------------------------------------------------- */
 	// Fetch Rights
 	const fetchRightsList = async () => {
 		try {
@@ -92,6 +98,8 @@ const AssignRightsToGroupScreen = () => {
 	const handleConfirmUpdate = async () => {
 		setShowConfirm(false);
 		try {
+			setGlobalLoading(true);
+
 			const payload = {
 				groupId: selectedGroup._id,
 				rightIds: selectedRights,
@@ -99,17 +107,13 @@ const AssignRightsToGroupScreen = () => {
 			const response: any = await assignRightsToGroup(payload);
 			alert("Rights updated successfully!");
 			setGroupRights([...selectedRights]); // update local state
-			console.log(response);
 		} catch (error) {
 			console.log("Error on assigning rights", error);
+		} finally {
+			setGlobalLoading(false);
 		}
 	};
-
-	// On Mount
-	useEffect(() => {
-		fetchRightsList();
-		fetchGroups();
-	}, []);
+	/* -------------------------------------------------------------------------- */
 
 	const toggleRight = (rightId: string) => {
 		setSelectedRights((prev) =>
@@ -142,6 +146,15 @@ const AssignRightsToGroupScreen = () => {
 			setSelectAll(true);
 		}
 	};
+
+	// On Mount
+	useEffect(() => {
+		fetchRightsList();
+		fetchGroups();
+	}, []);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<SafeAreaView
 			style={{

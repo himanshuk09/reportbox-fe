@@ -1,11 +1,13 @@
 import CustomSwitch from "@/components/ui/CustomSwitch";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const SettingsPanel1 = () => {
@@ -159,7 +161,11 @@ const SettingsPanel = () => {
 	};
 
 	const buttonTextColor = getContrastText(primaryColor);
-
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<View
 			style={{

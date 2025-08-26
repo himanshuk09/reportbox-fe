@@ -17,6 +17,7 @@ const ProtectedLayout = () => {
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
 					title: "Help",
+					animation: "simple_push",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
@@ -35,6 +36,7 @@ const ProtectedLayout = () => {
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
+					animation: "simple_push",
 					title: "Help",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
@@ -53,6 +55,7 @@ const ProtectedLayout = () => {
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
+					animation: "ios_from_left",
 					title: "Help",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
@@ -71,6 +74,7 @@ const ProtectedLayout = () => {
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
+					animation: "simple_push",
 					title: "Help",
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>

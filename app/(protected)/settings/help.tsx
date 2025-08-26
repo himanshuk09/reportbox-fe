@@ -1,5 +1,7 @@
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import React from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // --- Data Definition (as above, or import from a constants file) ---
@@ -45,6 +47,11 @@ const ITEM_MARGIN_BOTTOM = 20;
 const ComplaintStepsTimeline = () => {
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	return (
 		<ScrollView
 			style={{

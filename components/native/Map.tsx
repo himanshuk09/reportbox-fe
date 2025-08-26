@@ -218,7 +218,6 @@ export default function LeafletMapWebView({ location, setLocation }: any) {
 						`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc?.coords?.latitude}&lon=${loc?.coords?.longitude}`
 					);
 					geo = await response.json();
-					console.log(geo);
 				} catch (error) {
 					console.warn("Reverse geocode failed on web:", error);
 					return "Unknown location";

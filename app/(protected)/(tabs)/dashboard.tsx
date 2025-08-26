@@ -1,25 +1,23 @@
 import { getLocationDetails } from "@/components/native/Map";
 import { bannersImageUrls } from "@/constants/banners";
 import { Dashboard_Categories } from "@/constants/complaints";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+	FlatList,
+	Image,
+	InteractionManager,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
-const getWeatherEmoji = (code: number) => {
-	if (code === 0) return "☀️";
-	if (code === 1) return "🌤";
-	if (code === 2) return "⛅";
-	if (code === 3) return "☁️";
-	if (code >= 45 && code <= 48) return "🌫";
-	if (code >= 51 && code <= 67) return "🌧";
-	if (code >= 71 && code <= 77) return "🌨";
-	if (code >= 95) return "⛈";
-	return "🌍";
-};
 
 const getWeatherIcon = (code: number, size = 24) => {
 	if (code === 0)
@@ -97,10 +95,14 @@ async function getWeather({ latitude, longitude }: any) {
 }
 
 const ComplaintCategoriesScreen = () => {
+	const router = useRouter();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+	/* -------------------------------------------------------------------------- */
 	const [weather, setWeather] = useState<any>(null);
-	const router = useRouter();
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		const fetchLocation = async () => {
 			const { geo, loc }: any = await getLocationDetails();
@@ -113,15 +115,17 @@ const ComplaintCategoriesScreen = () => {
 		fetchLocation();
 	}, []);
 
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* --------------------------------- Return --------------------------------- */
 	return (
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
-			<LegendList
+			<FlatList
 				data={Dashboard_Categories}
-				estimatedItemSize={5}
 				numColumns={3}
-				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				extraData={[cardsColor, textColor, primaryColor]}
@@ -130,7 +134,10 @@ const ComplaintCategoriesScreen = () => {
 						style={styles.item}
 						onPress={() => {
 							if (item.route) {
-								router.push(item.route);
+								setGlobalLoading(true);
+								InteractionManager.runAfterInteractions(() => {
+									router.push(item.route);
+								});
 							}
 						}}
 					>
@@ -189,18 +196,16 @@ const ComplaintCategoriesScreen = () => {
 
 						{weather && (
 							<View
-								style={
-									{
-										flexDirection: "row",
-										alignItems: "center",
-										justifyContent: "space-between",
-										backgroundColor: cardsColor,
-										padding: 10,
-										borderRadius: 10,
-										marginHorizontal: 5,
-										marginBottom: 10,
-									} as any
-								}
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "space-between",
+									backgroundColor: cardsColor,
+									padding: 10,
+									borderRadius: 10,
+									marginHorizontal: 5,
+									marginBottom: 10,
+								}}
 							>
 								<Text
 									style={{
@@ -219,9 +224,6 @@ const ComplaintCategoriesScreen = () => {
 										justifyContent: "center",
 									}}
 								>
-									{/* <Text style={{ fontSize: 18 }}>
-										{getWeatherEmoji(weather.weathercode)}
-									</Text> */}
 									{getWeatherIcon(weather.weathercode)}
 									<Text
 										style={{

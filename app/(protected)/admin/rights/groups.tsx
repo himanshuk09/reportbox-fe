@@ -1,5 +1,6 @@
 import CustomAlert from "@/components/ui/CustomAlert";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	createGroup,
@@ -9,21 +10,26 @@ import {
 } from "@/services/group.service";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 const CreateGroupScreen = () => {
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-
+	/* -------------------------------------------------------------------------- */
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [groups, setGroups] = useState<any[]>([]);
 	const [editingId, setEditingId] = useState<string | null>(null);
 
+	/* -------------------------------------------------------------------------- */
 	const handleCreateOrUpdate = async () => {
 		try {
+			setGlobalLoading(true);
 			if (editingId) {
 				// Update group
 				const response: any = await updateGroup(editingId, {
@@ -60,6 +66,8 @@ const CreateGroupScreen = () => {
 					? "Unable to update group"
 					: "Unable to create group",
 			});
+		} finally {
+			setGlobalLoading(false);
 		}
 	};
 
@@ -103,11 +111,6 @@ const CreateGroupScreen = () => {
 			cancelText: "Cancel",
 		});
 	};
-
-	useEffect(() => {
-		fetchGroups();
-	}, []);
-
 	const renderGroupItem = ({ item }: any) => (
 		<View
 			className="p-3 rounded-lg mb-2"
@@ -136,7 +139,15 @@ const CreateGroupScreen = () => {
 			</View>
 		</View>
 	);
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchGroups();
+	}, []);
 
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			style={{

@@ -1,5 +1,6 @@
 import PostCard from "@/components/complaints/PostCard";
 import Blob from "@/components/on-bording/blob";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getAllComplaints } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
@@ -9,26 +10,21 @@ import { View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 
 const Feed = () => {
-	const { secondaryColor, primaryColor, textColor } = useAppTheme();
-	const [complaints, setComplaints] = useState([]);
-	const [loading, setLoading] = useState(false);
 	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	const { secondaryColor, primaryColor, textColor } = useAppTheme();
+	/* -------------------------------------------------------------------------- */
+	const [complaints, setComplaints] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	/* -------------------------------------------------------------------------- */
 	const fetchComplaints = async () => {
 		try {
-			setLoading(true);
 			const data = await getAllComplaints();
 			setComplaints(data);
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
-		} finally {
-			setLoading(false);
 		}
 	};
-
-	useEffect(() => {
-		fetchComplaints();
-	}, []);
 
 	const onRefresh = async () => {
 		setRefreshing(true);
@@ -36,7 +32,15 @@ const Feed = () => {
 
 		setRefreshing(false);
 	};
-	// if (loading) return <Loader />;
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchComplaints();
+	}, []);
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			style={{

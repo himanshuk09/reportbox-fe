@@ -64,7 +64,7 @@ const AuthGuard = () => {
 				config={toastConfig}
 				position="top"
 				swipeable
-				visibilityTime={2000}
+				visibilityTime={3000}
 				topOffset={10}
 				avoidKeyboard
 				autoHide

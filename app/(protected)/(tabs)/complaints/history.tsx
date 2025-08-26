@@ -3,9 +3,11 @@ import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
 import { complaintsPosts } from "@/constants/posts";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByUserID } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 
@@ -71,13 +73,16 @@ const ComplaintCard = ({ item, setComplaint, setIsModalOpen }: any) => {
 };
 
 const ComplaintHistoryScreen = () => {
-	const { logout, user } = useAuth();
-	const [complaintDetails, setComplaintDetails] = useState([]);
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [complaintonModel, setComplaintModel] = useState([]);
+	const { user } = useAuth();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { textColor, primaryColor, secondaryColor } = useAppTheme();
+	/* -------------------------------------------------------------------------- */
 	const [loading, setLoading] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [complaintonModel, setComplaintModel] = useState([]);
+	const [complaintDetails, setComplaintDetails] = useState([]);
 
 	const fetchAllComplaints = async () => {
 		setLoading(true);
@@ -85,14 +90,21 @@ const ComplaintHistoryScreen = () => {
 		setComplaintDetails(response?.complaints);
 		setLoading(false);
 	};
-	useEffect(() => {
-		fetchAllComplaints();
-	}, []);
+
 	const onRefresh = async () => {
 		setRefreshing(true);
 		await fetchAllComplaints();
 		setRefreshing(false);
 	};
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchAllComplaints();
+	}, []);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
+	/* -------------------------------------------------------------------------- */
 	if (loading) return <Loader />;
 	return (
 		<View

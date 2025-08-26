@@ -1,8 +1,10 @@
 import Blob from "@/components/on-bording/blob";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
-import React from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect } from "react";
 import {
 	Linking,
 	StyleSheet,
@@ -52,7 +54,11 @@ const EmergencyContactScreen = () => {
 	const handleCall = (number: string) => {
 		Linking.openURL(`tel:${number}`);
 	};
-
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
 	const renderItem = ({ item }: { item: (typeof emergencyContacts)[0] }) => (
 		<TouchableOpacity
 			style={[styles.itemContainer, { backgroundColor: cardsColor }]}

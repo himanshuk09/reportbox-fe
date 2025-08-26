@@ -140,6 +140,7 @@
 // export default CreateRightsScreen;
 import CustomAlert from "@/components/ui/CustomAlert";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	createRights,
@@ -149,6 +150,7 @@ import {
 } from "@/services/rights.service";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
+import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
 	Keyboard,
@@ -166,6 +168,9 @@ const CreateRightsScreen = () => {
 	const [rights, setRights] = useState<any[]>([]);
 	const [editingId, setEditingId] = useState<string | null>(null);
 
+	/* -------------------------------------------------------------------------- */
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
 
@@ -178,53 +183,61 @@ const CreateRightsScreen = () => {
 		}
 	};
 
-	useEffect(() => {
-		fetchRights();
-	}, []);
-
 	const handleCreateOrUpdate = async () => {
-		if (editingId) {
-			// Update
-			try {
-				await updateRight(editingId, { name, key, description });
-				setRights((prev) =>
-					prev.map((r) =>
-						r._id === editingId
-							? { ...r, name, key, description }
-							: r
-					)
-				);
-				setEditingId(null);
-				setName("");
-				setDescription("");
-				Keyboard.dismiss();
-				Toast.show({
-					type: "success",
-					text1: "Rights updated successfully.",
-				});
-			} catch (error) {
-				Toast.show({ type: "error", text1: "Unable to update rights" });
-			}
-		} else {
-			// Create
-			try {
-				const response: any = await createRights({
-					name,
-					key,
-					description,
-				});
-				if (response.status) {
-					Toast.show({
-						type: "success",
-						text1: "Rights created successfully.",
-					});
-					await fetchRights();
+		try {
+			setGlobalLoading(true);
+			if (editingId) {
+				// Update
+				try {
+					await updateRight(editingId, { name, key, description });
+					setRights((prev) =>
+						prev.map((r) =>
+							r._id === editingId
+								? { ...r, name, key, description }
+								: r
+						)
+					);
+					setEditingId(null);
 					setName("");
 					setDescription("");
+					Keyboard.dismiss();
+					Toast.show({
+						type: "success",
+						text1: "Rights updated successfully.",
+					});
+				} catch (error) {
+					Toast.show({
+						type: "error",
+						text1: "Unable to update rights",
+					});
 				}
-			} catch (error) {
-				Toast.show({ type: "error", text1: "Unable to create rights" });
+			} else {
+				// Create
+				try {
+					const response: any = await createRights({
+						name,
+						key,
+						description,
+					});
+					if (response.status) {
+						Toast.show({
+							type: "success",
+							text1: "Rights created successfully.",
+						});
+						await fetchRights();
+						setName("");
+						setDescription("");
+					}
+				} catch (error) {
+					Toast.show({
+						type: "error",
+						text1: "Unable to create rights",
+					});
+				}
 			}
+		} catch (error) {
+		} finally {
+			setGlobalLoading(false);
 		}
 	};
 
@@ -284,7 +297,14 @@ const CreateRightsScreen = () => {
 			</View>
 		</View>
 	);
-
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchRights();
+	}, []);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			style={{

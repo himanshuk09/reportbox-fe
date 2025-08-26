@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import {
 	Image,
+	InteractionManager,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -12,7 +13,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Href, router } from "expo-router";
+import { Href, router, useSegments } from "expo-router";
 import React from "react";
 const menuItems: {
 	label: string;
@@ -49,19 +50,27 @@ const menuItems: {
 ];
 const CustomDrawer = (props: any) => {
 	const { navigation } = props;
+	const segments = useSegments(); //Returns a list of selected file segments for the currently selected route.
 	const { logout, user } = useAuth();
-	const { globalLoading, setGlobalLoading } = useLoading();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+
+	const segmentPath = "/" + segments.join("/");
 
 	return (
 		<View style={[styles.container, { backgroundColor: secondaryColor }]}>
 			<TouchableOpacity
 				style={[styles.header, { borderBottomColor: textColor }]}
 				onPress={() => {
-					router.push("/(protected)/profile");
 					if (navigation?.closeDrawer) {
 						navigation.closeDrawer();
+					}
+					if (segmentPath !== "/(protected)/profile") {
+						setGlobalLoading(true);
+						InteractionManager.runAfterInteractions(() => {
+							router.push("/(protected)/profile");
+						});
 					}
 				}}
 			>
@@ -88,10 +97,14 @@ const CustomDrawer = (props: any) => {
 						key={item.label}
 						style={styles.customItem}
 						onPress={() => {
-							router.push(item.path);
-
 							if (navigation?.closeDrawer) {
 								navigation.closeDrawer();
+							}
+							if (segmentPath !== item.path) {
+								setGlobalLoading(true);
+								InteractionManager.runAfterInteractions(() => {
+									router.push(item.path);
+								});
 							}
 						}}
 					>

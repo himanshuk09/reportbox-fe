@@ -1,14 +1,17 @@
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 const GroupManagementHome = () => {
+	const router = useRouter();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
-	const router = useRouter();
-
-	// Button config list
+	/* -------------------------------------------------------------------------- */
 	const actions = [
 		{
 			label: "New Group Setup",
@@ -35,7 +38,11 @@ const GroupManagementHome = () => {
 			path: "/(protected)/admin/rights/group-user-mapping",
 		},
 	];
-
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			style={{

@@ -5,11 +5,14 @@ import CameraScreen from "@/components/native/CameraScreen";
 import LeafletMapWebView from "@/components/native/Map";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { raisedComplaint } from "@/services/complaint.service";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+	Keyboard,
 	KeyboardAvoidingView,
 	Modal,
 	Platform,
@@ -48,7 +51,12 @@ const validateFormData = (complaintData: any) => {
 };
 const Complaint = () => {
 	const { user } = useAuth();
-	const { primaryColor, secondaryColor, textColor } = useAppTheme();
+	const isFocused = useIsFocused();
+	const router = useRouter();
+	const { setGlobalLoading } = useLoading();
+	const { secondaryColor, textColor } = useAppTheme();
+
+	/* -------------------------------------------------------------------------- */
 	const [showCamera, setShowCamera] = useState(false);
 	const [complaintData, setComplaintData] = useState({
 		beforeImage: "",
@@ -59,14 +67,16 @@ const Complaint = () => {
 		tags: "",
 	});
 	const [showSuccess, setShowSuccess] = useState(false);
-	const router = useRouter();
+	const [CID, setCID] = useState("");
+
+	/* -------------------------------------------------------------------------- */
 	const handleSetImage = (newImage: string) => {
 		setComplaintData((prev) => ({
 			...prev,
 			beforeImage: newImage,
 		}));
 	};
-	const [CID, setCID] = useState("");
+
 	const handleSetLocation = (newLocation: string) => {
 		setComplaintData((prev) => ({
 			...prev,
@@ -93,8 +103,9 @@ const Complaint = () => {
 
 	const handleSubmit = async () => {
 		if (!validateFormData(complaintData)) return;
-
 		try {
+			setGlobalLoading(true);
+			Keyboard.dismiss();
 			const response: any = await raisedComplaint({
 				...complaintData,
 				userID: user?.user?._id,
@@ -113,8 +124,16 @@ const Complaint = () => {
 			}
 		} catch (error) {
 			console.log("error on create complaint ");
+		} finally {
+			setGlobalLoading(false);
 		}
 	};
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
+	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
 			style={{

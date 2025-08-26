@@ -1,5 +1,6 @@
 import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersList } from "@/services/admin.service";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -12,15 +13,19 @@ import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserListScreen() {
+	const router = useRouter();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+
+	/* -------------------------------------------------------------------------- */
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState("");
 	const [allUsers, setAllUsers] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const isFocused = useIsFocused();
 	const [statusFilter, setStatusFilter] = useState("");
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
-	const router = useRouter();
+
 	const filteredUsers = useMemo(() => {
 		return allUsers
 			?.filter((user: any) => {
@@ -56,8 +61,6 @@ export default function UserListScreen() {
 		try {
 			setLoading(true);
 			const data = await getUsersList();
-			console.log(JSON.stringify(data, null, 2));
-
 			setAllUsers(data);
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
@@ -66,9 +69,16 @@ export default function UserListScreen() {
 		}
 	};
 
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchUsersList();
 	}, []);
+
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+
+	/* -------------------------------------------------------------------------- */
 	if (loading) return <Loader />;
 	return (
 		<SafeAreaView
