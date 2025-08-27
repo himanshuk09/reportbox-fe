@@ -1,7 +1,10 @@
+import CustomAlert from "@/components/ui/CustomAlert";
 import { getFullDetails } from "@/services/auth.service";
 import { getMMKV, removeMMKV, setMMKV } from "@/storage/mmkv";
+import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { createContext, useContext, useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 
 type AuthContextType = {
 	user: any;
@@ -62,9 +65,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	// Clear all data
 	const logout = async () => {
-		setUser(null);
-		setSession(false);
-		removeMMKV("user");
+		CustomAlert({
+			title: "Logout",
+			description: "Are you sure you want to logout?",
+			confirmText: "Logout",
+			cancelText: "Cancel",
+			onConfirm: async () => {
+				try {
+					setUser(null);
+					setSession(false);
+					removeMMKV("user");
+					router.push("/");
+					Toast.show({
+						type: "success",
+						text1: "Logged out successfully",
+					});
+				} catch (error) {
+					Toast.show({
+						type: "error",
+						text1: "Unable to logout",
+					});
+				}
+			},
+		});
 	};
 
 	return (

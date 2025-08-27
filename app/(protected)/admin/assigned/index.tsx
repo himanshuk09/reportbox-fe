@@ -30,7 +30,7 @@ const mockAssignedComplaints = [
 ];
 
 const WorkerAssignedComplaintsScreen = () => {
-	const { logout, user } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 
 	const isFocused = useIsFocused();

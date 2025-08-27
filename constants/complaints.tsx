@@ -24,7 +24,7 @@ export const Dashboard_Categories = [
 				color="#00F0FF"
 			/>
 		),
-		route: "/(protected)/complaints/add",
+		route: "/(protected)/(tabs)/complaints/create",
 	},
 	{
 		label: "Sanitation Module",

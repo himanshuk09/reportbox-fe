@@ -1,4 +1,6 @@
+import NotificationWrapper from "@/components/NotificationWrapper";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ImagePreviewProvider } from "@/contexts/ImagePreviewContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
@@ -25,8 +27,11 @@ export default function RootLayout() {
 	return (
 		<AuthProvider>
 			<ThemeProvider>
+				<NotificationWrapper />
 				<LoadingProvider>
-					<AuthGuard />
+					<ImagePreviewProvider>
+						<AuthGuard />
+					</ImagePreviewProvider>
 				</LoadingProvider>
 			</ThemeProvider>
 		</AuthProvider>

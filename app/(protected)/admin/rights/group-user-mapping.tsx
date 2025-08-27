@@ -22,6 +22,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const AssignUsersToGroupScreen = () => {
 	const [groups, setGroups] = useState<any[]>([]);
@@ -77,7 +78,13 @@ const AssignUsersToGroupScreen = () => {
 	};
 
 	const handlePreviewChanges = () => {
-		if (!selectedGroup) return alert("Please select a group");
+		if (!selectedGroup) {
+			Toast.show({
+				type: "error",
+				text1: "Please select a group",
+			});
+			return;
+		}
 
 		// Calculate added/removed
 		const added = allUsers.filter(
@@ -102,10 +109,18 @@ const AssignUsersToGroupScreen = () => {
 				userIds: selectedUsers,
 			};
 			await assignUsersToGroup(payload);
-			alert("Users updated successfully!");
+
+			Toast.show({
+				type: "success",
+				text1: "Users updated successfully!",
+			});
 			setGroupUsers([...selectedUsers]); // update local state
 		} catch (error) {
 			console.log("Error on assigning users", error);
+			Toast.show({
+				type: "error",
+				text1: "Unable to Update!",
+			});
 		} finally {
 			setGlobalLoading(false);
 		}

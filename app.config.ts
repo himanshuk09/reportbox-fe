@@ -2,8 +2,8 @@ import { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
-	name: "complaint-app",
-	slug: "complaint-app",
+	name: "Report Box",
+	slug: "report-box",
 	version: "1.0.0",
 	orientation: "portrait",
 	icon: "./assets/images/icon.png",
@@ -19,7 +19,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			backgroundColor: "#ffffff",
 		},
 		edgeToEdgeEnabled: true,
-		package: "com.himanshukhade.complaintapp",
+		package: "com.himanshukhade.reportbox",
+		googleServicesFile: "./google-services.json",
 		permissions: [
 			"WRITE_EXTERNAL_STORAGE",
 			"READ_EXTERNAL_STORAGE",
@@ -47,7 +48,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 				image: "./assets/images/splash-icon.png",
 				imageWidth: 200,
 				resizeMode: "contain",
-				backgroundColor: "#ffffff",
+				backgroundColor: "#f1f1f1",
+				dark: {
+					image: "./assets/images/splash-icon.png",
+					backgroundColor: "#343232",
+				},
 			},
 		],
 		[
@@ -130,7 +135,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	extra: {
 		router: {},
 		eas: {
-			projectId: "8af56934-163c-494d-b185-1792f50fc363",
+			projectId: "91785fb2-1f97-4918-af00-776fdc430bbc",
 		},
 	},
 });

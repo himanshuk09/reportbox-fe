@@ -2,6 +2,7 @@ import Blob from "@/components/on-bording/blob";
 import CustomAlert from "@/components/ui/CustomAlert";
 import Loader from "@/components/ui/Loader";
 import { getStatusStyle } from "@/constants/statuscode";
+import { useImagePreview } from "@/contexts/ImagePreviewContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersDetailsByID } from "@/services/admin.service";
@@ -26,6 +27,8 @@ export default function ComplaintListScreen() {
 	const isFocused = useIsFocused();
 	const { userID } = useLocalSearchParams();
 	const { setGlobalLoading } = useLoading();
+	const { showImage } = useImagePreview();
+
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
 	/* -------------------------------------------------------------------------- */
@@ -162,16 +165,22 @@ export default function ComplaintListScreen() {
 							<View className="flex-row items-center justify-between">
 								<View className="flex-row items-center">
 									{userDetails?.avatar && (
-										<Image
-											source={{
-												uri: userDetails.avatar,
-											}}
-											className="w-20 h-20 rounded-full mr-4 border-2"
-											style={{
-												borderColor: primaryColor,
-											}}
-											resizeMode="cover"
-										/>
+										<Pressable
+											onPress={() =>
+												showImage(userDetails.avatar)
+											}
+										>
+											<Image
+												source={{
+													uri: userDetails.avatar,
+												}}
+												className="w-20 h-20 rounded-full mr-4 border-2"
+												style={{
+													borderColor: primaryColor,
+												}}
+												resizeMode="cover"
+											/>
+										</Pressable>
 									)}
 									<View>
 										<Text

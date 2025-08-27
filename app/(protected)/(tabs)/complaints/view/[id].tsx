@@ -108,7 +108,12 @@ const PostDetailsScreen = () => {
 							{index < arr.length - 1 && (
 								<View style={styles.verticalLineBottom} />
 							)}
-							<View style={styles.circle}>
+							<View
+								style={[
+									styles.circle,
+									{ backgroundColor: secondaryColor },
+								]}
+							>
 								{step.icon === "handshake" && (
 									<FontAwesome5
 										name="handshake"
@@ -136,7 +141,7 @@ const PostDetailsScreen = () => {
 							style={{
 								color: textColor,
 								fontSize: 16,
-								fontWeight: "500",
+								fontWeight: "400",
 							}}
 						>
 							{formateDate(step.date)}
@@ -193,7 +198,7 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		backgroundColor: "#333",
+
 		alignItems: "center",
 		justifyContent: "center",
 		zIndex: 2,

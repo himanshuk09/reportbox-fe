@@ -83,7 +83,6 @@ const TabLayout = () => {
 				name="complaints/index"
 				options={{
 					title: "",
-
 					headerShown: true,
 					tabBarIcon: ({ color, size }) => (
 						// <Ionicons name="search" color={color} size={size} />
@@ -108,6 +107,7 @@ const TabLayout = () => {
 				name="complaints/create"
 				options={{
 					href: null,
+					animation: "fade",
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
@@ -123,6 +123,7 @@ const TabLayout = () => {
 				name="complaints/view/[id]"
 				options={{
 					href: null,
+					animation: "fade",
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,
@@ -138,6 +139,7 @@ const TabLayout = () => {
 				name="complaints/edit/[id]"
 				options={{
 					href: null,
+					animation: "fade",
 					headerShown: true,
 					tabBarActiveTintColor: primaryColor,
 					headerTransparent: true,

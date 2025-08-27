@@ -2,7 +2,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import Svg, { Path, Text } from "react-native-svg";
+import Svg, { Path, Text, TSpan } from "react-native-svg";
 
 const Blob = ({ text, iconName }: any) => {
 	const { primaryColor, secondaryColor } = useAppTheme();
@@ -21,7 +21,7 @@ const Blob = ({ text, iconName }: any) => {
 					name={iconName}
 					size={35}
 					color={secondaryColor}
-					className="mb-3"
+					style={{ marginBottom: 5 }}
 				/>
 				<TextSVG text={text} />
 			</View>
@@ -30,19 +30,28 @@ const Blob = ({ text, iconName }: any) => {
 };
 
 export default Blob;
+
 const TextSVG = ({ text }: { text: string }) => {
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { secondaryColor } = useAppTheme();
+
+	// Split text into lines of max 15 characters
+	const lines = text.match(/.{1,15}/g) || [];
+
 	return (
-		<Svg height="20" width="200">
+		<Svg height={lines.length * 20} width="200">
 			<Text
 				x="100"
-				y="15"
+				y="0"
 				fill={secondaryColor}
-				fontSize="18"
+				fontSize="16"
 				fontWeight="bold"
 				textAnchor="middle"
 			>
-				{text}
+				{lines.map((line, i) => (
+					<TSpan key={i} x="100" dy={i === 0 ? 15 : 20}>
+						{line}
+					</TSpan>
+				))}
 			</Text>
 		</Svg>
 	);

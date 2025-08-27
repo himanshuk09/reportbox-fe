@@ -22,6 +22,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 const AssignRightsToGroupScreen = () => {
 	const [groups, setGroups] = useState<any[]>([]);
 	const [allRights, setAllRights] = useState<any[]>([]);
@@ -77,7 +78,13 @@ const AssignRightsToGroupScreen = () => {
 	};
 
 	const handlePreviewChanges = () => {
-		if (!selectedGroup) return alert("Please select a group");
+		if (!selectedGroup) {
+			Toast.show({
+				type: "error",
+				text1: "Please select a group",
+			});
+			return;
+		}
 
 		// Calculate added/removed
 		const added = allRights.filter(
@@ -104,8 +111,12 @@ const AssignRightsToGroupScreen = () => {
 				groupId: selectedGroup._id,
 				rightIds: selectedRights,
 			};
-			const response: any = await assignRightsToGroup(payload);
-			alert("Rights updated successfully!");
+			await assignRightsToGroup(payload);
+
+			Toast.show({
+				type: "success",
+				text1: "Rights updated successfully!",
+			});
 			setGroupRights([...selectedRights]); // update local state
 		} catch (error) {
 			console.log("Error on assigning rights", error);

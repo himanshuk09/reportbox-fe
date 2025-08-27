@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useImagePreview } from "@/contexts/ImagePreviewContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { updateProfile } from "@/services/auth.service";
@@ -16,7 +17,10 @@ import {
 	Dimensions,
 	Image,
 	ImageBackground,
+	Keyboard,
+	KeyboardAvoidingView,
 	Modal,
+	Platform,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -103,10 +107,11 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 	const { user, data, completeProfile } = useAuth();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+	const { showImage } = useImagePreview();
+
 	/* -------------------------------------------------------------------------- */
 	const [edit, setEdit] = useState(onlyForm);
 	const [showCamera, setShowCamera] = useState(false);
-	const [showImageViewer, setShowImageViewer] = useState(false);
 	const [formData, setFormData] = useState({
 		name: user?.user?.name || "",
 		state: user?.user?.state || "",
@@ -123,7 +128,9 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 	/* -------------------------------------------------------------------------- */
 	const handleFormSubmit = async () => {
 		if (!validateFormData(formData, avatar, setAvatar)) return;
+
 		try {
+			Keyboard.dismiss();
 			setGlobalLoading(true);
 			const result = await updateProfile(
 				id ?? user?.user?._id,
@@ -137,7 +144,7 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 
 			setTimeout(() => {
 				if (!onlyForm) setEdit(false);
-			}, 1000);
+			}, 2000);
 		} catch (error) {
 		} finally {
 			setGlobalLoading(false);
@@ -149,561 +156,586 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 	}, [isFocused]);
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: secondaryColor }}>
-			<ScrollView
-				contentContainerStyle={{ flexGrow: 1 }}
-				keyboardShouldPersistTaps="handled"
-				showsVerticalScrollIndicator={false}
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} // adjust if header overlaps
 			>
-				{/* Background Header */}
-				<ImageBackground
-					source={{
-						uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
-					}}
-					style={styles.headerBg}
-					resizeMode="cover"
+				<ScrollView
+					contentContainerStyle={{ flexGrow: 1 }}
+					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
 				>
-					{editable && !onlyForm && (
-						<Pressable
-							style={styles.editButton}
-							onPress={() => setEdit(!edit)}
-						>
-							<MaterialIcons name="edit" size={24} color="#FFF" />
-						</Pressable>
-					)}
+					{/* Background Header */}
+					<ImageBackground
+						source={{
+							uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+						}}
+						style={styles.headerBg}
+						resizeMode="cover"
+					>
+						{editable && !onlyForm && (
+							<Pressable
+								style={styles.editButton}
+								onPress={() => setEdit(!edit)}
+							>
+								<MaterialIcons
+									name="edit"
+									size={24}
+									color="#FFF"
+								/>
+							</Pressable>
+						)}
 
-					<View style={styles.profilePicWrapper}>
-						<TouchableOpacity
-							style={[
-								styles.profilePic,
-								{ borderColor: primaryColor },
-							]}
-							onPress={() => setShowImageViewer(true)}
-						>
-							<Image
-								source={{
-									uri:
-										avatar.trim() ||
-										"https://avatar.iran.liara.run/public/37",
-								}}
-								resizeMode="cover"
-								style={styles.profileImage}
-							/>
-						</TouchableOpacity>
-						{(edit || onlyForm) && (
+						<View style={styles.profilePicWrapper}>
 							<TouchableOpacity
 								style={[
-									styles.addIcon,
+									styles.profilePic,
 									{ borderColor: primaryColor },
 								]}
 								onPress={() =>
-									handleImageChoice(setShowCamera, setAvatar)
+									showImage(
+										avatar.trim() ||
+											"https://avatar.iran.liara.run/public/37"
+									)
 								}
 							>
-								<Ionicons
-									name="add"
-									size={16}
-									color={primaryColor}
+								<Image
+									source={{
+										uri:
+											avatar.trim() ||
+											"https://avatar.iran.liara.run/public/37",
+									}}
+									resizeMode="cover"
+									style={styles.profileImage}
 								/>
 							</TouchableOpacity>
-						)}
-					</View>
-				</ImageBackground>
-
-				{/**Editable form */}
-				{edit || onlyForm ? (
-					<View
-						style={[
-							styles.form,
-							{ backgroundColor: secondaryColor },
-						]}
-					>
-						<Text style={[styles.label, { color: textColor }]}>
-							Name
-						</Text>
-						<TextInput
-							placeholder="Enter your name"
-							placeholderTextColor="#aaa"
-							style={[
-								styles.input,
-								{
-									backgroundColor: cardsColor,
-									color: textColor,
-								},
-							]}
-							value={formData.name}
-							onChangeText={(text) =>
-								setFormData((prev) => ({ ...prev, name: text }))
-							}
-						/>
-
-						<Text
-							style={[
-								styles.label,
-								{ fontSize: 12, color: textColor },
-							]}
-						>
-							Phone Number
-						</Text>
-						<TextInput
-							placeholder="Enter your phone number"
-							placeholderTextColor="#aaa"
-							keyboardType="phone-pad"
-							style={[
-								styles.input,
-								{
-									backgroundColor: cardsColor,
-									color: textColor,
-								},
-							]}
-							value={formData.phoneNo}
-							onChangeText={(text) =>
-								setFormData((prev) => ({
-									...prev,
-									phoneNo: text,
-								}))
-							}
-							maxLength={10}
-						/>
-
-						<Text
-							style={[
-								styles.label,
-								{ fontSize: 12, color: textColor },
-							]}
-						>
-							Gender
-						</Text>
-						<View style={styles.genderToggleContainer}>
-							{["Male", "Female", "Other"].map((option) => (
+							{(edit || onlyForm) && (
 								<TouchableOpacity
-									key={option}
 									style={[
-										styles.genderOption,
-										{
-											backgroundColor:
-												formData.gender === option
-													? primaryColor
-													: cardsColor,
-											borderColor: primaryColor,
-										},
+										styles.addIcon,
+										{ borderColor: primaryColor },
 									]}
 									onPress={() =>
-										setFormData((prev) => ({
-											...prev,
-											gender: option,
-										}))
+										handleImageChoice(
+											setShowCamera,
+											setAvatar
+										)
 									}
 								>
-									<Text
-										style={{
-											color:
-												formData.gender === option
-													? "#fff"
-													: textColor,
-											fontWeight: "500",
-										}}
-									>
-										{option}
-									</Text>
+									<Ionicons
+										name="add"
+										size={16}
+										color={primaryColor}
+									/>
 								</TouchableOpacity>
-							))}
+							)}
 						</View>
+					</ImageBackground>
 
-						<Text style={[styles.label, { color: textColor }]}>
-							Address
-						</Text>
-
-						<View style={styles.row}>
-							<View
+					{/**Editable form */}
+					{edit || onlyForm ? (
+						<View
+							style={[
+								styles.form,
+								{ backgroundColor: secondaryColor },
+							]}
+						>
+							<Text style={[styles.label, { color: textColor }]}>
+								Name
+							</Text>
+							<TextInput
+								placeholder="Enter your name"
+								placeholderTextColor="#aaa"
 								style={[
-									styles.inputContainer,
-									{ flex: 1, marginRight: 8 },
+									styles.input,
+									{
+										backgroundColor: cardsColor,
+										color: textColor,
+									},
 								]}
-							>
-								<Text
-									style={[
-										styles.label,
-										{ fontSize: 12, color: textColor },
-									]}
-								>
-									State
-								</Text>
-								<TextInput
-									placeholder="Enter your state"
-									placeholderTextColor="#aaa"
-									style={[
-										styles.input,
-										{
-											backgroundColor: cardsColor,
-											color: textColor,
-										},
-									]}
-									value={formData.state}
-									onChangeText={(text) =>
-										setFormData((prev) => ({
-											...prev,
-											state: text,
-										}))
-									}
-								/>
-							</View>
-							<View style={[styles.inputContainer, { flex: 1 }]}>
-								<Text
-									style={[
-										styles.label,
-										{ fontSize: 12, color: textColor },
-									]}
-								>
-									City
-								</Text>
-								<TextInput
-									placeholder="Enter your city"
-									placeholderTextColor="#aaa"
-									style={[
-										styles.input,
-										{
-											backgroundColor: cardsColor,
-											color: textColor,
-										},
-									]}
-									value={formData.city}
-									onChangeText={(text) =>
-										setFormData((prev) => ({
-											...prev,
-											city: text,
-										}))
-									}
-								/>
-							</View>
-						</View>
+								value={formData.name}
+								onChangeText={(text) =>
+									setFormData((prev) => ({
+										...prev,
+										name: text,
+									}))
+								}
+							/>
 
-						<Text
-							style={[
-								styles.label,
-								{ fontSize: 12, color: textColor },
-							]}
-						>
-							Door no.
-						</Text>
-						<TextInput
-							placeholder="Enter door no."
-							placeholderTextColor="#aaa"
-							style={[
-								styles.input,
-								{
-									backgroundColor: cardsColor,
-									color: textColor,
-								},
-							]}
-							value={formData.doorNo}
-							onChangeText={(text) =>
-								setFormData((prev) => ({
-									...prev,
-									doorNo: text,
-								}))
-							}
-						/>
-
-						<Text
-							style={[
-								styles.label,
-								{ fontSize: 12, color: textColor },
-							]}
-						>
-							Street name
-						</Text>
-						<TextInput
-							placeholder="Enter your street"
-							placeholderTextColor="#aaa"
-							style={[
-								styles.input,
-								{
-									backgroundColor: cardsColor,
-									color: textColor,
-								},
-							]}
-							value={formData.street}
-							onChangeText={(text) =>
-								setFormData((prev) => ({
-									...prev,
-									street: text,
-								}))
-							}
-						/>
-
-						<RoundedButton
-							title={onlyForm ? "Submit" : "Update"}
-							onPress={handleFormSubmit}
-						/>
-					</View>
-				) : (
-					<View
-						style={[
-							styles.form,
-							{
-								paddingTop: 0,
-								paddingBottom: 30,
-								backgroundColor: secondaryColor,
-							},
-						]}
-					>
-						{/* USER ID */}
-						<View style={styles.userIdContainer}>
 							<Text
 								style={[
 									styles.label,
-									{ fontSize: 18, color: textColor },
+									{ fontSize: 12, color: textColor },
 								]}
 							>
-								This is Your User ID
+								Phone Number
 							</Text>
-							<View
+							<TextInput
+								placeholder="Enter your phone number"
+								placeholderTextColor="#aaa"
+								keyboardType="phone-pad"
 								style={[
-									styles.userIdBox,
+									styles.input,
 									{
-										borderColor: primaryColor,
 										backgroundColor: cardsColor,
+										color: textColor,
 									},
 								]}
+								value={formData.phoneNo}
+								onChangeText={(text) =>
+									setFormData((prev) => ({
+										...prev,
+										phoneNo: text,
+									}))
+								}
+								maxLength={10}
+							/>
+
+							<Text
+								style={[
+									styles.label,
+									{ fontSize: 12, color: textColor },
+								]}
 							>
-								<Feather
-									name="user-check"
-									size={18}
-									color={primaryColor}
-									style={styles.userIdIcon}
-								/>
-								<Text
-									style={[
-										styles.userIdText,
-										{ color: textColor },
-									]}
-								>
-									{formData.UID}
-								</Text>
-							</View>
-						</View>
-
-						{/* USER INFO */}
-						<View style={styles.addressContainer}>
-							{/* Name */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<Feather
-										name="user"
-										size={16}
-										color={primaryColor}
-									/>
-								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.name}
-								</Text>
-							</View>
-
-							{/* Gender */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<FontAwesome
-										name={
-											formData.gender === "Female"
-												? "venus"
-												: formData.gender === "Male"
-													? "mars"
-													: "genderless"
+								Gender
+							</Text>
+							<View style={styles.genderToggleContainer}>
+								{["Male", "Female", "Other"].map((option) => (
+									<TouchableOpacity
+										key={option}
+										style={[
+											styles.genderOption,
+											{
+												backgroundColor:
+													formData.gender === option
+														? primaryColor
+														: cardsColor,
+												borderColor: primaryColor,
+											},
+										]}
+										onPress={() =>
+											setFormData((prev) => ({
+												...prev,
+												gender: option,
+											}))
 										}
-										size={16}
-										color={primaryColor}
-									/>
-								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.gender || "Not specified"}
-								</Text>
+									>
+										<Text
+											style={{
+												color:
+													formData.gender === option
+														? "#fff"
+														: textColor,
+												fontWeight: "500",
+											}}
+										>
+											{option}
+										</Text>
+									</TouchableOpacity>
+								))}
 							</View>
 
-							{/* Address */}
-							<View style={styles.infoRow}>
+							<Text style={[styles.label, { color: textColor }]}>
+								Address
+							</Text>
+
+							<View style={styles.row}>
 								<View
 									style={[
-										styles.iconContainer,
+										styles.inputContainer,
+										{ flex: 1, marginRight: 8 },
+									]}
+								>
+									<Text
+										style={[
+											styles.label,
+											{ fontSize: 12, color: textColor },
+										]}
+									>
+										State
+									</Text>
+									<TextInput
+										placeholder="Enter your state"
+										placeholderTextColor="#aaa"
+										style={[
+											styles.input,
+											{
+												backgroundColor: cardsColor,
+												color: textColor,
+											},
+										]}
+										value={formData.state}
+										onChangeText={(text) =>
+											setFormData((prev) => ({
+												...prev,
+												state: text,
+											}))
+										}
+									/>
+								</View>
+								<View
+									style={[styles.inputContainer, { flex: 1 }]}
+								>
+									<Text
+										style={[
+											styles.label,
+											{ fontSize: 12, color: textColor },
+										]}
+									>
+										City
+									</Text>
+									<TextInput
+										placeholder="Enter your city"
+										placeholderTextColor="#aaa"
+										style={[
+											styles.input,
+											{
+												backgroundColor: cardsColor,
+												color: textColor,
+											},
+										]}
+										value={formData.city}
+										onChangeText={(text) =>
+											setFormData((prev) => ({
+												...prev,
+												city: text,
+											}))
+										}
+									/>
+								</View>
+							</View>
+
+							<Text
+								style={[
+									styles.label,
+									{ fontSize: 12, color: textColor },
+								]}
+							>
+								Door no.
+							</Text>
+							<TextInput
+								placeholder="Enter door no."
+								placeholderTextColor="#aaa"
+								style={[
+									styles.input,
+									{
+										backgroundColor: cardsColor,
+										color: textColor,
+									},
+								]}
+								value={formData.doorNo}
+								onChangeText={(text) =>
+									setFormData((prev) => ({
+										...prev,
+										doorNo: text,
+									}))
+								}
+							/>
+
+							<Text
+								style={[
+									styles.label,
+									{ fontSize: 12, color: textColor },
+								]}
+							>
+								Street name
+							</Text>
+							<TextInput
+								placeholder="Enter your street"
+								placeholderTextColor="#aaa"
+								style={[
+									styles.input,
+									{
+										backgroundColor: cardsColor,
+										color: textColor,
+									},
+								]}
+								value={formData.street}
+								onChangeText={(text) =>
+									setFormData((prev) => ({
+										...prev,
+										street: text,
+									}))
+								}
+							/>
+
+							<RoundedButton
+								title={onlyForm ? "Submit" : "Update"}
+								onPress={handleFormSubmit}
+							/>
+						</View>
+					) : (
+						<View
+							style={[
+								styles.form,
+								{
+									paddingTop: 0,
+									paddingBottom: 30,
+									backgroundColor: secondaryColor,
+								},
+							]}
+						>
+							{/* USER ID */}
+							<View style={styles.userIdContainer}>
+								<Text
+									style={[
+										styles.label,
+										{ fontSize: 18, color: textColor },
+									]}
+								>
+									This is Your User ID
+								</Text>
+								<View
+									style={[
+										styles.userIdBox,
 										{
-											backgroundColor:
-												primaryColor + "20",
+											borderColor: primaryColor,
+											backgroundColor: cardsColor,
 										},
 									]}
 								>
 									<Feather
-										name="map-pin"
-										size={16}
+										name="user-check"
+										size={18}
 										color={primaryColor}
+										style={styles.userIdIcon}
 									/>
+									<Text
+										style={[
+											styles.userIdText,
+											{ color: textColor },
+										]}
+									>
+										{formData.UID}
+									</Text>
 								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.street
-										? `${formData.street}, ${formData.doorNo}`
-										: "Address not available"}
-								</Text>
 							</View>
 
-							{/* City */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<Feather
-										name="home"
-										size={16}
-										color={primaryColor}
-									/>
+							{/* USER INFO */}
+							<View style={styles.addressContainer}>
+								{/* Name */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<Feather
+											name="user"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.name}
+									</Text>
 								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.city || "City not available"}
-								</Text>
-							</View>
 
-							{/* State */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<Feather
-										name="globe"
-										size={16}
-										color={primaryColor}
-									/>
+								{/* Gender */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<FontAwesome
+											name={
+												formData.gender === "Female"
+													? "venus"
+													: formData.gender === "Male"
+														? "mars"
+														: "genderless"
+											}
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.gender || "Not specified"}
+									</Text>
 								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.state || "State not available"}
-								</Text>
-							</View>
 
-							{/* Phone */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<Feather
-										name="phone"
-										size={16}
-										color={primaryColor}
-									/>
+								{/* Address */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<Feather
+											name="map-pin"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.street
+											? `${formData.street}, ${formData.doorNo}`
+											: "Address not available"}
+									</Text>
 								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.phoneNo || "Phone not available"}
-								</Text>
-							</View>
 
-							{/* Email */}
-							<View style={styles.infoRow}>
-								<View
-									style={[
-										styles.iconContainer,
-										{
-											backgroundColor:
-												primaryColor + "20",
-										},
-									]}
-								>
-									<MaterialIcons
-										name="email"
-										size={16}
-										color={primaryColor}
-									/>
+								{/* City */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<Feather
+											name="home"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.city || "City not available"}
+									</Text>
 								</View>
-								<Text
-									style={[
-										styles.addressText,
-										{ color: textColor },
-									]}
-								>
-									{formData.email || "Email not available"}
-								</Text>
+
+								{/* State */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<Feather
+											name="globe"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.state ||
+											"State not available"}
+									</Text>
+								</View>
+
+								{/* Phone */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<Feather
+											name="phone"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.phoneNo ||
+											"Phone not available"}
+									</Text>
+								</View>
+
+								{/* Email */}
+								<View style={styles.infoRow}>
+									<View
+										style={[
+											styles.iconContainer,
+											{
+												backgroundColor:
+													primaryColor + "20",
+											},
+										]}
+									>
+										<MaterialIcons
+											name="email"
+											size={16}
+											color={primaryColor}
+										/>
+									</View>
+									<Text
+										style={[
+											styles.addressText,
+											{ color: textColor },
+										]}
+									>
+										{formData.email ||
+											"Email not available"}
+									</Text>
+								</View>
 							</View>
 						</View>
-					</View>
-				)}
+					)}
 
-				{!edit && !onlyForm && (
-					<TouchableOpacity
-						style={[
-							styles.helpButton,
-							{ backgroundColor: cardsColor },
-						]}
-						onPress={() =>
-							router.push("/(protected)/settings/help")
-						}
-					>
-						<Entypo
-							name="help-with-circle"
-							size={35}
-							color={primaryColor}
-						/>
-					</TouchableOpacity>
-				)}
-			</ScrollView>
-
+					{!edit && !onlyForm && (
+						<TouchableOpacity
+							style={[
+								styles.helpButton,
+								{ backgroundColor: cardsColor },
+							]}
+							onPress={() =>
+								router.push("/(protected)/settings/help")
+							}
+						>
+							<Entypo
+								name="help-with-circle"
+								size={35}
+								color={primaryColor}
+							/>
+						</TouchableOpacity>
+					)}
+				</ScrollView>
+			</KeyboardAvoidingView>
 			{/* Camera Modal */}
 			<Modal
 				visible={showCamera}
@@ -714,28 +746,6 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 					setShowCamera={setShowCamera}
 					setImage={setAvatar}
 				/>
-			</Modal>
-
-			{/* Image Viewer Modal */}
-			<Modal
-				visible={showImageViewer}
-				transparent={true}
-				onRequestClose={() => setShowImageViewer(false)}
-				animationType="fade"
-			>
-				<View style={styles.imageViewerContainer}>
-					<Image
-						source={{ uri: avatar }}
-						style={styles.fullScreenImage}
-						resizeMode="contain"
-					/>
-					<TouchableOpacity
-						style={styles.closeButton}
-						onPress={() => setShowImageViewer(false)}
-					>
-						<Ionicons name="close-circle" size={40} color="white" />
-					</TouchableOpacity>
-				</View>
 			</Modal>
 		</SafeAreaView>
 	);
@@ -819,41 +829,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "bold",
 	},
-	// userIdContainer: {
-	// 	alignItems: "center",
-	// 	marginVertical: 40,
-	// },
-	// userIdBox: {
-	// 	borderWidth: 1,
-	// 	paddingHorizontal: 20,
-	// 	paddingVertical: 8,
-	// 	borderRadius: 6,
-	// 	flexDirection: "row",
-	// 	alignItems: "center",
-	// },
-	// userIdIcon: {
-	// 	marginRight: 6,
-	// 	fontWeight: "bold",
-	// },
-	// userIdText: {
-	// 	fontSize: 18,
-	// 	fontWeight: "bold",
-	// },
-	// addressContainer: {
-	// 	marginHorizontal: 30,
-	// 	marginVertical: 20,
-	// 	gap: 12,
-	// },
-	// infoRow: {
-	// 	flexDirection: "row",
-	// 	alignItems: "center",
-	// },
-	// icon: {
-	// 	marginRight: 8,
-	// },
-	// addressText: {
-	// 	fontSize: 16,
-	// },
+
 	helpButton: {
 		position: "absolute",
 		right: 20,
@@ -869,22 +845,7 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.25,
 		shadowRadius: 3.84,
 	},
-	imageViewerContainer: {
-		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.9)",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	fullScreenImage: {
-		width: screenWidth * 0.9,
-		height: screenHeight * 0.8,
-	},
-	closeButton: {
-		position: "absolute",
-		top: 50,
-		right: 20,
-		zIndex: 1,
-	},
+
 	genderToggleContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",

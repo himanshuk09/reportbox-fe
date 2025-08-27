@@ -3,7 +3,7 @@ import { BlurView } from "expo-blur";
 import React from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
 export const FullScreenLoader = () => {
-	const { primaryColor, secondaryColor } = useAppTheme();
+	const { primaryColor, bgLoader } = useAppTheme();
 
 	return (
 		<BlurView
@@ -14,7 +14,7 @@ export const FullScreenLoader = () => {
 					zIndex: 999,
 					justifyContent: "center",
 					alignItems: "center",
-					backgroundColor: "rgba(0, 0, 0, 0.4)",
+					backgroundColor: bgLoader,
 				},
 			]}
 		>

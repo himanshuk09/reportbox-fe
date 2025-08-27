@@ -1,5 +1,6 @@
 import { formatCreatedAtTime, getStatusStyle } from "@/constants/statuscode";
 import { useAuth } from "@/contexts/AuthContext";
+import { useImagePreview } from "@/contexts/ImagePreviewContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	addComment,
@@ -13,7 +14,6 @@ import {
 	Animated,
 	Dimensions,
 	Image,
-	Modal,
 	Pressable,
 	StyleSheet,
 	Text,
@@ -31,17 +31,19 @@ export function PostCard({
 	onLike,
 	onComment,
 }: any) {
-	const [menuVisible, setMenuVisible] = useState(false);
-	const [showComments, setShowComments] = useState(false);
-	const animatedHeight = useRef(new Animated.Value(0)).current;
-	const [showImageViewer, setShowImageViewer] = useState(false);
-	const [currentImageUri, setCurrentImageUri] = useState("");
-	const [newCommentText, setNewCommentText] = useState("");
 	const router = useRouter();
 	const { primaryColor, cardsColor, textColor, secondaryColor } =
 		useAppTheme();
 	const { user } = useAuth();
+	const { showImage } = useImagePreview();
 
+	/* -------------------------------------------------------------------------- */
+	const [menuVisible, setMenuVisible] = useState(false);
+	const [showComments, setShowComments] = useState(false);
+	const animatedHeight = useRef(new Animated.Value(0)).current;
+	const [newCommentText, setNewCommentText] = useState("");
+
+	/* -------------------------------------------------------------------------- */
 	const toggleComments = () => {
 		setShowComments(!showComments);
 		Animated.timing(animatedHeight, {
@@ -62,21 +64,13 @@ export function PostCard({
 		setNewCommentText("");
 		if (onComment) onComment(item._id);
 	};
-
+	/* -------------------------------------------------------------------------- */
 	const commentsMaxHeight = animatedHeight.interpolate({
 		inputRange: [0, 1],
 		outputRange: [0, 300],
 	});
 
-	const openImageViewer = (uri: any) => {
-		setCurrentImageUri(uri);
-		setShowImageViewer(true);
-	};
-
-	const closeImageViewer = () => {
-		setShowImageViewer(false);
-		setCurrentImageUri("");
-	};
+	/* -------------------------------------------------------------------------- */
 
 	return (
 		<Pressable
@@ -92,13 +86,15 @@ export function PostCard({
 			{/* Header */}
 			<View style={styles.header}>
 				<View style={styles.userInfo}>
-					<Image
-						source={{
-							uri: item?.userID?.avatar,
-						}}
-						resizeMode="cover"
-						style={styles.avatar}
-					/>
+					<Pressable onPress={() => showImage(item?.userID?.avatar)}>
+						<Image
+							source={{
+								uri: item?.userID?.avatar,
+							}}
+							resizeMode="cover"
+							style={styles.avatar}
+						/>
+					</Pressable>
 					<View>
 						<Text style={{ color: textColor, fontWeight: "600" }}>
 							{item?.userID?.name}
@@ -204,7 +200,7 @@ export function PostCard({
 				{item?.beforeImage && (
 					<TouchableOpacity
 						style={styles.imageHalfTouchable}
-						onPress={() => openImageViewer(item?.beforeImage)}
+						onPress={() => showImage(item?.beforeImage)}
 						activeOpacity={0.7}
 					>
 						<Image
@@ -217,7 +213,7 @@ export function PostCard({
 				{item?.afterImage && (
 					<TouchableOpacity
 						style={styles.imageHalfTouchable}
-						onPress={() => openImageViewer(item?.afterImage)}
+						onPress={() => showImage(item?.afterImage)}
 						activeOpacity={0.7}
 					>
 						<Image
@@ -364,26 +360,6 @@ export function PostCard({
 			</Animated.View>
 
 			{/* Image Viewer */}
-			<Modal
-				visible={showImageViewer}
-				transparent={true}
-				onRequestClose={closeImageViewer}
-				animationType="fade"
-			>
-				<View style={styles.imageViewerContainer}>
-					<Image
-						source={{ uri: currentImageUri }}
-						style={styles.fullScreenImage}
-						resizeMode="contain"
-					/>
-					<TouchableOpacity
-						style={styles.closeButton}
-						onPress={closeImageViewer}
-					>
-						<Ionicons name="close-circle" size={40} color="white" />
-					</TouchableOpacity>
-				</View>
-			</Modal>
 		</Pressable>
 	);
 }

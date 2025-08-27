@@ -6,10 +6,12 @@ export const useAppTheme = () => {
 	const primaryColor = useThemeColor({}, "primary");
 	const secondaryColor = useThemeColor({}, "secondary");
 	const cardsColor = useThemeColor({}, "cardsColor");
+	const bgLoader = useThemeColor({}, "bgLoader");
 	return {
 		primaryColor,
 		secondaryColor,
 		textColor,
 		cardsColor,
+		bgLoader,
 	};
 };

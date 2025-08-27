@@ -51,7 +51,7 @@ const HoneycombLoader = () => {
 	}, []);
 
 	const overlayColor =
-		scheme !== "dark" ? "rgba(241,241,241,0.1)" : "rgba(52,50,50,0.7)";
+		scheme === "dark" ? "rgba(241,241,241,0.4)" : "rgba(52,50,50,0.5)";
 
 	const offsets = [
 		{ x: -28, y: 0 },
@@ -67,37 +67,32 @@ const HoneycombLoader = () => {
 		<View
 			style={[
 				StyleSheet.absoluteFill,
+				styles.container,
 				{ backgroundColor: overlayColor, zIndex: 1000 },
 			]}
 		>
-			<View style={styles.container}>
-				<View style={styles.honeycomb}>
-					{animations.map((anim, i) => (
-						<Animated.View
-							key={i}
-							style={{
-								position: "absolute",
-								left: 56 + offsets[i].x, // container center + offset
-								top: 56 + offsets[i].y,
-								width: 28,
-								height: 28,
-								transform: [{ scale: anim }],
-								opacity: anim,
-							}}
-						>
-							<Svg
-								height="100%"
-								width="100%"
-								viewBox="0 0 100 100"
-							>
-								<Polygon
-									points="50,0 93,25 93,75 50,100 7,75 7,25"
-									fill={primaryColor}
-								/>
-							</Svg>
-						</Animated.View>
-					))}
-				</View>
+			<View style={styles.honeycomb}>
+				{animations.map((anim, i) => (
+					<Animated.View
+						key={i}
+						style={{
+							position: "absolute",
+							left: 56 + offsets[i].x, // container center + offset
+							top: 56 + offsets[i].y,
+							width: 18,
+							height: 18,
+							transform: [{ scale: anim }],
+							opacity: anim,
+						}}
+					>
+						<Svg height="100%" width="100%" viewBox="0 0 100 100">
+							<Polygon
+								points="50,0 93,25 93,75 50,100 7,75 7,25"
+								fill={primaryColor}
+							/>
+						</Svg>
+					</Animated.View>
+				))}
 			</View>
 		</View>
 	);
