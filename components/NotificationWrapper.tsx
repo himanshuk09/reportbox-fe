@@ -34,18 +34,18 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 	BACKGROUND_NOTIFICATION_TASK,
 	async ({ data, error, executionInfo }: any) => {
 		try {
-			// console.log(
-			// 	" Received 🔔 in the background!",
-			// 	JSON.stringify(
-			// 		{
-			// 			data,
-			// 			// error,
-			// 			// executionInfo,
-			// 		},
-			// 		null,
-			// 		2
-			// 	)
-			// );
+			console.log(
+				" Received 🔔 in the background!",
+				JSON.stringify(
+					{
+						data,
+						// error,
+						// executionInfo,
+					},
+					null,
+					2
+				)
+			);
 			if (error) {
 				console.error("Background notification error:", error);
 				return Promise.reject(error);
@@ -98,6 +98,7 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 		}
 	}
 );
+
 /* ------------------ Notification categories configuration ----------------- */
 const categories: {
 	id: string;
@@ -183,6 +184,7 @@ const categories: {
 		],
 	},
 ];
+
 /* ----------------------- setupNotificationCategories ---------------------- */
 const setupNotificationCategories = async () => {
 	await Promise.all(
@@ -350,9 +352,7 @@ const sendNotification = async (notificationContent: {
  * @returns
  */
 const sendMultipleNotification = async (
-	notificationContent: (Notifications.NotificationContentInput & {
-		to?: string;
-	})[]
+	notificationContent: Notifications.NotificationContentInput[]
 ) => {
 	try {
 		const response = await fetch(

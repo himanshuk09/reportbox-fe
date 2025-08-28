@@ -57,8 +57,8 @@ export default function WelcommeScreen() {
 	return (
 		<WaveHeaderScreen
 			// headerImageUri="https://images.pexels.com/photos/1154059/pexels-photo-1154059.jpeg"
-			headerImageUri="https://images.unsplash.com/photo-1639114036746-e3337de48783?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-			imageContainerHeight={0.6}
+			headerImageUri="https://images.unsplash.com/photo-1543842025-c7fc5de13626?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA3fHxtdW5pY2lwYWwlMjBzdHJlZXQlMjBjbGVhbmluZ3xlbnwwfHwwfHx8MA%3D%3D"
+			imageContainerHeight={0.59}
 			svgStyle={{ opacity: 1 }}
 		>
 			<WelcomeCard />

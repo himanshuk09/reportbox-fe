@@ -63,18 +63,18 @@ const Notifications = () => {
 				}
 				renderItem={({ item }) => (
 					<Pressable
-						className="flex-row rounded-xl shadow p-2 mb-3"
-						style={{ backgroundColor: cardsColor }}
+						className="flex-row rounded-lg shadow p-2 mb-2"
+						style={{ backgroundColor: cardsColor, minHeight: 80 }}
 					>
 						<Image
 							source={{ uri: item.data.beforeImage }}
-							className="rounded-md mr-3"
+							className="rounded-md mr-2"
 							resizeMode="cover"
-							style={{ width: "35%", height: "100%" }}
+							style={{ width: "25%", height: 70 }}
 						/>
 						<View className="flex-1 my-1">
 							<Text
-								className="font-bold"
+								className="font-bold text-sm"
 								style={{ color: textColor }}
 							>
 								Complaint ID:{" "}
@@ -87,32 +87,35 @@ const Notifications = () => {
 									{item.data.cid}
 								</Text>
 							</Text>
+
 							<Text
-								className="text-sm mt-1"
+								className="text-xs mt-1"
 								style={{ color: textColor }}
 							>
 								Date:{" "}
 								{item.data.raisedDate
 									? new Date(
-											item.data.raisedDate.$date
+											item.data.raisedDate
 										).toLocaleString()
 									: item.receivedAt}
 							</Text>
+
 							<View
-								className="mt-2 px-2 py-1 rounded-full self-start"
+								className="mt-1 px-2 py-0.5 rounded-full self-start"
 								style={getStatusStyle(item.data.status)}
 							>
-								<Text className="text-xs font-medium">
+								<Text className="text-[10px] font-medium">
 									{item.data.status}
 								</Text>
 							</View>
+
 							<Text
-								className="text-sm mt-2"
+								className="text-xs mt-1"
 								style={{ color: textColor }}
 							>
 								{item.data.status === "Resolved"
-									? `Resolved By: ${item.data.resolvedBy?.$oid ?? "N/A"}`
-									: `Assigned To: ${item.data.assignedTo?.$oid ?? "N/A"}`}
+									? `Resolved By: ${item.data.resolvedBy?.name ?? "N/A"}`
+									: `Assigned To: ${item.data.assignedTo?.name ?? "N/A"}`}
 							</Text>
 						</View>
 					</Pressable>

@@ -141,7 +141,10 @@ const WorkerAssignedComplaintsScreen = () => {
 							alignItems: "center",
 						}}
 					>
-						<Blob text={"No Assigned!"} iconName={"alert-sharp"} />
+						<Blob
+							text={"No Assigned!"}
+							iconName={"newspaper-sharp"}
+						/>
 					</View>
 				}
 			/>

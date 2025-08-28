@@ -77,7 +77,7 @@ const Verified = () => {
 	);
 	return (
 		<WaveHeaderScreen
-			headerImageUri="https://images.pexels.com/photos/1154059/pexels-photo-1154059.jpeg"
+			headerImageUri="https://plus.unsplash.com/premium_photo-1683842190286-204c3d93a5f6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dmVyaWZpZWR8ZW58MHwxfDB8fHww"
 			imageContainerHeight={0.6}
 			svgStyle={{ opacity: 1 }}
 			floatingOverlay={floatingCard}

@@ -169,7 +169,7 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 					{/* Background Header */}
 					<ImageBackground
 						source={{
-							uri: "https://ix-marketing.imgix.net/focalpoint.png?auto=format,compress&w=1946",
+							uri: "https://images.unsplash.com/photo-1721305254301-bc22475ccf14?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8SGFuZHMlMjB0b2dldGhlciUyMGZvciUyMHBsYW50fGVufDB8MHwwfHx8MA%3D%3D",
 						}}
 						style={styles.headerBg}
 						resizeMode="cover"

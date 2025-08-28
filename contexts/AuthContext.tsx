@@ -1,5 +1,7 @@
+import { registerForPushNotificationsAsync } from "@/components/NotificationWrapper";
 import CustomAlert from "@/components/ui/CustomAlert";
 import { getFullDetails } from "@/services/auth.service";
+import { sendOrUpdateToken } from "@/services/push-notification.service";
 import { getMMKV, removeMMKV, setMMKV } from "@/storage/mmkv";
 import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -54,10 +56,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	// Get full user profile and store it
 	const completeProfile = async (id: string) => {
 		try {
-			const fullDetails = await getFullDetails(id ?? data?.userID); // Ensure userID is in data
+			const fullDetails = await getFullDetails(id ?? data?.userID);
+
 			setUser(fullDetails);
 			setSession(true);
 			setMMKV("user", fullDetails);
+			const token = await registerForPushNotificationsAsync();
+
+			await sendOrUpdateToken(id ?? data?.userID, token);
 		} catch (err) {
 			console.log("complete Profile error:", err);
 		}

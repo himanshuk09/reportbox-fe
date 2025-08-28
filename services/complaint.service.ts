@@ -41,7 +41,6 @@ export const raisedComplaint = async (payload: any) => {
 export const getAllComplaints = async () => {
 	try {
 		const response = await api.get("/complaints/");
-		console.log(JSON.stringify(response.data, null, 1));
 
 		return response.data;
 	} catch (error) {
@@ -144,7 +143,6 @@ const raisedComplaintwithAvtarINUpload = async (payload: any) => {
 		const response = await api.post("/complaints", payload);
 		if (response.data) {
 			await uploadRaisedImage(response.data._id, beforeImage);
-			console.log(JSON.stringify(response.data, null, 1));
 		}
 		return true;
 	} catch (error: any) {

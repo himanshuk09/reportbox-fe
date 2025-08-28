@@ -351,7 +351,7 @@ const AssignRightsToGroupScreen = () => {
 						{addedRights.length > 0 ? (
 							addedRights.map((r) => (
 								<Text key={r._id}>
-									+ {r.name} ({r.code})
+									+ {r.name} ({r.key})
 								</Text>
 							))
 						) : (
@@ -364,7 +364,7 @@ const AssignRightsToGroupScreen = () => {
 						{removedRights.length > 0 ? (
 							removedRights.map((r) => (
 								<Text key={r._id}>
-									- {r.name} ({r.code})
+									- {r.name} ({r.key})
 								</Text>
 							))
 						) : (

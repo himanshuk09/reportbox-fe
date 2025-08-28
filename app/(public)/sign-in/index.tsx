@@ -91,7 +91,7 @@ function SignInScreen() {
 export default function LoginScreen() {
 	return (
 		<WaveHeaderScreen
-			headerImageUri="https://images.unsplash.com/photo-1580893246395-52aead8960dc?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+			headerImageUri="https://images.unsplash.com/photo-1578357078586-491adf1aa5ba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aGFuZHNoYWtlfGVufDB8fDB8fHww"
 			imageContainerHeight={0.5}
 			svgStyle={{ opacity: 1 }}
 		>

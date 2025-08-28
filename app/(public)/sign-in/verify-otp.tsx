@@ -139,7 +139,7 @@ function VerificationScreen() {
 const VerifyOTP = () => {
 	return (
 		<WaveHeaderScreen
-			headerImageUri="https://images.pexels.com/photos/1154059/pexels-photo-1154059.jpeg"
+			headerImageUri="https://images.unsplash.com/photo-1591453214154-c95db71dbd83?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGhhbmRzaGFrZXxlbnwwfHwwfHx8MA%3D%3D"
 			imageContainerHeight={0.4}
 			svgStyle={{ opacity: 1 }}
 		>

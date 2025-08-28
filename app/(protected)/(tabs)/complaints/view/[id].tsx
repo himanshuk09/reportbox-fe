@@ -69,7 +69,7 @@ const PostDetailsScreen = () => {
 					alignItems: "center",
 				}}
 			>
-				<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+				<Blob text={"No Complaint !"} iconName={"newspaper-sharp"} />
 			</View>
 		);
 	}

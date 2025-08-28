@@ -58,39 +58,44 @@ export default function NotificationScreen() {
 			Alert.alert("Error", "Please provide at least one valid token");
 			return;
 		}
-		// (Notifications.NotificationContentInput & {
-		// 			to?: string;
-		// 		})[]
-		// Prepare notifications array
-		const notifications: any = tokens.map((tok) => ({
-			to: tok,
-			title: title,
-			body: body,
-			categoryIdentifier: "image ",
-			categoryId: "image",
-			data: data
-				? JSON.parse(data)
-				: {
-						url: "https://eec-cockpit.expo.app/dashboard/loaddata",
-						extraInfo: "You have a new alert",
-					},
 
-			autoDismiss: true,
-			badge: 2,
-			color: "#e31837",
-			interruptionLevel: "active",
-			priority: Notifications.AndroidNotificationPriority.HIGH,
-			sticky: true,
-			launchImageName: "hello",
-			subtitle: "hellooo",
-			sound: "default",
-			attachments: [
-				{
-					url: "https://example.com/avatar.png", // image URL
-					identifier: "profile_image",
+		// Prepare notifications array
+		const notifications: Notifications.NotificationContentInput[] =
+			tokens.map((tok) => ({
+				to: tok,
+				title: title,
+				body: body,
+				ttl: undefined,
+				categoryIdentifier: "image ",
+				categoryId: "image",
+				richContent: {
+					image: "https://avatar.iran.liara.run/public/5",
 				},
-			],
-		}));
+				data: data
+					? JSON.parse(data)
+					: {
+							url: "https://eec-cockpit.expo.app/dashboard/loaddata",
+							extraInfo: "You have a new alert",
+						},
+
+				autoDismiss: true,
+				badge: 2,
+				color: "#e31837",
+				interruptionLevel: "active",
+				priority: Notifications.AndroidNotificationPriority.HIGH,
+				sticky: true,
+				launchImageName: "hello",
+				subtitle: "hellooo",
+				sound: "default",
+				attachments: [
+					{
+						identifier: "profile_image",
+						url: "https://avatar.iran.liara.run/public/46",
+						type: "image",
+					},
+				],
+				icon: "https://avatar.iran.liara.run/public/46",
+			}));
 
 		try {
 			if (isScheduled) {

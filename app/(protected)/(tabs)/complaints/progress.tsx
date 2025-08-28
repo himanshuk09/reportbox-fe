@@ -256,8 +256,8 @@ const MyComplaintsScreen = () => {
 						}}
 					>
 						<Blob
-							text={"No complaints raised yet 🚫"}
-							iconName={""}
+							text={"No Complaint !"}
+							iconName={"newspaper-sharp"}
 						/>
 					</View>
 				}

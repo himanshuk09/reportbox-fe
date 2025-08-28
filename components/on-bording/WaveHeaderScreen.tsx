@@ -81,8 +81,15 @@ export default function WaveHeaderScreen({
 						<ImageBackground
 							source={{ uri: headerImageUri }}
 							style={styles.imageBackground}
-							resizeMode="cover"
+							resizeMode="stretch"
 						>
+							<View
+								style={{
+									...StyleSheet.absoluteFillObject,
+									backgroundColor: "#00B4C6",
+									opacity: 0.3, // adjust for desired transparency
+								}}
+							/>
 							{imageOverlayContent || (
 								<MobileSvg style={svgStyle} />
 							)}

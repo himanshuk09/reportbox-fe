@@ -96,6 +96,7 @@ const CustomDrawer = (props: any) => {
 					/>
 				</Pressable>
 				<TouchableOpacity
+					style={{ alignItems: "center" }}
 					onPress={() => {
 						if (navigation?.closeDrawer) {
 							navigation.closeDrawer();

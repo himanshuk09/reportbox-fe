@@ -85,8 +85,8 @@ const Feed = () => {
 						}}
 					>
 						<Blob
-							text={"No Complaint yet !"}
-							iconName={"alert-sharp"}
+							text={"No Complaint !"}
+							iconName={"newspaper-sharp"}
 						/>
 					</View>
 				}

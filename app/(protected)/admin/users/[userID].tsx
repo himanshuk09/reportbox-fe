@@ -39,6 +39,7 @@ export default function ComplaintListScreen() {
 		try {
 			setLoading(true);
 			const data = await getUsersDetailsByID(userID as string);
+
 			setUserDetails(data);
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
@@ -133,12 +134,12 @@ export default function ComplaintListScreen() {
 
 						{item.status === "Resolved" && (
 							<Text style={{ color: textColor }}>
-								Resolved By: {item.resolvedBy}
+								Resolved By: {item.resolvedBy.name}
 							</Text>
 						)}
 						{item.status === "Assigned" && (
 							<Text style={{ color: textColor }}>
-								Assigned To: {item?.assignedTo}
+								Assigned To: {item?.assignedTo.name}
 							</Text>
 						)}
 					</Pressable>
@@ -152,7 +153,10 @@ export default function ComplaintListScreen() {
 							alignItems: "center",
 						}}
 					>
-						<Blob text={"Not Found !"} iconName={"alert-sharp"} />
+						<Blob
+							text={"No Complaint !"}
+							iconName={"newspaper-sharp"}
+						/>
 					</View>
 				}
 				ListHeaderComponent={() => (
