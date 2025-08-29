@@ -63,9 +63,9 @@ const getProgressFromStatus = (status: string) => {
 		case "In Progress":
 			return 50;
 		case "Resolved":
-			return 75;
-		case "Closed":
 			return 100;
+		// case "Closed":
+		// 	return 100;
 		default:
 			return 0;
 	}
@@ -86,7 +86,11 @@ const MyComplaintsScreen = () => {
 	const fetchComplaints = async () => {
 		try {
 			const res = await getComplaintsByUserID(user?.user?._id);
-			setComplaints(res.complaints ?? []);
+			const filteredComplaints = (res.complaints ?? []).filter(
+				(item: any) => item.status !== "Resolved"
+			);
+
+			setComplaints(filteredComplaints);
 		} catch (error) {
 			console.error("Error fetching complaints:", error);
 		} finally {
