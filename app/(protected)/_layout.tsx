@@ -17,6 +17,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 const menuItems: {
 	label: string;
 	icon: string;
@@ -50,7 +51,7 @@ const menuItems: {
 	{
 		label: "Notification",
 		icon: "notifications-outline",
-		path: "/(protected)/settings/notification",
+		path: "/(protected)/admin/notification",
 		right: "settings",
 	},
 	{
@@ -74,20 +75,31 @@ const menuItems: {
 ];
 const CustomDrawer = (props: any) => {
 	const { navigation } = props;
-	const segments = useSegments(); //Returns a list of selected file segments for the currently selected route.
+	const segments = useSegments();
 	const { logout, user } = useAuth();
-	const { showImage } = useImagePreview();
-
-	const { setGlobalLoading } = useLoading();
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
 	const { hasRight } = useUserAccess();
+	const { showImage } = useImagePreview();
 	const segmentPath = "/" + segments.join("/");
+	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, textColor } = useAppTheme();
 
 	return (
-		<View style={[styles.container, { backgroundColor: secondaryColor }]}>
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: secondaryColor }]}
+		>
 			<View style={[styles.header, { borderBottomColor: textColor }]}>
-				<Pressable onPress={() => showImage(user?.user?.avatar)}>
+				<Pressable
+					onPress={() => showImage(user?.user?.avatar)}
+					style={{
+						borderWidth: 3,
+						width: 90,
+						height: 90,
+						borderRadius: 45,
+						borderColor: primaryColor,
+						overflow: "hidden",
+						marginBottom: 2,
+					}}
+				>
 					<Image
 						source={{
 							uri: user?.user?.avatar,
@@ -173,7 +185,7 @@ const CustomDrawer = (props: any) => {
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-		</View>
+		</SafeAreaView>
 	);
 };
 
@@ -207,10 +219,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	profileImage: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		marginBottom: 8,
+		width: "100%",
+		height: "100%",
 	},
 	username: {
 		fontSize: 18,

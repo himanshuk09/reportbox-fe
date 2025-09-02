@@ -1,10 +1,12 @@
 import Blob from "@/components/on-bording/blob";
+import { contactLists } from "@/constants/complaints";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { LegendList } from "@legendapp/list";
 import { useIsFocused } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
 	Linking,
 	StyleSheet,
@@ -14,73 +16,55 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const emergencyContacts = [
-	{
-		label: "Mayor Helpline",
-		icon: <MaterialIcons name="record-voice-over" size={20} />,
-		phone: "1800123456",
-	},
-	{
-		label: "Nagar Nigam",
-		icon: <FontAwesome name="building" size={20} />,
-		phone: "1800654321",
-	},
-	{
-		label: "Fire Department",
-		icon: <MaterialIcons name="local-fire-department" size={20} />,
-		phone: "101",
-	},
-	{
-		label: "Police Control Room",
-		icon: <FontAwesome name="shield" size={20} />,
-		phone: "100",
-	},
-	{
-		label: "Ambulance",
-		icon: <FontAwesome name="ambulance" size={20} />,
-		phone: "102",
-	},
-	{
-		label: "Electricity Emergency",
-		icon: <MaterialIcons name="bolt" size={20} />,
-		phone: "1912",
-	},
-];
-
 const EmergencyContactScreen = () => {
+	const { id } = useLocalSearchParams();
+	const isFocused = useIsFocused();
+	const { setGlobalLoading } = useLoading();
 	const { cardsColor, primaryColor, textColor, secondaryColor } =
 		useAppTheme();
 
+	/* -------------------------------------------------------------------------- */
+	const [contactList, setContactList] = useState<any>([]);
+	/* -------------------------------------------------------------------------- */
 	const handleCall = (number: string) => {
 		Linking.openURL(`tel:${number}`);
 	};
-	const isFocused = useIsFocused();
-	const { setGlobalLoading } = useLoading();
-	useEffect(() => {
-		setGlobalLoading(false);
-	}, [isFocused]);
-	const renderItem = ({ item }: { item: (typeof emergencyContacts)[0] }) => (
+	const renderItem = ({ item }: { item: (typeof contactList)[0] }) => (
 		<TouchableOpacity
 			style={[styles.itemContainer, { backgroundColor: cardsColor }]}
-			onPress={() => handleCall(item.phone)}
+			onPress={() => handleCall(item?.phone)}
 			activeOpacity={0.8}
 		>
 			<View style={[styles.iconBox, { borderColor: primaryColor }]}>
-				{React.cloneElement(item.icon, { color: primaryColor })}
+				{React.cloneElement(item?.icon, { color: primaryColor })}
 			</View>
 			<Text style={[styles.label, { color: textColor }]}>
-				{item.label}
+				{item?.label}
 			</Text>
 			<FontAwesome name="phone" size={20} color={primaryColor} />
 		</TouchableOpacity>
 	);
 
+	/* -------------------------------------------------------------------------- */
+
+	useEffect(() => {
+		setGlobalLoading(false);
+
+		const setHelplineContacts = (category: string) => {
+			const list = contactLists[category] ?? [];
+			setContactList(list);
+		};
+
+		if (id) {
+			setHelplineContacts(id as any);
+		}
+	}, [isFocused, id]);
 	return (
 		<SafeAreaView
 			style={[styles.container, { backgroundColor: secondaryColor }]}
 		>
 			<LegendList
-				data={emergencyContacts}
+				data={contactList}
 				keyExtractor={(item, index) => index.toString()}
 				renderItem={renderItem}
 				showsVerticalScrollIndicator={false}

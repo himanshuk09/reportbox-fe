@@ -6,9 +6,9 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 function WelcomeCard() {
+	const router = useRouter();
 	const { primaryColor, textColor, secondaryColor, cardsColor } =
 		useAppTheme();
-	const router = useRouter();
 
 	return (
 		<View>

@@ -8,9 +8,8 @@ import { AlertContainer } from "rn-custom-alert-prompt";
 
 const AuthGuard = () => {
 	const { session } = useAuth();
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
 	const { theme } = useThemeContext();
+	const { secondaryColor, textColor } = useAppTheme();
 
 	return (
 		<>

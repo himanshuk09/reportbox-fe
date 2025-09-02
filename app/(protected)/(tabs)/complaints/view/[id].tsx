@@ -59,7 +59,6 @@ const PostDetailsScreen = () => {
 	}
 
 	if (!complaint) {
-		// optional: show empty state if complaint not found
 		return (
 			<View
 				style={{

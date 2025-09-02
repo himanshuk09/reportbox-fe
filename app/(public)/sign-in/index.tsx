@@ -11,10 +11,11 @@ import Toast from "react-native-toast-message";
 function SignInScreen() {
 	const router = useRouter();
 	const { setTempData } = useAuth();
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
+	const { primaryColor, textColor } = useAppTheme();
+	/* -------------------------------------------------------------------------- */
 	const [email, setEmail] = useState<string>("");
 	const [loading, setLoading] = useState(false);
+	/* -------------------------------------------------------------------------- */
 	const isValidEmail = (email: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
@@ -39,6 +40,7 @@ function SignInScreen() {
 		}
 		setLoading(false);
 	};
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View className="px-2 pt-6">
 			{/* Title */}

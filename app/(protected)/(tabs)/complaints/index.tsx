@@ -95,6 +95,7 @@ const Feed = () => {
 						colors={[primaryColor, textColor]}
 						refreshing={refreshing}
 						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
 					/>
 				}
 			/>

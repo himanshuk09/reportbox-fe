@@ -229,7 +229,11 @@ const TabLayout = () => {
 					headerTransparent: true,
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
-							<MemoizedStackHeader showThreeDots={false} />
+							<MemoizedStackHeader
+								showThreeDots={false}
+								showBackIcon={true}
+								showMenuDrawer={false}
+							/>
 						</SafeAreaView>
 					),
 					tabBarStyle: { display: "none" },
@@ -237,6 +241,21 @@ const TabLayout = () => {
 			/>
 			<Tabs.Screen
 				name="complaints/type/[id]"
+				options={{
+					href: null,
+					headerShown: true,
+					tabBarActiveTintColor: primaryColor,
+					headerTransparent: true,
+					header: () => (
+						<SafeAreaView style={{ backgroundColor: primaryColor }}>
+							<MemoizedStackHeader showThreeDots={false} />
+						</SafeAreaView>
+					),
+					tabBarStyle: { display: "none" },
+				}}
+			/>
+			<Tabs.Screen
+				name="complaints/contact/[id]"
 				options={{
 					href: null,
 					headerShown: true,

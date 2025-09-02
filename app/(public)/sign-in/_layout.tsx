@@ -17,10 +17,10 @@ const SignINayout = () => {
 				options={({ route }) => ({
 					headerShown: false,
 					title: "",
-					headerTransparent: true, // makes header background transparent
+					headerTransparent: true,
 					headerLeft: () => (
 						<HeaderBackButton
-							tintColor="#fff" // or any icon color
+							tintColor="#fff"
 							onPress={() => navigation.goBack()}
 						/>
 					),

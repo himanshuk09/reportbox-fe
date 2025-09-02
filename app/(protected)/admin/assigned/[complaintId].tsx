@@ -112,7 +112,10 @@ const ResolveComplaintScreen = () => {
 				marginTop: 55,
 			}}
 		>
-			<ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+			<ScrollView
+				contentContainerStyle={{ paddingBottom: 16 }}
+				showsVerticalScrollIndicator={false}
+			>
 				<Text
 					className="text-2xl font-bold mb-4"
 					style={{ color: textColor }}

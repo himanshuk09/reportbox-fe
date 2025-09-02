@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { Image, RefreshControl, Text, View } from "react-native";
 
 // Function to generate ApexChart HTML with dynamic progress
-const getChartHtml = (progress: any) => `
+const getChartHtml1 = (progress: any) => `
   <html>
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,27 +56,104 @@ const getChartHtml = (progress: any) => `
     </body>
   </html>
 `;
+/* -------------------------------------------------------------------------- */
+const getChartHtml = (progress: any) => `
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <style>
+           body, html, #chart {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+        #chart {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="chart"></div>
+      <script>
+        var options = {
+          chart: { 
+            type: 'radialBar',  
+            height: 250,
+            sparkline: { enabled: true }, 
+            animations: { enabled: true },
+            toolbar: { show: false }
+          },
+          series: [${progress}],
+          plotOptions: {
+            radialBar: {
+              hollow: { size: '45%' },
+              track: { background: '#e6e6e6' },
+              dataLabels: {
+                name: { show: false },
+                value: { 
+                  show: true, 
+                  fontSize: '28px', 
+                  fontWeight: 'bold', 
+                  color: '#ccc', 
+                  offsetY: 8 
+                }
+              }
+            }
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shade: "light",
+              type: "vertical",
+              gradientToColors: ["#0099ff"], 
+              stops: [0, 100]
+            }
+          },
+          tooltip: {
+            enabled: false,
+            y: {
+              formatter: function (val) {
+                return val + "% Completed";
+              }
+            }
+          },
+          colors: ['#00eeff'],
+          labels: ['Progress']
+        };
+        new ApexCharts(document.querySelector("#chart"), options).render();
+      </script>
+    </body>
+  </html>
+`;
+/* -------------------------------------------------------------------------- */
 const getProgressFromStatus = (status: string) => {
 	switch (status) {
 		case "Raised":
 			return 25;
-		case "In Progress":
+		case "Assigned":
 			return 50;
+		case "In Progress":
+			return 75;
 		case "Resolved":
 			return 100;
-		// case "Closed":
-		// 	return 100;
+
 		default:
 			return 0;
 	}
 };
-
+/* -------------------------------------------------------------------------- */
 const MyComplaintsScreen = () => {
-	const { primaryColor, secondaryColor, cardsColor, textColor } =
-		useAppTheme();
 	const { user } = useAuth();
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
 	/* -------------------------------------------------------------------------- */
 	const [loading, setLoading] = useState(true);
 	const [complaints, setComplaints] = useState<any[]>([]);
@@ -270,6 +347,7 @@ const MyComplaintsScreen = () => {
 						colors={[primaryColor, textColor]}
 						refreshing={refreshing}
 						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
 					/>
 				}
 			/>

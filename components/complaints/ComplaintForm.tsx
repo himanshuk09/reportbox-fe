@@ -32,6 +32,7 @@ const ICON_MAP: any = {
 };
 
 export default function ComplaintForm({
+	type,
 	tags,
 	setTags,
 	location,
@@ -43,12 +44,15 @@ export default function ComplaintForm({
 	setComplaintSubtype,
 }: any) {
 	const [modalVisible, setModalVisible] = useState(false);
-	const [expandedType, setExpandedType] = useState<string | null>(null);
+	const [expandedType, setExpandedType] = useState<string | null>(
+		type || null
+	);
 	const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>([]);
-
+	/* -------------------------------------------------------------------------- */
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
 
+	/* -------------------------------------------------------------------------- */
 	const toggleSubtype = (subtype: string) => {
 		if (!expandedType) return;
 
@@ -65,6 +69,7 @@ export default function ComplaintForm({
 		// 		: [...prev, subtype]
 		// );
 	};
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		if (Array.isArray(subtypes)) {
 			setSelectedSubtypes(subtypes);
@@ -74,6 +79,7 @@ export default function ComplaintForm({
 			setSelectedSubtypes([]);
 		}
 	}, [subtypes]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View style={{ flex: 1, padding: 10 }}>
 			{/* Complaint Type Field */}
@@ -89,6 +95,7 @@ export default function ComplaintForm({
 						color: selectedSubtypes?.length ? textColor : "#999",
 					}}
 				>
+					{`${expandedType} \t : \t`}
 					{Array.isArray(selectedSubtypes) &&
 					selectedSubtypes.length > 0
 						? selectedSubtypes.join(", ")

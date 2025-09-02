@@ -1,5 +1,6 @@
 import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
+import { complaintTypes, STATUS_KEY } from "@/constants/complaints";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getUsersList } from "@/services/admin.service";
@@ -9,7 +10,14 @@ import { Picker } from "@react-native-picker/picker";
 import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+	Image,
+	RefreshControl,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserListScreen() {
@@ -25,6 +33,8 @@ export default function UserListScreen() {
 	const [allUsers, setAllUsers] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [statusFilter, setStatusFilter] = useState("");
+
+	const [refreshing, setRefreshing] = useState(false);
 
 	const filteredUsers = useMemo(() => {
 		return allUsers
@@ -69,6 +79,11 @@ export default function UserListScreen() {
 		}
 	};
 
+	const onRefresh = async () => {
+		setRefreshing(true);
+		fetchUsersList();
+		setTimeout(() => setRefreshing(false), 2000);
+	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchUsersList();
@@ -148,16 +163,15 @@ export default function UserListScreen() {
 										value=""
 										color={textColor}
 									/>
-									<Picker.Item
-										label="Drainage Leakage"
-										value="Drainage Leakage"
-										color={textColor}
-									/>
-									<Picker.Item
-										label="Garbage"
-										value="Garbage"
-										color={textColor}
-									/>
+
+									{complaintTypes.map((item, index) => (
+										<Picker.Item
+											key={`${item?.label}+${index}`}
+											label={item?.label}
+											value={item?.label}
+											color={textColor}
+										/>
+									))}
 								</Picker>
 							</View>
 
@@ -178,26 +192,14 @@ export default function UserListScreen() {
 										value=""
 										color={textColor}
 									/>
-									<Picker.Item
-										label="Raised"
-										value="Raised"
-										color={textColor}
-									/>
-									<Picker.Item
-										label="Resolved"
-										value="Resolved"
-										color={textColor}
-									/>
-									<Picker.Item
-										label="Assigned"
-										value="Assigned"
-										color={textColor}
-									/>
-									<Picker.Item
-										label="Pending"
-										value="Pending"
-										color={textColor}
-									/>
+									{STATUS_KEY.map((item, index) => (
+										<Picker.Item
+											key={`${item}+${index}`}
+											label={item}
+											value={item}
+											color={textColor}
+										/>
+									))}
 								</Picker>
 							</View>
 						</View>
@@ -266,6 +268,14 @@ export default function UserListScreen() {
 					>
 						<Blob text={"Not Users !"} iconName={"people-sharp"} />
 					</View>
+				}
+				refreshControl={
+					<RefreshControl
+						colors={[primaryColor, textColor]}
+						refreshing={refreshing}
+						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
+					/>
 				}
 			/>
 		</SafeAreaView>

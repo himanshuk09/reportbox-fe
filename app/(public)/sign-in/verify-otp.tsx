@@ -9,11 +9,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 function VerificationScreen() {
 	const router = useRouter();
-	const { data, completeProfile, setTempData } = useAuth();
 	const [code, setCode] = useState("");
+	const { data, completeProfile, setTempData } = useAuth();
 	const { primaryColor, textColor, cardsColor } = useAppTheme();
-	const [showVerificationIcon, setShowVerificationIcon] = useState(false);
+	/* -------------------------------------------------------------------------- */
 	const [isValidOtp, setIsValidOtp] = useState(false);
+	const [showVerificationIcon, setShowVerificationIcon] = useState(false);
 
 	const handleKeyPress = async (digit: string) => {
 		if (digit === "x") {
@@ -83,7 +84,7 @@ function VerificationScreen() {
 			)
 		);
 	};
-
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View className="px-6 items-center">
 			<Text

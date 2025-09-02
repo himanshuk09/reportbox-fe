@@ -1,11 +1,10 @@
 import StackHeader from "@/components/ui/StackHeader";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Stack, useNavigation } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
 const ProtectedLayout = () => {
-	const navigation = useNavigation();
 	const { primaryColor } = useAppTheme();
 
 	return (
@@ -60,27 +59,8 @@ const ProtectedLayout = () => {
 					header: () => (
 						<SafeAreaView style={{ backgroundColor: primaryColor }}>
 							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
-								showThreeDots={false}
-							/>
-						</SafeAreaView>
-					),
-				})}
-			/>
-			<Stack.Screen
-				name="emergency-no"
-				options={({ route }) => ({
-					headerShown: true,
-					tabBarActiveTintColor: primaryColor,
-					headerTransparent: true,
-					animation: "simple_push",
-					title: "Help",
-					header: () => (
-						<SafeAreaView style={{ backgroundColor: primaryColor }}>
-							<StackHeader
-								showBackIcon={true}
-								showMenuDrawer={false}
+								showBackIcon={false}
+								showMenuDrawer={true}
 								showThreeDots={false}
 							/>
 						</SafeAreaView>

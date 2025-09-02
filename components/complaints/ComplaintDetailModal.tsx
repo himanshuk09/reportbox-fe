@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -15,19 +16,25 @@ export default function ComplaintDetailModal({
 	onClose,
 	complaint,
 }: any) {
+	const { primaryColor, secondaryColor, cardsColor, textColor } =
+		useAppTheme();
 	return (
 		<Modal visible={visible} animationType="fade" transparent>
 			<View className="flex-1 justify-center items-center bg-black/60 px-4">
 				<View
-					className="bg-white rounded-xl w-full p-4 max-w-md"
-					style={{ zIndex: 1, elevation: 10 }} // <-- Android fix
+					className=" rounded-xl w-full p-4 max-w-md"
+					style={{
+						zIndex: 1,
+						elevation: 10,
+						backgroundColor: secondaryColor,
+					}} // <-- Android fix
 				>
 					<Pressable
 						onPress={onClose}
 						className="absolute top-3 right-3 p-1 z-10 rounded-full"
 						style={{ zIndex: 10, elevation: 10 }} // <-- Ensure above all content
 					>
-						<Ionicons name="close" size={22} color="#333" />
+						<Ionicons name="close" size={22} color="#ccc" />
 					</Pressable>
 					{/* Images */}
 					<View style={styles.imageRow}>
@@ -60,25 +67,48 @@ export default function ComplaintDetailModal({
 					</View>
 
 					{/* Complaint Info */}
-					<Text className="font-bold text-sm text-gray-800">
+					<Text
+						className="font-bold text-sm "
+						style={{ color: textColor }}
+					>
 						Complaint ID:{" "}
-						<Text className="text-gray-900">{complaint?.cid}</Text>
+						<Text style={{ color: textColor }}>
+							{complaint?.cid}
+						</Text>
 					</Text>
-					<Text className="text-sm text-gray-700 mt-2">
+					<Text
+						className="text-sm text-gray-700 mt-2"
+						style={{ color: textColor }}
+					>
 						Raised On:{" "}
-						<Text className="font-medium text-black">
+						<Text
+							className="font-medium text-black"
+							style={{ color: textColor }}
+						>
 							{complaint?.raisedDate}
 						</Text>
 					</Text>
-					<Text className="text-sm text-gray-700">
+					<Text
+						className="text-sm text-gray-700"
+						style={{ color: textColor }}
+					>
 						Corporation Response:{" "}
-						<Text className="font-medium text-black">
+						<Text
+							className="font-medium text-black"
+							style={{ color: textColor }}
+						>
 							{complaint?.responseDate}
 						</Text>
 					</Text>
-					<Text className="text-sm text-gray-700">
+					<Text
+						className="text-sm text-gray-700"
+						style={{ color: textColor }}
+					>
 						Resolved On:{" "}
-						<Text className="font-medium text-black">
+						<Text
+							className="font-medium text-black"
+							style={{ color: textColor }}
+						>
 							{complaint?.resolvedDate}
 						</Text>
 					</Text>

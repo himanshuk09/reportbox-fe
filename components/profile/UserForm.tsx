@@ -101,6 +101,7 @@ const validateFormData = (formData: any, avatar: any, setAvatar: any) => {
 
 	return true;
 };
+/* -------------------------------------------------------------------------- */
 const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
@@ -166,6 +167,17 @@ const UserForm = ({ editable = true, onlyForm = false, id }: UserFormProps) => {
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}
 				>
+					<Pressable
+						style={{
+							position: "absolute",
+							top: 10,
+							left: 16,
+							zIndex: 10,
+						}}
+						onPress={() => router.back()}
+					>
+						<Ionicons name="chevron-back" size={24} color="#FFF" />
+					</Pressable>
 					{/* Background Header */}
 					<ImageBackground
 						source={{

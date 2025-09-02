@@ -1,0 +1,488 @@
+import { sendMultipleNotification } from "@/components/NotificationWrapper";
+import RoundedButton from "@/components/ui/RoundedButton";
+import { NOTIFICATION_TYPES } from "@/constants/complaints";
+import { useLoading } from "@/contexts/LoadingContext";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { getTokensWithUser } from "@/services/push-notification.service";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
+import { useIsFocused } from "@react-navigation/native";
+import * as Notifications from "expo-notifications";
+import React, { useEffect, useState } from "react";
+import {
+	FlatList,
+	Image,
+	KeyboardAvoidingView,
+	Modal,
+	Platform,
+	SafeAreaView,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import Toast from "react-native-toast-message";
+
+const NotificationSenderScreen = () => {
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+	const { setGlobalLoading } = useLoading();
+	const isFocused = useIsFocused();
+	/* -------------------------------------------------------------------------- */
+	const [title, setTitle] = useState("");
+	const [body, setBody] = useState("");
+	const [subtitle, setSubtitle] = useState("");
+	const [richContent, setRichContent] = useState({
+		image: "",
+	});
+	const [category, setCategory] = useState({
+		categoryIdentifier: "simple",
+		categoryId: "simple",
+	});
+	const [dataFields, setDataFields] = useState<
+		{ key: string; value: string }[]
+	>([]);
+	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+	const [list, setList] = useState<any>([]);
+	const [showUserModal, setShowUserModal] = useState(false);
+
+	/* -------------------------------------------------------------------------- */
+	const toggleUser = (UID: string) => {
+		setSelectedUsers((prev) =>
+			prev.includes(UID)
+				? prev.filter((id) => id !== UID)
+				: [...prev, UID]
+		);
+	};
+
+	const addDataField = () =>
+		setDataFields((prev) => [...prev, { key: "", value: "" }]);
+
+	const updateDataField = (index: number, key: string, value: string) => {
+		const newFields = [...dataFields];
+		newFields[index] = { key, value };
+		setDataFields(newFields);
+	};
+
+	const removeDataField = (index: number) => {
+		const newFields = [...dataFields];
+		newFields.splice(index, 1);
+		setDataFields(newFields);
+	};
+
+	const fetchTokens = async () => {
+		const response = await getTokensWithUser();
+		setList(response.tokens);
+	};
+
+	const sendNotification = async () => {
+		if (!title || !body) {
+			Toast.show({ type: "error", text1: "Title and Body are required" });
+			return;
+		}
+
+		let dataJson: any = {};
+		dataFields.forEach((f) => {
+			if (f.key) dataJson[f.key] = f.value;
+		});
+
+		try {
+			setGlobalLoading(true);
+
+			// Get all selected users
+			const selected = list.filter((u: any) =>
+				selectedUsers.includes(u.userId.UID)
+			);
+			if (selected.length === 0) {
+				Toast.show({
+					type: "error",
+					text1: "No users selected",
+					text2: "Please select at least one user to send notification",
+				});
+				return;
+			}
+			console.log(JSON.stringify(selected, null, 1));
+
+			// Build notifications array
+			const notifications: Notifications.NotificationContentInput[] =
+				selected.map((user: any) => ({
+					to: user.token,
+					title: title,
+					body: body,
+					ttl: undefined,
+					categoryIdentifier: category.categoryIdentifier,
+					categoryId: category.categoryId,
+					richContent: {
+						image: richContent.image || user?.userId.avatar,
+					},
+
+					data:
+						Object.keys(dataJson).length > 0
+							? dataJson
+							: {
+									url: "https://eec-cockpit.expo.app/dashboard/loaddata",
+									extraInfo: "You have a new alert",
+								},
+					autoDismiss: true,
+					badge: 2,
+					interruptionLevel: "active",
+					priority: Notifications.AndroidNotificationPriority.HIGH,
+					sticky: true,
+					launchImageName: "hello",
+					subtitle: subtitle || "New Notification",
+					sound: "default",
+					attachments: [
+						{
+							identifier: "profile_image",
+							url: user.userId.avatar, // 👈 use user avatar here
+							type: "image",
+						},
+					],
+					icon: user.userId.avatar, // 👈 also use avatar as icon
+				}));
+			await sendMultipleNotification(notifications);
+
+			Toast.show({ type: "success", text1: "Notifications prepared!" });
+		} catch (err) {
+			console.error(err);
+			Toast.show({
+				type: "error",
+				text1: "Failed to send notifications",
+			});
+		} finally {
+			setGlobalLoading(false);
+		}
+	};
+
+	/* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		fetchTokens();
+	}, []);
+	useEffect(() => {
+		setGlobalLoading(false);
+	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
+	return (
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: secondaryColor }]}
+		>
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 40} // adjust if header overlaps
+			>
+				<ScrollView
+					contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
+					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}
+				>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "bold",
+							color: textColor,
+							marginBottom: 4,
+						}}
+					>
+						Notification Fields
+					</Text>
+
+					<TextInput
+						placeholder="Title"
+						value={title}
+						onChangeText={setTitle}
+						placeholderTextColor="#999"
+						className="bg-white text-black p-4 rounded-lg mb-4 pr-10"
+					/>
+					<TextInput
+						placeholder="Body"
+						value={body}
+						onChangeText={setBody}
+						placeholderTextColor="#999"
+						className="bg-white text-black p-4 rounded-lg mb-4 pr-10"
+					/>
+					<TextInput
+						placeholder="Subtitle"
+						value={subtitle}
+						onChangeText={setSubtitle}
+						placeholderTextColor="#999"
+						className="bg-white text-black p-4 rounded-lg mb-4 pr-10"
+					/>
+					<TextInput
+						placeholder="Rich Content Image URL"
+						value={richContent.image}
+						onChangeText={(val) => setRichContent({ image: val })}
+						placeholderTextColor="#999"
+						className="bg-white text-black p-4 rounded-lg mb-4 pr-10"
+					/>
+
+					<Text
+						style={{
+							fontSize: 16,
+							fontWeight: "bold",
+							color: textColor,
+							marginVertical: 4,
+						}}
+					>
+						Category
+					</Text>
+					<View
+						style={{
+							backgroundColor: cardsColor,
+							borderRadius: 6,
+							marginBottom: 12,
+						}}
+					>
+						<Picker
+							selectedValue={category.categoryId}
+							onValueChange={(val) =>
+								setCategory({
+									categoryId: val,
+									categoryIdentifier: val,
+								})
+							}
+						>
+							{NOTIFICATION_TYPES.map((item, index) => (
+								<Picker.Item
+									key={`${item}+${index}`}
+									label={item}
+									value={item}
+								/>
+							))}
+						</Picker>
+					</View>
+
+					<Text
+						style={{
+							fontSize: 16,
+							fontWeight: "bold",
+							color: textColor,
+							marginBottom: 6,
+						}}
+					>
+						Data Fields (JSON)
+					</Text>
+
+					{dataFields.map((field, index) => (
+						<View
+							key={index}
+							style={{
+								flexDirection: "row",
+								gap: 6,
+								marginBottom: 6,
+							}}
+						>
+							<TextInput
+								placeholder="Key"
+								value={field.key}
+								onChangeText={(k) =>
+									updateDataField(index, k, field.value)
+								}
+								placeholderTextColor="#999"
+								className="flex-1 bg-white text-black p-3 rounded-md mb-4 pr-3"
+							/>
+							<TextInput
+								placeholder="Value"
+								value={field.value}
+								onChangeText={(v) =>
+									updateDataField(index, field.key, v)
+								}
+								placeholderTextColor="#999"
+								className="flex-1 bg-white text-black p-3 rounded-md mb-4 pr-3"
+							/>
+							<TouchableOpacity
+								onPress={() => removeDataField(index)}
+								style={{
+									justifyContent: "center",
+									paddingHorizontal: 6,
+									paddingBottom: 13,
+								}}
+							>
+								<MaterialIcons
+									name="delete"
+									size={24}
+									color="red"
+								/>
+							</TouchableOpacity>
+						</View>
+					))}
+
+					<TouchableOpacity
+						onPress={addDataField}
+						style={{ marginBottom: 12 }}
+					>
+						<Text
+							style={{ color: primaryColor, fontWeight: "bold" }}
+						>
+							+ Add Field
+						</Text>
+					</TouchableOpacity>
+
+					{/* Button to open user modal */}
+					<View style={{ flexDirection: "row", marginBottom: 12 }}>
+						<TouchableOpacity
+							onPress={() => setShowUserModal(true)}
+							style={{
+								paddingVertical: 12,
+								paddingHorizontal: 6,
+								backgroundColor: primaryColor,
+								borderRadius: 6,
+								alignItems: "center",
+								width: 120, // reduced width
+								marginLeft: "auto", // push to right
+							}}
+						>
+							<Text
+								style={{
+									color: cardsColor,
+									fontWeight: "bold",
+								}}
+							>
+								Select Users
+							</Text>
+						</TouchableOpacity>
+					</View>
+
+					<RoundedButton
+						title="Send Notification"
+						onPress={sendNotification}
+					/>
+
+					{/* User Selection Modal (FlatList inside modal, untouched) */}
+					<Modal
+						visible={showUserModal}
+						animationType="fade"
+						transparent
+					>
+						<View
+							style={{
+								flex: 1,
+								backgroundColor: secondaryColor,
+								justifyContent: "flex-start",
+								paddingHorizontal: 16,
+								paddingTop: 40,
+							}}
+						>
+							<View
+								style={{
+									backgroundColor: cardsColor,
+									borderRadius: 10,
+									paddingVertical: 14,
+									paddingHorizontal: 16,
+									marginBottom: 12,
+									shadowColor: "#000",
+									shadowOffset: { width: 0, height: 2 },
+									shadowOpacity: 0.2,
+									shadowRadius: 3,
+									elevation: 3,
+								}}
+							>
+								<Text
+									style={{
+										fontSize: 20,
+										fontWeight: "700",
+										color: textColor,
+									}}
+								>
+									Select Users
+								</Text>
+							</View>
+
+							<FlatList
+								data={list}
+								keyExtractor={(item) => item.userId.UID}
+								keyboardShouldPersistTaps="handled"
+								contentContainerStyle={{ paddingBottom: 16 }}
+								ItemSeparatorComponent={() => (
+									<View style={{ height: 8 }} />
+								)}
+								renderItem={({ item }) => {
+									const selected = selectedUsers.includes(
+										item.userId.UID
+									);
+									return (
+										<TouchableOpacity
+											onPress={() =>
+												toggleUser(item.userId.UID)
+											}
+											style={{
+												flexDirection: "row",
+												alignItems: "center",
+												paddingVertical: 10,
+												paddingHorizontal: 12,
+												borderRadius: 8,
+												backgroundColor: selected
+													? primaryColor
+													: cardsColor,
+											}}
+										>
+											<Image
+												source={{
+													uri: item.userId.avatar,
+												}}
+												style={{
+													width: 40,
+													height: 40,
+													borderRadius: 20,
+													marginRight: 12,
+												}}
+											/>
+											<Text
+												style={{
+													color: selected
+														? cardsColor
+														: textColor,
+													fontWeight: selected
+														? "600"
+														: "400",
+													fontSize: 16,
+												}}
+											>
+												{item.userId.name}
+											</Text>
+										</TouchableOpacity>
+									);
+								}}
+							/>
+
+							<TouchableOpacity
+								onPress={() => setShowUserModal(false)}
+								style={{
+									marginTop: 12,
+									paddingVertical: 14,
+									backgroundColor: primaryColor,
+									borderRadius: 8,
+									alignItems: "center",
+									marginBottom: 20,
+								}}
+							>
+								<Text
+									style={{
+										color: "#fff",
+										fontWeight: "700",
+										fontSize: 16,
+									}}
+								>
+									Done
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</Modal>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
+	);
+};
+
+export default NotificationSenderScreen;
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		paddingVertical: 6,
+		paddingHorizontal: 10,
+		marginTop: 110,
+	},
+});

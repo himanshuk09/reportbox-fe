@@ -16,25 +16,6 @@ const AuthLayout = () => {
 					headerShown: false,
 				})}
 			/>
-
-			{/* <Stack.Screen
-				name="verify-otp"
-				options={({ route }) => ({
-					headerShown: false,
-				})}
-			/>
-			<Stack.Screen
-				name="verified"
-				options={({ route }) => ({
-					headerShown: true,
-				})}
-			/>
-			<Stack.Screen
-				name="profile-form"
-				options={({ route }) => ({
-					headerShown: false,
-				})}
-			/> */}
 		</Stack>
 	);
 };

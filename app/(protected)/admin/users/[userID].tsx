@@ -50,7 +50,7 @@ export default function ComplaintListScreen() {
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchComplaints();
-	}, []);
+	}, [userID]);
 
 	useEffect(() => {
 		setGlobalLoading(false);
@@ -97,12 +97,12 @@ export default function ComplaintListScreen() {
 						<View style={styles.imageRow}>
 							{item?.beforeImage && (
 								<TouchableOpacity
-									style={styles.imageHalfTouchable}
+									style={styles?.imageHalfTouchable}
 									activeOpacity={0.7}
 								>
 									<Image
 										source={{ uri: item?.beforeImage }}
-										style={styles.imageHalf}
+										style={styles?.imageHalf}
 										resizeMode="cover"
 									/>
 								</TouchableOpacity>
@@ -123,23 +123,23 @@ export default function ComplaintListScreen() {
 						<Text
 							style={[styles.status, getStatusStyle(item.status)]}
 						>
-							Status: {item.status}
+							Status: {item?.status}
 						</Text>
 						<Text style={{ color: textColor }}>
-							Complaint ID: {item.cid}
+							Complaint ID: {item?.cid}
 						</Text>
 						<Text style={{ color: textColor }}>
 							Date: {new Date(item?.raisedDate).toLocaleString()}
 						</Text>
 
-						{item.status === "Resolved" && (
+						{item?.status === "Resolved" && (
 							<Text style={{ color: textColor }}>
-								Resolved By: {item.resolvedBy.name}
+								Resolved By: {item?.resolvedBy?.name}
 							</Text>
 						)}
-						{item.status === "Assigned" && (
+						{item?.status === "Assigned" && (
 							<Text style={{ color: textColor }}>
-								Assigned To: {item?.assignedTo.name}
+								Assigned To: {item?.assignedTo?.name}
 							</Text>
 						)}
 					</Pressable>

@@ -11,7 +11,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,13 +54,14 @@ const RenderComplaintList = () => {
 			<FlashList
 				data={complaintData}
 				estimatedItemSize={60}
-				renderItem={({ item }) => (
+				renderItem={({ item }: any) => (
 					<TouchableOpacity
 						style={[
 							styles.itemContainer,
 							{ backgroundColor: cardsColor },
 						]}
 						activeOpacity={0.8}
+						onPress={() => router.push(item?.route)}
 					>
 						<View
 							style={[
@@ -68,13 +69,13 @@ const RenderComplaintList = () => {
 								{ borderColor: primaryColor },
 							]}
 						>
-							{item.icon &&
+							{item?.icon &&
 								React.cloneElement(item.icon, {
 									color: primaryColor,
 								})}
 						</View>
 						<Text style={[styles.label, { color: textColor }]}>
-							{item.label}
+							{item?.label}
 						</Text>
 					</TouchableOpacity>
 				)}

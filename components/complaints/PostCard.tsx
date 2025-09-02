@@ -274,13 +274,13 @@ export function PostCard({
 							{item.comments?.length || 0}
 						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity>
+					{/* <TouchableOpacity>
 						<Ionicons
 							name="share-social-outline"
 							size={20}
 							color={textColor}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 				</View>
 			</View>
 

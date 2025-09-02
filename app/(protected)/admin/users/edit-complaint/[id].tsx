@@ -239,6 +239,7 @@ const EditComplaintScreen = () => {
 						style={{ color: textColor }}
 						dropdownIconColor={textColor}
 					>
+						<Picker.Item label="Select" value="" color="#888" />
 						<Picker.Item
 							label="Drainage Leakage"
 							value="Drainage Leakage"
@@ -301,6 +302,7 @@ const EditComplaintScreen = () => {
 						}}
 						dropdownIconColor={textColor}
 					>
+						<Picker.Item label="Select" value="" color="#888" />
 						{Status.map((status, index) => (
 							<Picker.Item
 								key={`${status}+${index}`}
@@ -329,6 +331,11 @@ const EditComplaintScreen = () => {
 								}}
 								dropdownIconColor={textColor}
 							>
+								<Picker.Item
+									label="Select"
+									value=""
+									color="#888"
+								/>
 								{workerlist.map((worker: any) => (
 									<Picker.Item
 										key={worker._id}

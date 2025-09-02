@@ -127,7 +127,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		typedRoutes: true,
 	},
 	updates: {
-		url: "https://u.expo.dev/8af56934-163c-494d-b185-1792f50fc363",
+		url: "https://u.expo.dev/91785fb2-1f97-4918-af00-776fdc430bbc",
 	},
 	runtimeVersion: {
 		policy: "appVersion",

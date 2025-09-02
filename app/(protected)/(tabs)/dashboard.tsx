@@ -11,6 +11,7 @@ import {
 	FlatList,
 	Image,
 	InteractionManager,
+	RefreshControl,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -102,6 +103,13 @@ const ComplaintCategoriesScreen = () => {
 		useAppTheme();
 	/* -------------------------------------------------------------------------- */
 	const [weather, setWeather] = useState<any>(null);
+	const [refreshing, setRefreshing] = useState(false);
+
+	/* -------------------------------------------------------------------------- */
+	const onRefresh = async () => {
+		setRefreshing(true);
+		setTimeout(() => setRefreshing(false), 2000);
+	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		const fetchLocation = async () => {
@@ -241,6 +249,14 @@ const ComplaintCategoriesScreen = () => {
 					</View>
 				}
 				contentContainerStyle={styles.listContent}
+				refreshControl={
+					<RefreshControl
+						colors={[primaryColor, textColor]}
+						refreshing={refreshing}
+						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
+					/>
+				}
 			/>
 		</SafeAreaView>
 	);

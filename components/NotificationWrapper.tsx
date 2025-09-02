@@ -34,18 +34,18 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 	BACKGROUND_NOTIFICATION_TASK,
 	async ({ data, error, executionInfo }: any) => {
 		try {
-			console.log(
-				" Received 🔔 in the background!",
-				JSON.stringify(
-					{
-						data,
-						// error,
-						// executionInfo,
-					},
-					null,
-					2
-				)
-			);
+			// console.log(
+			// 	" Received 🔔 in the background!",
+			// 	JSON.stringify(
+			// 		{
+			// 			data,
+			// 			// error,
+			// 			// executionInfo,
+			// 		},
+			// 		null,
+			// 		2
+			// 	)
+			// );
 			if (error) {
 				console.error("Background notification error:", error);
 				return Promise.reject(error);
@@ -70,10 +70,16 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 
 			// Construct notification object to store
 			const newNotification = {
-				id: payloadData.messageId || Date.now().toString(),
-				title: payloadData.title || notification.title || "No Title",
-				body: payloadData.message || notification.body || "No Body",
-				user: parsedDataString.userId || null, // your user object
+				id: payloadData?.messageId || Date.now().toString(),
+				title: payloadData?.title || notification?.title || "No Title",
+				subtitle:
+					payloadData?.subtitle ||
+					notification?.subtitle ||
+					"No Subtitle",
+				body: payloadData?.message || notification?.body || "No Body",
+				categoryId: payloadData?.categoryId || null,
+				imageUrl: notification?.imageUrl,
+				user: parsedDataString?.userId || null, // your user object
 				data: { ...parsedBody, ...parsedDataString }, // merge additional data
 				receivedAt: new Date().toISOString(),
 			};
@@ -370,6 +376,8 @@ const sendMultipleNotification = async (
 		);
 
 		const result = await response.json();
+		console.log(result);
+
 		return result;
 	} catch (error) {
 		notificationError = error;

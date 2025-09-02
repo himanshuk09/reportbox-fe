@@ -6,9 +6,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 function VerificationSuccessScreen() {
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
 	const router = useRouter();
+	const { primaryColor, textColor } = useAppTheme();
 	return (
 		<View className="flex-1 relative justify-center">
 			{/* Other content below */}

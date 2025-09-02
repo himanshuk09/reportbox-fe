@@ -1,39 +1,57 @@
+import { registerForPushNotificationsAsync } from "@/components/NotificationWrapper";
 import CustomSwitch from "@/components/ui/CustomSwitch";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import {
+	deleteTokenByUserId,
+	sendOrUpdateToken,
+} from "@/services/push-notification.service";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 const SettingsPanel = () => {
 	const { logout, user } = useAuth();
-
-	const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-	const [language, setLanguage] = useState("en");
-	const { theme, mode, setThemeMode } = useThemeContext();
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
-
-	const getContrastText = (bgColor: string) => {
-		// Simple contrast check to pick white or black text
-		const rgb = parseInt(bgColor.replace("#", ""), 16);
-		const r = (rgb >> 16) & 0xff;
-		const g = (rgb >> 8) & 0xff;
-		const b = (rgb >> 0) & 0xff;
-		const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-		return luminance > 0.5 ? "#000" : "#fff";
-	};
-
-	const buttonTextColor = getContrastText(primaryColor);
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+	const { theme, mode, setThemeMode } = useThemeContext();
+
+	/* -------------------------------------------------------------------------- */
+	const [language, setLanguage] = useState("en");
+	const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+	/* -------------------------------------------------------------------------- */
+	// Inside your SettingsPanel component
+	const handleToggleNotifications = async (value: boolean) => {
+		setNotificationsEnabled(value);
+		if (value) {
+			try {
+				const token = await registerForPushNotificationsAsync();
+				await sendOrUpdateToken(user.user._id, token);
+			} catch (error) {
+				console.error("Failed to register notifications:", error);
+			}
+		} else {
+			try {
+				await deleteTokenByUserId(user.user._id);
+			} catch (err: any) {
+				Toast.show({
+					type: "error",
+					text1: "Failed to disable notifications. Please try again.",
+				});
+			}
+		}
+	};
 	useEffect(() => {
 		setGlobalLoading(false);
 	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			style={{
@@ -97,12 +115,12 @@ const SettingsPanel = () => {
 				</View>
 				<CustomSwitch
 					isEnabled={notificationsEnabled}
-					setIsEnabled={setNotificationsEnabled}
+					setIsEnabled={handleToggleNotifications}
 				/>
 			</View>
 
 			{/* Language */}
-			<View className="flex-row items-center justify-between mb-12">
+			{/* <View className="flex-row items-center justify-between mb-12">
 				<View className="flex-row items-center gap-3">
 					<Feather name="globe" size={25} color={textColor} />
 					<Text className="text-lg" style={{ color: textColor }}>
@@ -147,7 +165,7 @@ const SettingsPanel = () => {
 						</TouchableOpacity>
 					))}
 				</View>
-			</View>
+			</View> */}
 
 			{/* Logout */}
 			<RoundedButton

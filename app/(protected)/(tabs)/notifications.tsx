@@ -1,12 +1,11 @@
 import Blob from "@/components/on-bording/blob";
-// import { complaintsPosts } from "@/constants/posts";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getMMKV, setMMKV } from "@/storage/mmkv";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
@@ -15,9 +14,13 @@ const Notifications = () => {
 	const { setGlobalLoading } = useLoading();
 	const { primaryColor, secondaryColor, textColor, cardsColor } =
 		useAppTheme();
+
+	/* -------------------------------------------------------------------------- */
 	const [refreshing, setRefreshing] = useState(false);
 	const [notification, setNotification] = useState<any[]>([]);
+	const swipeListRef = useRef<SwipeListView<any>>(null);
 
+	/* -------------------------------------------------------------------------- */
 	const handleDelete = (rowKey: string) => {
 		const newData = notification.filter((item) => item.id !== rowKey);
 		setNotification(newData);
@@ -28,19 +31,133 @@ const Notifications = () => {
 		setRefreshing(true);
 		setTimeout(() => setRefreshing(false), 2000);
 	};
+	const clearAllNotifications = () => {
+		swipeListRef.current?.closeAllOpenRows(); // closes all open swipe rows
+		setNotification([]);
+		setMMKV("notifications", []);
+	};
 
+	/* -------------------------------------------------------------------------- */
+	const ComplaintCard = ({ item }: any) => (
+		<Pressable
+			className="flex-row rounded-lg shadow p-2 mb-2"
+			style={{
+				backgroundColor: cardsColor,
+				minHeight: 80,
+			}}
+		>
+			<Image
+				source={{ uri: item?.data?.beforeImage }}
+				className="rounded-md mr-2"
+				resizeMode="cover"
+				style={{ width: "25%", height: 70 }}
+			/>
+			<View className="flex-1 my-1">
+				<Text
+					className="font-bold text-sm"
+					style={{ color: textColor }}
+				>
+					Complaint ID:{" "}
+					<Text
+						style={{
+							color: textColor,
+							fontWeight: "400",
+						}}
+					>
+						{item?.data?.cid}
+					</Text>
+				</Text>
+
+				<Text className="text-xs mt-1" style={{ color: textColor }}>
+					Date:{" "}
+					{item?.data?.raisedDate
+						? new Date(item.data.raisedDate).toLocaleString()
+						: item.receivedAt}
+				</Text>
+
+				<View
+					className="mt-1 px-2 py-0.5 rounded-full self-start"
+					style={getStatusStyle(item.data.status)}
+				>
+					<Text className="text-[10px] font-medium">
+						{item?.data?.status}
+					</Text>
+				</View>
+
+				<Text className="text-xs mt-1" style={{ color: textColor }}>
+					{item?.data?.status === "Resolved"
+						? `Resolved By: ${item?.data?.resolvedBy?.name ?? "N/A"}`
+						: `Assigned To: ${item?.data?.assignedTo?.name ?? "N/A"}`}
+				</Text>
+			</View>
+		</Pressable>
+	);
+
+	const InfoCard = ({ item }: any) => {
+		return (
+			<Pressable
+				className="flex-row items-center rounded-lg shadow p-3 mb-2"
+				style={{
+					backgroundColor: cardsColor,
+					minHeight: 80,
+				}}
+			>
+				{/* Image (optional) */}
+				{item?.imageUrl && (
+					<Image
+						source={{ uri: item?.imageUrl }}
+						className="rounded-md mr-3"
+						resizeMode="cover"
+						style={{ width: 70, height: 70 }}
+					/>
+				)}
+
+				{/* Text Section */}
+				<View className="flex-1">
+					<Text
+						className="font-bold text-base"
+						style={{ color: textColor }}
+						numberOfLines={1}
+					>
+						{item?.title ?? "Untitled"}
+					</Text>
+
+					{item?.body ? (
+						<Text
+							className="text-sm mt-1"
+							style={{ color: textColor }}
+							numberOfLines={2}
+						>
+							{item.body}
+						</Text>
+					) : null}
+				</View>
+			</Pressable>
+		);
+	};
+	const renderItem = ({ item }: any) => {
+		if (item?.categoryId === "complaint_update") {
+			return <ComplaintCard item={item} />;
+		} else if (item?.categoryId === "simple") {
+			return <InfoCard item={item} />;
+		} else {
+			return <InfoCard item={item} />;
+		}
+	};
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		const storeNotification: any = getMMKV("notifications") || [];
-		setNotification(storeNotification);
+		setNotification(storeNotification.reverse());
 		setGlobalLoading(false);
 	}, [isFocused, refreshing]);
-
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View
 			className="flex-1 px-4"
 			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
 			<SwipeListView
+				ref={swipeListRef}
 				data={notification}
 				keyExtractor={(item) => item.id}
 				showsHorizontalScrollIndicator={false}
@@ -54,72 +171,27 @@ const Notifications = () => {
 						>
 							Notifications
 						</Text>
-						<Ionicons
-							name="notifications-outline"
-							size={27}
-							color={textColor}
-						/>
+						<View className="flex-row items-center">
+							{notification.length > 0 && (
+								<Pressable
+									onPress={clearAllNotifications}
+									className="px-3 py-1  rounded-md"
+								>
+									<Text className="text-white font-bold">
+										Clear All
+									</Text>
+								</Pressable>
+							)}
+							<Ionicons
+								name="notifications-outline"
+								size={27}
+								color={textColor}
+								style={{ marginLeft: 10 }}
+							/>
+						</View>
 					</View>
 				}
-				renderItem={({ item }) => (
-					<Pressable
-						className="flex-row rounded-lg shadow p-2 mb-2"
-						style={{ backgroundColor: cardsColor, minHeight: 80 }}
-					>
-						<Image
-							source={{ uri: item.data.beforeImage }}
-							className="rounded-md mr-2"
-							resizeMode="cover"
-							style={{ width: "25%", height: 70 }}
-						/>
-						<View className="flex-1 my-1">
-							<Text
-								className="font-bold text-sm"
-								style={{ color: textColor }}
-							>
-								Complaint ID:{" "}
-								<Text
-									style={{
-										color: textColor,
-										fontWeight: "400",
-									}}
-								>
-									{item.data.cid}
-								</Text>
-							</Text>
-
-							<Text
-								className="text-xs mt-1"
-								style={{ color: textColor }}
-							>
-								Date:{" "}
-								{item.data.raisedDate
-									? new Date(
-											item.data.raisedDate
-										).toLocaleString()
-									: item.receivedAt}
-							</Text>
-
-							<View
-								className="mt-1 px-2 py-0.5 rounded-full self-start"
-								style={getStatusStyle(item.data.status)}
-							>
-								<Text className="text-[10px] font-medium">
-									{item.data.status}
-								</Text>
-							</View>
-
-							<Text
-								className="text-xs mt-1"
-								style={{ color: textColor }}
-							>
-								{item.data.status === "Resolved"
-									? `Resolved By: ${item.data.resolvedBy?.name ?? "N/A"}`
-									: `Assigned To: ${item.data.assignedTo?.name ?? "N/A"}`}
-							</Text>
-						</View>
-					</Pressable>
-				)}
+				renderItem={renderItem}
 				renderHiddenItem={({ item }) => (
 					<View className="flex-row justify-end items-center px-4 h-full rounded-xl">
 						<Pressable
@@ -157,6 +229,7 @@ const Notifications = () => {
 						colors={[primaryColor, textColor]}
 						refreshing={refreshing}
 						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
 					/>
 				}
 			/>

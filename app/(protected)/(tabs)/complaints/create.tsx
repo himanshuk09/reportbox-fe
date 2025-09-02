@@ -9,7 +9,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { raisedComplaint } from "@/services/complaint.service";
 import { useIsFocused } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
 	Keyboard,
@@ -55,13 +55,17 @@ const Complaint = () => {
 	const router = useRouter();
 	const { setGlobalLoading } = useLoading();
 	const { secondaryColor, textColor } = useAppTheme();
+	const { type, subtype } = useLocalSearchParams<{
+		type?: string;
+		subtype?: string;
+	}>();
 
 	/* -------------------------------------------------------------------------- */
 	const [showCamera, setShowCamera] = useState(false);
 	const [complaintData, setComplaintData] = useState({
 		beforeImage: "",
-		type: "",
-		subtype: "",
+		type: type || "",
+		subtype: subtype || "",
 		message: "",
 		location: "",
 		tags: "",
@@ -131,8 +135,18 @@ const Complaint = () => {
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		setGlobalLoading(false);
-	}, [isFocused]);
+		setComplaintData((prev: any) => ({
+			...prev,
+			type: type || prev.type,
+		}));
+	}, [isFocused, type]);
+	useEffect(() => {
+		setComplaintData((prev: any) => ({
+			...prev,
 
+			subtype: subtype || prev.subtype,
+		}));
+	}, [isFocused, subtype]);
 	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
@@ -160,6 +174,7 @@ const Complaint = () => {
 						setImage={handleSetImage}
 					/>
 					<ComplaintForm
+						type={complaintData.type}
 						subtypes={complaintData.subtype}
 						location={complaintData.location}
 						setLocation={handleSetLocation}

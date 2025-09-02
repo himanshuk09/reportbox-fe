@@ -1,7 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import Toast from "react-native-toast-message";
 import api, { uploadImageToCloudinary } from "./axiosInstance";
-
+/* -------------------------------------------------------------------------- */
 export const sendOtpRToEmail = async ({ email }: { email: string }) => {
 	try {
 		const res = await api.post("/auth/send-otp", {
@@ -13,7 +13,7 @@ export const sendOtpRToEmail = async ({ email }: { email: string }) => {
 		return false;
 	}
 };
-
+/* -------------------------------------------------------------------------- */
 export const verifySentOtp = async ({
 	email,
 	otp,

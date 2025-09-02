@@ -9,7 +9,7 @@ interface ComplaintStep {
 	id: number;
 	text: string;
 }
-
+/* -------------------------------------------------------------------------- */
 const complaintSteps: ComplaintStep[] = [
 	{ id: 1, text: 'Tap on the "Add" icon on the home screen.' },
 	{ id: 2, text: "Choose the issue category you want to report." },
@@ -40,18 +40,22 @@ const complaintSteps: ComplaintStep[] = [
 	},
 	{ id: 10, text: "Review all entered details carefully." },
 ];
-
+/* -------------------------------------------------------------------------- */
 const CIRCLE_SIZE = 48;
 const LINE_WIDTH = 2;
 const ITEM_MARGIN_BOTTOM = 20;
+/* -------------------------------------------------------------------------- */
 const ComplaintStepsTimeline = () => {
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
+	const { primaryColor, secondaryColor, textColor, cardsColor } =
+		useAppTheme();
+
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		setGlobalLoading(false);
 	}, [isFocused]);
+	/* -------------------------------------------------------------------------- */
 	return (
 		<ScrollView
 			style={{

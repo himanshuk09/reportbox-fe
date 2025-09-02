@@ -191,7 +191,10 @@ export default function NotificationScreen() {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={styles.container}>
+		<ScrollView
+			contentContainerStyle={styles.container}
+			showsVerticalScrollIndicator={false}
+		>
 			<Text style={styles.header}>Send a notification</Text>
 
 			<View style={styles.inputContainer}>

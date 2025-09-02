@@ -155,6 +155,7 @@ const ComplaintHistoryScreen = () => {
 						colors={[primaryColor, textColor]}
 						refreshing={refreshing}
 						onRefresh={onRefresh}
+						progressBackgroundColor={secondaryColor}
 					/>
 				}
 			/>
