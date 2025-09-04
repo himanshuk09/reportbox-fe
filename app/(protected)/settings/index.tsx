@@ -34,12 +34,14 @@ const SettingsPanel = () => {
 			try {
 				const token = await registerForPushNotificationsAsync();
 				await sendOrUpdateToken(user.user._id, token);
+				Toast.show({ type: "info", text1: "Enable Notification" });
 			} catch (error) {
 				console.error("Failed to register notifications:", error);
 			}
 		} else {
 			try {
 				await deleteTokenByUserId(user.user._id);
+				Toast.show({ type: "info", text1: "Disable Notification" });
 			} catch (err: any) {
 				Toast.show({
 					type: "error",

@@ -37,8 +37,7 @@ export const getTokensByUserID = async (userId: string) => {
 
 export const deleteTokenByUserId = async (userId: string) => {
 	try {
-		const res = await api.delete(`/token/${userId}`);
-		console.log("Deleted:", res.data);
+		await api.delete(`/token/${userId}`);
 	} catch (error) {
 		console.error("Unable to delete token", error);
 	}

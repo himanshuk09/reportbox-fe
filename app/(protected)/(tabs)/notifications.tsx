@@ -2,7 +2,7 @@ import Blob from "@/components/on-bording/blob";
 import { getStatusStyle } from "@/constants/statuscode";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getMMKV, setMMKV } from "@/storage/mmkv";
+import { getMMKV, MMKV_KEYS, setMMKV } from "@/storage/mmkv";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
@@ -24,17 +24,13 @@ const Notifications = () => {
 	const handleDelete = (rowKey: string) => {
 		const newData = notification.filter((item) => item.id !== rowKey);
 		setNotification(newData);
-		setMMKV("notifications", newData); // Update MMKV after delete
+		setMMKV(MMKV_KEYS?.NOTIFICATION_KEY, newData); // Update MMKV after delete
 	};
 
-	const onRefresh = async () => {
-		setRefreshing(true);
-		setTimeout(() => setRefreshing(false), 2000);
-	};
 	const clearAllNotifications = () => {
 		swipeListRef.current?.closeAllOpenRows(); // closes all open swipe rows
 		setNotification([]);
-		setMMKV("notifications", []);
+		setMMKV(MMKV_KEYS?.NOTIFICATION_KEY, []);
 	};
 
 	/* -------------------------------------------------------------------------- */
@@ -144,10 +140,22 @@ const Notifications = () => {
 			return <InfoCard item={item} />;
 		}
 	};
+	const fetchNotificationhistroy = () => {
+		const storeNotification: any =
+			getMMKV(MMKV_KEYS?.NOTIFICATION_KEY) || [];
+		setNotification(storeNotification.reverse());
+		if (storeNotification.length == 0) {
+			// Toast.show({ type: "info", text1: "No Notification Found" });
+		}
+	};
+	const onRefresh = async () => {
+		setRefreshing(true);
+		fetchNotificationhistroy();
+		setTimeout(() => setRefreshing(false), 2000);
+	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
-		const storeNotification: any = getMMKV("notifications") || [];
-		setNotification(storeNotification.reverse());
+		fetchNotificationhistroy();
 		setGlobalLoading(false);
 	}, [isFocused, refreshing]);
 	/* -------------------------------------------------------------------------- */
@@ -177,7 +185,10 @@ const Notifications = () => {
 									onPress={clearAllNotifications}
 									className="px-3 py-1  rounded-md"
 								>
-									<Text className="text-white font-bold">
+									<Text
+										className=" font-bold"
+										style={{ color: textColor }}
+									>
 										Clear All
 									</Text>
 								</Pressable>

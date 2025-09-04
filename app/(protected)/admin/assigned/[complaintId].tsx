@@ -109,7 +109,7 @@ const ResolveComplaintScreen = () => {
 				flex: 1,
 				padding: 16,
 				backgroundColor: secondaryColor,
-				marginTop: 55,
+				marginTop: 80,
 			}}
 		>
 			<ScrollView

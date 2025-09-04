@@ -30,6 +30,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			"android.permission.ACCESS_COARSE_LOCATION",
 			"android.permission.ACCESS_FINE_LOCATION",
 		],
+		runtimeVersion: {
+			policy: "appVersion",
+		},
 	},
 	web: {
 		bundler: "metro",
@@ -133,7 +136,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		policy: "appVersion",
 	},
 	extra: {
-		router: {},
 		eas: {
 			projectId: "91785fb2-1f97-4918-af00-776fdc430bbc",
 		},

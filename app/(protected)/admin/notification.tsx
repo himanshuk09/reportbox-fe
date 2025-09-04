@@ -15,6 +15,7 @@ import {
 	KeyboardAvoidingView,
 	Modal,
 	Platform,
+	RefreshControl,
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
@@ -47,7 +48,7 @@ const NotificationSenderScreen = () => {
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 	const [list, setList] = useState<any>([]);
 	const [showUserModal, setShowUserModal] = useState(false);
-
+	const [refreshing, setRefreshing] = useState(false);
 	/* -------------------------------------------------------------------------- */
 	const toggleUser = (UID: string) => {
 		setSelectedUsers((prev) =>
@@ -103,7 +104,6 @@ const NotificationSenderScreen = () => {
 				});
 				return;
 			}
-			console.log(JSON.stringify(selected, null, 1));
 
 			// Build notifications array
 			const notifications: Notifications.NotificationContentInput[] =
@@ -143,19 +143,22 @@ const NotificationSenderScreen = () => {
 					icon: user.userId.avatar, // 👈 also use avatar as icon
 				}));
 			await sendMultipleNotification(notifications);
-
 			Toast.show({ type: "success", text1: "Notifications prepared!" });
 		} catch (err) {
 			console.error(err);
 			Toast.show({
 				type: "error",
-				text1: "Failed to send notifications",
+				text1: "Unable to  sent Notification.",
 			});
 		} finally {
 			setGlobalLoading(false);
 		}
 	};
-
+	const onRefresh = async () => {
+		setRefreshing(true);
+		fetchTokens();
+		setTimeout(() => setRefreshing(false), 2000);
+	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchTokens();
@@ -249,6 +252,7 @@ const NotificationSenderScreen = () => {
 									key={`${item}+${index}`}
 									label={item}
 									value={item}
+									color={textColor}
 								/>
 							))}
 						</Picker>
@@ -398,6 +402,14 @@ const NotificationSenderScreen = () => {
 								ItemSeparatorComponent={() => (
 									<View style={{ height: 8 }} />
 								)}
+								refreshControl={
+									<RefreshControl
+										colors={[primaryColor, textColor]}
+										refreshing={refreshing}
+										onRefresh={onRefresh}
+										progressBackgroundColor={secondaryColor}
+									/>
+								}
 								renderItem={({ item }) => {
 									const selected = selectedUsers.includes(
 										item.userId.UID

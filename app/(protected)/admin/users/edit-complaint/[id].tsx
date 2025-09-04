@@ -188,7 +188,7 @@ const EditComplaintScreen = () => {
 			style={{
 				flex: 1,
 				backgroundColor: secondaryColor,
-				marginTop: 60,
+				marginTop: 80,
 				padding: 10,
 			}}
 		>

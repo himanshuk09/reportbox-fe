@@ -39,13 +39,16 @@ export default function UserListScreen() {
 	const filteredUsers = useMemo(() => {
 		return allUsers
 			?.filter((user: any) => {
-				// ✅ Search by ID or phone
+				// ✅ Search by ID, phone, or UID
 				const matchesSearch =
 					user?._id
 						.toString()
 						.toLowerCase()
 						.includes(search.toLowerCase()) ||
-					user.phoneNo?.toString().includes(search);
+					user.phoneNo?.toString().includes(search) ||
+					user.UID?.toString()
+						.toLowerCase()
+						.includes(search.toLowerCase());
 
 				// ✅ Filter by complaint type
 				const matchesType = typeFilter

@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                            NOTIFICATION WRAPPER                            */
 /* -------------------------------------------------------------------------- */
-import { getMMKV, setMMKV } from "@/storage/mmkv";
+import { getMMKV, MMKV_KEYS, setMMKV } from "@/storage/mmkv";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -34,18 +34,18 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 	BACKGROUND_NOTIFICATION_TASK,
 	async ({ data, error, executionInfo }: any) => {
 		try {
-			// console.log(
-			// 	" Received 🔔 in the background!",
-			// 	JSON.stringify(
-			// 		{
-			// 			data,
-			// 			// error,
-			// 			// executionInfo,
-			// 		},
-			// 		null,
-			// 		2
-			// 	)
-			// );
+			console.log(
+				" Received 🔔 in the background!",
+				JSON.stringify(
+					{
+						data,
+						// error,
+						// executionInfo,
+					},
+					null,
+					2
+				)
+			);
 			if (error) {
 				console.error("Background notification error:", error);
 				return Promise.reject(error);
@@ -54,7 +54,8 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 			// Raw notification content
 			const notification = data?.notification;
 			const payloadData = data?.data;
-
+			const NOTIFICATION_KEY =
+				MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
 			if (!notification || !payloadData) return Promise.resolve();
 
 			// Some fields are stringified JSON, parse them safely
@@ -85,10 +86,10 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 			};
 
 			// Get existing notifications
-			const existingNotifications = getMMKV("notifications") || [];
+			const existingNotifications = getMMKV(NOTIFICATION_KEY) || [];
 
 			// Store in MMKV
-			setMMKV("notifications", [
+			setMMKV(NOTIFICATION_KEY, [
 				...existingNotifications,
 				newNotification,
 			]);
@@ -361,7 +362,7 @@ const sendMultipleNotification = async (
 	notificationContent: Notifications.NotificationContentInput[]
 ) => {
 	try {
-		const response = await fetch(
+		const response: any = await fetch(
 			// "https://api.expo.dev/v2/push/send",
 			"https://exp.host/--/api/v2/push/send",
 			{
@@ -376,8 +377,6 @@ const sendMultipleNotification = async (
 		);
 
 		const result = await response.json();
-		console.log(result);
-
 		return result;
 	} catch (error) {
 		notificationError = error;
