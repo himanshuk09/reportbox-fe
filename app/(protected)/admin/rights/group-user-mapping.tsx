@@ -346,18 +346,30 @@ const AssignUsersToGroupScreen = () => {
 				animationType="slide"
 				transparent={true}
 			>
-				<View className="flex-1 justify-center items-center bg-black/60">
-					<View className="bg-white p-5 rounded-2xl w-4/5">
-						<Text className="text-lg font-bold mb-3">
+				<View
+					className="flex-1 justify-center items-center"
+					style={{ backgroundColor: `${secondaryColor}99` }} // semi-transparent overlay
+				>
+					<View
+						className="p-5 rounded-2xl w-4/5"
+						style={{ backgroundColor: cardsColor }}
+					>
+						<Text
+							className="text-lg font-bold mb-3"
+							style={{ color: textColor }}
+						>
 							Confirm Changes
 						</Text>
 
-						<Text className="font-semibold text-green-600">
+						<Text
+							className="font-semibold mb-1"
+							style={{ color: "green" }}
+						>
 							Users to Add:
 						</Text>
 						{addedUsers.length > 0 ? (
 							addedUsers.map((u) => (
-								<Text key={u._id}>
+								<Text key={u._id} style={{ color: textColor }}>
 									+ {u.name} ({u.UID})
 								</Text>
 							))
@@ -365,12 +377,15 @@ const AssignUsersToGroupScreen = () => {
 							<Text className="text-gray-400">No new users</Text>
 						)}
 
-						<Text className="font-semibold text-red-600 mt-3">
+						<Text
+							className="font-semibold mt-3 mb-1"
+							style={{ color: "red" }}
+						>
 							Users to Remove:
 						</Text>
 						{removedUsers.length > 0 ? (
 							removedUsers.map((u) => (
-								<Text key={u._id}>
+								<Text key={u._id} style={{ color: textColor }}>
 									- {u.name} ({u.UID})
 								</Text>
 							))
@@ -384,10 +399,23 @@ const AssignUsersToGroupScreen = () => {
 							<TouchableOpacity
 								onPress={() => setShowConfirm(false)}
 							>
-								<Text className="text-gray-500">Cancel</Text>
+								<Text style={{ color: textColor }}>Cancel</Text>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={handleConfirmUpdate}>
-								<Text className="text-blue-600 font-bold">
+							<TouchableOpacity
+								onPress={handleConfirmUpdate}
+								style={{
+									backgroundColor: primaryColor,
+									paddingHorizontal: 16,
+									paddingVertical: 6,
+									borderRadius: 8,
+								}}
+							>
+								<Text
+									style={{
+										color: cardsColor,
+										fontWeight: "bold",
+									}}
+								>
 									Confirm
 								</Text>
 							</TouchableOpacity>

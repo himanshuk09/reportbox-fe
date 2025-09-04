@@ -7,7 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	version: "1.0.0",
 	orientation: "portrait",
 	icon: "./assets/images/icon.png",
-	scheme: "complaintapp",
+	scheme: "reportbox",
 	userInterfaceStyle: "automatic",
 	newArchEnabled: true,
 	ios: {
@@ -33,11 +33,25 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		runtimeVersion: {
 			policy: "appVersion",
 		},
+		intentFilters: [
+			{
+				action: "VIEW",
+				autoVerify: true,
+				data: [
+					{
+						scheme: "https",
+						host: "report-box.expo.app",
+						pathPrefix: "/",
+					},
+				],
+				category: ["BROWSABLE", "DEFAULT"],
+			},
+		],
 	},
 	web: {
 		bundler: "metro",
 		output: "single",
-		favicon: "./assets/images/favicon.png",
+		favicon: "./assets/web/favicon.png",
 	},
 	plugins: [
 		"expo-router",

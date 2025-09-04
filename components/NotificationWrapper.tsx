@@ -34,70 +34,65 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 	BACKGROUND_NOTIFICATION_TASK,
 	async ({ data, error, executionInfo }: any) => {
 		try {
-			console.log(
-				" Received 🔔 in the background!",
-				JSON.stringify(
-					{
-						data,
-						// error,
-						// executionInfo,
-					},
-					null,
-					2
-				)
-			);
-			if (error) {
-				console.error("Background notification error:", error);
-				return Promise.reject(error);
-			}
-
-			// Raw notification content
-			const notification = data?.notification;
-			const payloadData = data?.data;
-			const NOTIFICATION_KEY =
-				MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
-			if (!notification || !payloadData) return Promise.resolve();
-
-			// Some fields are stringified JSON, parse them safely
-			let parsedBody: any = {};
-			let parsedDataString: any = {};
-			try {
-				if (payloadData.body) parsedBody = JSON.parse(payloadData.body);
-			} catch {}
-			try {
-				if (payloadData.dataString)
-					parsedDataString = JSON.parse(payloadData.dataString);
-			} catch {}
-
-			// Construct notification object to store
-			const newNotification = {
-				id: payloadData?.messageId || Date.now().toString(),
-				title: payloadData?.title || notification?.title || "No Title",
-				subtitle:
-					payloadData?.subtitle ||
-					notification?.subtitle ||
-					"No Subtitle",
-				body: payloadData?.message || notification?.body || "No Body",
-				categoryId: payloadData?.categoryId || null,
-				imageUrl: notification?.imageUrl,
-				user: parsedDataString?.userId || null, // your user object
-				data: { ...parsedBody, ...parsedDataString }, // merge additional data
-				receivedAt: new Date().toISOString(),
-			};
-
-			// Get existing notifications
-			const existingNotifications = getMMKV(NOTIFICATION_KEY) || [];
-
-			// Store in MMKV
-			setMMKV(NOTIFICATION_KEY, [
-				...existingNotifications,
-				newNotification,
-			]);
-
 			// console.log(
-			// 	"Stored background notification:",
-			// 	JSON.stringify(newNotification, null, 2)
+			// 	" Received 🔔 in the background!",
+			// 	JSON.stringify(
+			// 		{
+			// 			data,
+			// 			// error,
+			// 			// executionInfo,
+			// 		},
+			// 		null,
+			// 		2
+			// 	)
 			// );
+			// if (error) {
+			// 	console.error("Background notification error:", error);
+			// 	return Promise.reject(error);
+			// }
+
+			// // Raw notification content
+			// const notification = data?.notification;
+			// const payloadData = data?.data;
+			// const NOTIFICATION_KEY =
+			// 	MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
+			// if (!notification || !payloadData) return Promise.resolve();
+
+			// // Some fields are stringified JSON, parse them safely
+			// let parsedBody: any = {};
+			// let parsedDataString: any = {};
+			// try {
+			// 	if (payloadData.body) parsedBody = JSON.parse(payloadData.body);
+			// } catch {}
+			// try {
+			// 	if (payloadData.dataString)
+			// 		parsedDataString = JSON.parse(payloadData.dataString);
+			// } catch {}
+
+			// // Construct notification object to store
+			// const newNotification = {
+			// 	id: payloadData?.messageId || Date.now().toString(),
+			// 	title: payloadData?.title || notification?.title || "No Title",
+			// 	subtitle:
+			// 		payloadData?.subtitle ||
+			// 		notification?.subtitle ||
+			// 		"No Subtitle",
+			// 	body: payloadData?.message || notification?.body || "No Body",
+			// 	categoryId: payloadData?.categoryId || null,
+			// 	imageUrl: notification?.imageUrl,
+			// 	user: parsedDataString?.userId || null, // your user object
+			// 	data: { ...parsedBody, ...parsedDataString }, // merge additional data
+			// 	receivedAt: new Date().toISOString(),
+			// };
+
+			// // Get existing notifications
+			// const existingNotifications = getMMKV(NOTIFICATION_KEY) || [];
+
+			// // Store in MMKV
+			// setMMKV(NOTIFICATION_KEY, [
+			// 	...existingNotifications,
+			// 	newNotification,
+			// ]);
 
 			return Promise.resolve();
 		} catch (e) {
@@ -413,6 +408,7 @@ let responseListener: Notifications.EventSubscription | any = null;
 
 const initializeNotifications = async () => {
 	try {
+		Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 		await Notifications.setNotificationChannelAsync("default", {
 			name: "default",
 			importance: Notifications.AndroidImportance.HIGH,
@@ -426,7 +422,6 @@ const initializeNotifications = async () => {
 		});
 		await setupNotificationCategories();
 		// await registerForPushNotificationsAsync();
-		Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 	} catch (error) {}
 };
 
@@ -440,12 +435,78 @@ const NotificationWrapper = () => {
 	useEffect(() => {
 		if (Platform.OS !== "web") {
 			initializeNotifications();
+
 			notificationListener =
 				Notifications.addNotificationReceivedListener(
-					(notification) => {
-						// console.log("🔔  Received: ", JSON.stringify(notification, null, 2));
+					(notification: any) => {
+						// console.log(
+						// 	"🔔 Received:",
+						// 	JSON.stringify(notification, null, 2)
+						// );
+
+						const request = notification?.request;
+						const remoteMessage = request?.trigger?.remoteMessage;
+						const content = request?.content;
+
+						const NOTIFICATION_KEY =
+							MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
+
+						// Parse possible stringified fields
+						let parsedBody: any = {};
+						let parsedDataString: any = {};
+						try {
+							if (remoteMessage?.data?.body) {
+								parsedBody = JSON.parse(
+									remoteMessage.data.body
+								);
+							}
+						} catch {}
+						try {
+							if (remoteMessage?.data?.dataString) {
+								parsedDataString = JSON.parse(
+									remoteMessage.data.dataString
+								);
+							}
+						} catch {}
+
+						// Construct notification object to store
+						const newNotification = {
+							id:
+								remoteMessage?.messageId ||
+								Date.now().toString(),
+							title:
+								remoteMessage?.data?.title ||
+								content?.title ||
+								"No Title",
+							subtitle:
+								remoteMessage?.data?.subtitle ||
+								content?.subtitle ||
+								"",
+							body:
+								remoteMessage?.data?.message ||
+								content?.body ||
+								"No Body",
+							categoryId:
+								remoteMessage?.data?.categoryId ||
+								content?.categoryIdentifier ||
+								null,
+							imageUrl:
+								remoteMessage?.notification?.imageUrl || null,
+							user: parsedDataString?.userId || null,
+							data: { ...parsedBody, ...parsedDataString },
+							receivedAt: new Date().toISOString(),
+						};
+
+						// Save into MMKV
+						const existingNotifications =
+							getMMKV(NOTIFICATION_KEY) || [];
+						setMMKV(NOTIFICATION_KEY, [
+							...existingNotifications,
+							newNotification,
+						]);
 					}
 				);
+
 			responseListener =
 				Notifications.addNotificationResponseReceivedListener(
 					async (response) => {

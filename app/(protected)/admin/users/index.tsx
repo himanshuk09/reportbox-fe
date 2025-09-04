@@ -111,7 +111,7 @@ export default function UserListScreen() {
 
 			<LegendList
 				data={filteredUsers}
-				estimatedItemSize={25}
+				estimatedItemSize={10}
 				recycleItems
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(item: any) => item._id}
@@ -150,9 +150,12 @@ export default function UserListScreen() {
 
 						<View className="flex-row gap-2 mb-4">
 							<View
-								className="flex-1  rounded-lg"
+								className="flex-1 rounded-lg"
 								style={{
 									backgroundColor: cardsColor,
+									borderRadius: 10,
+									overflow: "hidden",
+									marginBottom: 12,
 								}}
 							>
 								<Picker
@@ -160,11 +163,19 @@ export default function UserListScreen() {
 									onValueChange={(itemValue) =>
 										setTypeFilter(itemValue)
 									}
+									dropdownIconColor={textColor}
+									dropdownIconRippleColor={cardsColor}
+									mode="dialog"
 								>
 									<Picker.Item
 										label="All Types"
 										value=""
-										color={textColor}
+										style={{
+											color: textColor,
+											fontSize: 15,
+											fontWeight: "900",
+											backgroundColor: cardsColor,
+										}}
 									/>
 
 									{complaintTypes.map((item, index) => (
@@ -172,7 +183,12 @@ export default function UserListScreen() {
 											key={`${item?.label}+${index}`}
 											label={item?.label}
 											value={item?.label}
-											color={textColor}
+											style={{
+												color: textColor,
+												fontSize: 15,
+												fontWeight: "900",
+												backgroundColor: cardsColor,
+											}}
 										/>
 									))}
 								</Picker>
@@ -182,6 +198,9 @@ export default function UserListScreen() {
 								className="flex-1  rounded-lg"
 								style={{
 									backgroundColor: cardsColor,
+									borderRadius: 10,
+									overflow: "hidden",
+									marginBottom: 12,
 								}}
 							>
 								<Picker
@@ -189,18 +208,31 @@ export default function UserListScreen() {
 									onValueChange={(itemValue) =>
 										setStatusFilter(itemValue)
 									}
+									dropdownIconColor={textColor}
+									dropdownIconRippleColor={cardsColor}
+									mode="dialog"
 								>
 									<Picker.Item
 										label="All Statuses"
 										value=""
-										color={textColor}
+										style={{
+											color: textColor,
+											fontSize: 15,
+											fontWeight: "900",
+											backgroundColor: cardsColor,
+										}}
 									/>
 									{STATUS_KEY.map((item, index) => (
 										<Picker.Item
 											key={`${item}+${index}`}
 											label={item}
 											value={item}
-											color={textColor}
+											style={{
+												color: textColor,
+												fontSize: 15,
+												fontWeight: "900",
+												backgroundColor: cardsColor,
+											}}
 										/>
 									))}
 								</Picker>

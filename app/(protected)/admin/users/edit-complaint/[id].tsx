@@ -3,6 +3,7 @@ import CameraScreen from "@/components/native/CameraScreen";
 import CustomAlert from "@/components/ui/CustomAlert";
 import Loader from "@/components/ui/Loader";
 import { Status } from "@/constants/banners";
+import { complaintTypes } from "@/constants/complaints";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
@@ -231,28 +232,44 @@ const EditComplaintScreen = () => {
 				</Text>
 				<View
 					className="rounded-lg mb-3"
-					style={{ backgroundColor: cardsColor }}
+					style={{
+						backgroundColor: cardsColor,
+						borderRadius: 10,
+						overflow: "hidden",
+						marginBottom: 12,
+					}}
 				>
 					<Picker
 						selectedValue={form.type}
 						onValueChange={(val) => updateField("type", val)}
 						style={{ color: textColor }}
 						dropdownIconColor={textColor}
+						dropdownIconRippleColor={cardsColor}
+						mode="dialog"
 					>
-						<Picker.Item label="Select" value="" color="#888" />
 						<Picker.Item
-							label="Drainage Leakage"
-							value="Drainage Leakage"
+							label="Select"
+							value=""
+							style={{
+								color: textColor,
+								fontSize: 15,
+								fontWeight: "900",
+								backgroundColor: cardsColor,
+							}}
 						/>
-						<Picker.Item label="Garbage" value="Garbage" />
-						<Picker.Item
-							label="Stray Animals"
-							value="Stray Animals"
-						/>
-						<Picker.Item
-							label="Water & Sewerage"
-							value="Water & Sewerage"
-						/>
+						{complaintTypes.map((item: any, index: any) => (
+							<Picker.Item
+								key={`${item?.label}+${index}`}
+								label={item?.label}
+								value={item?.label}
+								style={{
+									color: textColor,
+									fontSize: 15,
+									fontWeight: "900",
+									backgroundColor: cardsColor,
+								}}
+							/>
+						))}
 					</Picker>
 				</View>
 
@@ -292,7 +309,12 @@ const EditComplaintScreen = () => {
 				</Text>
 				<View
 					className="rounded-lg mb-3"
-					style={{ backgroundColor: cardsColor }}
+					style={{
+						backgroundColor: cardsColor,
+						borderRadius: 10,
+						overflow: "hidden",
+						marginBottom: 12,
+					}}
 				>
 					<Picker
 						selectedValue={form.status}
@@ -302,12 +324,27 @@ const EditComplaintScreen = () => {
 						}}
 						dropdownIconColor={textColor}
 					>
-						<Picker.Item label="Select" value="" color="#888" />
+						<Picker.Item
+							label="Select"
+							value=""
+							style={{
+								color: textColor,
+								fontSize: 15,
+								fontWeight: "900",
+								backgroundColor: cardsColor,
+							}}
+						/>
 						{Status.map((status, index) => (
 							<Picker.Item
 								key={`${status}+${index}`}
 								label={status}
 								value={status}
+								style={{
+									color: textColor,
+									fontSize: 15,
+									fontWeight: "900",
+									backgroundColor: cardsColor,
+								}}
 							/>
 						))}
 					</Picker>
@@ -321,7 +358,12 @@ const EditComplaintScreen = () => {
 						</Text>
 						<View
 							className="rounded-lg"
-							style={{ backgroundColor: cardsColor }}
+							style={{
+								backgroundColor: cardsColor,
+								borderRadius: 10,
+								overflow: "hidden",
+								marginBottom: 12,
+							}}
 						>
 							<Picker
 								selectedValue={form[field]}
@@ -334,7 +376,12 @@ const EditComplaintScreen = () => {
 								<Picker.Item
 									label="Select"
 									value=""
-									color="#888"
+									style={{
+										color: textColor,
+										fontSize: 15,
+										fontWeight: "900",
+										backgroundColor: cardsColor,
+									}}
 								/>
 								{workerlist.map((worker: any) => (
 									<Picker.Item
@@ -346,7 +393,6 @@ const EditComplaintScreen = () => {
 											fontSize: 15,
 											fontWeight: "900",
 											backgroundColor: cardsColor,
-											borderRadius: 100,
 										}}
 									/>
 								))}

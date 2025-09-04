@@ -32,6 +32,14 @@ const Notifications = () => {
 		setNotification([]);
 		setMMKV(MMKV_KEYS?.NOTIFICATION_KEY, []);
 	};
+	const fetchNotificationhistroy = () => {
+		const storeNotification: any =
+			getMMKV(MMKV_KEYS?.NOTIFICATION_KEY) || [];
+		setNotification(storeNotification.reverse());
+		if (storeNotification.length == 0) {
+			// Toast.show({ type: "info", text1: "No Notification Found" });
+		}
+	};
 
 	/* -------------------------------------------------------------------------- */
 	const ComplaintCard = ({ item }: any) => (
@@ -140,14 +148,7 @@ const Notifications = () => {
 			return <InfoCard item={item} />;
 		}
 	};
-	const fetchNotificationhistroy = () => {
-		const storeNotification: any =
-			getMMKV(MMKV_KEYS?.NOTIFICATION_KEY) || [];
-		setNotification(storeNotification.reverse());
-		if (storeNotification.length == 0) {
-			// Toast.show({ type: "info", text1: "No Notification Found" });
-		}
-	};
+
 	const onRefresh = async () => {
 		setRefreshing(true);
 		fetchNotificationhistroy();

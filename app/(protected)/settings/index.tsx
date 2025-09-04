@@ -9,6 +9,7 @@ import {
 	deleteTokenByUserId,
 	sendOrUpdateToken,
 } from "@/services/push-notification.service";
+import { getMMKV, MMKV_KEYS, setMMKV } from "@/storage/mmkv";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
@@ -27,9 +28,12 @@ const SettingsPanel = () => {
 	const [language, setLanguage] = useState("en");
 	const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 	/* -------------------------------------------------------------------------- */
+
 	// Inside your SettingsPanel component
 	const handleToggleNotifications = async (value: boolean) => {
 		setNotificationsEnabled(value);
+		setMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY, value);
+
 		if (value) {
 			try {
 				const token = await registerForPushNotificationsAsync();
@@ -50,6 +54,16 @@ const SettingsPanel = () => {
 			}
 		}
 	};
+	/* -------------------------------------------------------------------------- */
+
+	// Load persisted notification status on mount
+	useEffect(() => {
+		const status = getMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY);
+		if (typeof status === "boolean") {
+			setNotificationsEnabled(status);
+		}
+	}, []);
+
 	useEffect(() => {
 		setGlobalLoading(false);
 	}, [isFocused]);

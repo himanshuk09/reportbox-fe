@@ -1,0 +1,12 @@
+[
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "com.himanshukhade.reportbox",
+			"sha256_cert_fingerprints": [
+				"8B:61:32:8E:6C:97:8D:62:41:C5:18:9C:4B:53:58:FC:EB:DE:B0:6E:62:A5:4D:7D:E3:A8:B3:14:9B:B8:FD:EC"
+			]
+		}
+	}
+]

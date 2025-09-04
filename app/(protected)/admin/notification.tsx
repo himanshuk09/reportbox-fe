@@ -122,7 +122,7 @@ const NotificationSenderScreen = () => {
 						Object.keys(dataJson).length > 0
 							? dataJson
 							: {
-									url: "https://eec-cockpit.expo.app/dashboard/loaddata",
+									url: "https://report-box.expo.app",
 									extraInfo: "You have a new alert",
 								},
 					autoDismiss: true,
@@ -234,7 +234,8 @@ const NotificationSenderScreen = () => {
 					<View
 						style={{
 							backgroundColor: cardsColor,
-							borderRadius: 6,
+							borderRadius: 10,
+							overflow: "hidden",
 							marginBottom: 12,
 						}}
 					>
@@ -246,13 +247,21 @@ const NotificationSenderScreen = () => {
 									categoryIdentifier: val,
 								})
 							}
+							dropdownIconColor={textColor}
+							dropdownIconRippleColor={cardsColor}
+							mode="dialog"
 						>
 							{NOTIFICATION_TYPES.map((item, index) => (
 								<Picker.Item
 									key={`${item}+${index}`}
 									label={item}
 									value={item}
-									color={textColor}
+									style={{
+										color: textColor,
+										fontSize: 15,
+										fontWeight: "900",
+										backgroundColor: cardsColor,
+									}}
 								/>
 							))}
 						</Picker>
