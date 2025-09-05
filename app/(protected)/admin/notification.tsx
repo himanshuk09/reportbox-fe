@@ -50,7 +50,8 @@ const NotificationSenderScreen = () => {
 	const [showUserModal, setShowUserModal] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	/* -------------------------------------------------------------------------- */
-	const toggleUser = (UID: string) => {
+	const toggleUser = (UID?: string) => {
+		if (!UID) return; // avoid null/undefined
 		setSelectedUsers((prev) =>
 			prev.includes(UID)
 				? prev.filter((id) => id !== UID)
@@ -75,6 +76,8 @@ const NotificationSenderScreen = () => {
 
 	const fetchTokens = async () => {
 		const response = await getTokensWithUser();
+		console.log(JSON.stringify(response.tokens, null, 1));
+
 		setList(response.tokens);
 	};
 
@@ -94,7 +97,7 @@ const NotificationSenderScreen = () => {
 
 			// Get all selected users
 			const selected = list.filter((u: any) =>
-				selectedUsers.includes(u.userId.UID)
+				selectedUsers.includes(u?.userId?.UID)
 			);
 			if (selected.length === 0) {
 				Toast.show({
@@ -115,7 +118,7 @@ const NotificationSenderScreen = () => {
 					categoryIdentifier: category.categoryIdentifier,
 					categoryId: category.categoryId,
 					richContent: {
-						image: richContent.image || user?.userId.avatar,
+						image: richContent?.image || user?.userId?.avatar,
 					},
 
 					data:
@@ -136,11 +139,11 @@ const NotificationSenderScreen = () => {
 					attachments: [
 						{
 							identifier: "profile_image",
-							url: user.userId.avatar, // 👈 use user avatar here
+							url: user?.userId?.avatar, // 👈 use user avatar here
 							type: "image",
 						},
 					],
-					icon: user.userId.avatar, // 👈 also use avatar as icon
+					icon: user?.userId?.avatar, // 👈 also use avatar as icon
 				}));
 			await sendMultipleNotification(notifications);
 			Toast.show({ type: "success", text1: "Notifications prepared!" });
@@ -418,7 +421,9 @@ const NotificationSenderScreen = () => {
 
 							<FlatList
 								data={list}
-								keyExtractor={(item) => item.userId.UID}
+								keyExtractor={(item, index) =>
+									item?.userId?.UID ?? `user-${index}`
+								}
 								keyboardShouldPersistTaps="handled"
 								contentContainerStyle={{ paddingBottom: 16 }}
 								ItemSeparatorComponent={() => (
@@ -432,14 +437,14 @@ const NotificationSenderScreen = () => {
 										progressBackgroundColor={secondaryColor}
 									/>
 								}
-								renderItem={({ item }) => {
+								renderItem={({ item }: any) => {
 									const selected = selectedUsers.includes(
-										item.userId.UID
+										item?.userId?.UID
 									);
 									return (
 										<TouchableOpacity
 											onPress={() =>
-												toggleUser(item.userId.UID)
+												toggleUser(item?.userId?.UID)
 											}
 											style={{
 												flexDirection: "row",
@@ -454,7 +459,7 @@ const NotificationSenderScreen = () => {
 										>
 											<Image
 												source={{
-													uri: item.userId.avatar,
+													uri: item?.userId?.avatar,
 												}}
 												style={{
 													width: 40,
@@ -474,7 +479,7 @@ const NotificationSenderScreen = () => {
 													fontSize: 16,
 												}}
 											>
-												{item.userId.name}
+												{item?.userId?.name}
 											</Text>
 										</TouchableOpacity>
 									);

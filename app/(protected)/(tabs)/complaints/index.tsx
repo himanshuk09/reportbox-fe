@@ -1,5 +1,6 @@
 import PostCard from "@/components/complaints/PostCard";
 import Blob from "@/components/on-bording/blob";
+import Loader from "@/components/ui/Loader";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getAllComplaints } from "@/services/complaint.service";
@@ -16,6 +17,7 @@ const Feed = () => {
 	/* -------------------------------------------------------------------------- */
 	const [complaints, setComplaints] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const [loading, setLoading] = useState(true);
 	/* -------------------------------------------------------------------------- */
 	const fetchComplaints = async () => {
 		try {
@@ -23,13 +25,14 @@ const Feed = () => {
 			setComplaints(data);
 		} catch (err) {
 			console.error("Error fetching complaints:", err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const onRefresh = async () => {
 		setRefreshing(true);
 		await fetchComplaints();
-
 		setRefreshing(false);
 	};
 	/* -------------------------------------------------------------------------- */
@@ -41,6 +44,9 @@ const Feed = () => {
 		setGlobalLoading(false);
 	}, [isFocused]);
 	/* -------------------------------------------------------------------------- */
+	if (loading) {
+		return <Loader />;
+	}
 	return (
 		<View
 			style={{

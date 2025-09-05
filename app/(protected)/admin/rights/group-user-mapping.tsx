@@ -338,7 +338,15 @@ const AssignUsersToGroupScreen = () => {
 				</ScrollView>
 			)}
 			{/* Update Button */}
-			<RoundedButton title={"Update"} onPress={handlePreviewChanges} />
+			<RoundedButton
+				title={"Update"}
+				onPress={handlePreviewChanges}
+				disabled={
+					selectedUsers.length === 0 ||
+					JSON.stringify(selectedUsers.sort()) ===
+						JSON.stringify(groupUsers.sort())
+				}
+			/>
 
 			{/* Confirmation Modal */}
 			<Modal

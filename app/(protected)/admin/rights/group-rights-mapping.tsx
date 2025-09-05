@@ -334,7 +334,16 @@ const AssignRightsToGroupScreen = () => {
 			)}
 
 			{/* Update Button */}
-			<RoundedButton title={"Update"} onPress={handlePreviewChanges} />
+			<RoundedButton
+				title={"Update"}
+				onPress={handlePreviewChanges}
+				disabled={
+					!selectedGroup || // no group picked
+					selectedRights.length === 0 || // nothing selected
+					JSON.stringify(selectedRights.sort()) ===
+						JSON.stringify(groupRights.sort()) // no change
+				}
+			/>
 
 			{/* Confirmation Modal */}
 			<Modal

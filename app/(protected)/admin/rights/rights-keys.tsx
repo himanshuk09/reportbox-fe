@@ -1,5 +1,6 @@
 import CustomAlert from "@/components/ui/CustomAlert";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { rightsKeys } from "@/constants/rights";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
@@ -20,7 +21,6 @@ import {
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { rightsKeys } from "@/constants/rights";
 const CreateRightsScreen = () => {
 	const [name, setName] = useState("");
 	const [key, setKey] = useState("");
@@ -125,40 +125,68 @@ const CreateRightsScreen = () => {
 		});
 	};
 
-    const renderRightsItem = ({ item }: any) => {
-        const isProtected = rightsKeys.includes(item.key);
-        return (
-		<View
-			className="p-3 rounded-lg mb-2"
-			style={{
-				backgroundColor: cardsColor,
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
-			}}
-		>
-			<View style={{ flex: 1, marginRight: 8 }}>
-				<Text style={{ color: textColor }}>{item?.name}</Text>
-				<Text style={{ color: "#ddd" }}>{item?.key}</Text>
-				<Text style={{ color: "#ccc" }}>{item?.description}</Text>
+	const renderRightsItem = ({ item }: any) => {
+		const isProtected = rightsKeys.includes(item.key);
+		return (
+			<View
+				className="p-3 rounded-lg mb-2"
+				style={{
+					backgroundColor: cardsColor,
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+				}}
+			>
+				<View style={{ flex: 1, marginRight: 8 }}>
+					<Text style={{ color: textColor }}>{item?.name}</Text>
+					<Text style={{ color: "#ddd" }}>{item?.key}</Text>
+					<Text style={{ color: "#ccc" }}>{item?.description}</Text>
+				</View>
+				{!isProtected && (
+					<View style={{ flexDirection: "row" }}>
+						<TouchableOpacity
+							onPress={() => {
+								setEditingId(item._id);
+								setName(item.name);
+								setKey(item.key);
+								setDescription(item.description);
+							}}
+							style={{ marginRight: 8 }}
+						>
+							<MaterialIcons
+								name="edit"
+								size={22}
+								color={textColor}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => handleDelete(item._id)}
+						>
+							<MaterialIcons
+								name="delete"
+								size={22}
+								color="red"
+							/>
+						</TouchableOpacity>
+					</View>
+				)}
 			</View>
-                {!isProtected && <View style={{ flexDirection: "row" }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setEditingId(item._id);
-                            setName(item.name);
-                            setDescription(item.description);
-                        }}
-                        style={{ marginRight: 8 }}
-                    >
-                        <MaterialIcons name="edit" size={22} color={textColor} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDelete(item._id)}>
-                        <MaterialIcons name="delete" size={22} color="red" />
-                    </TouchableOpacity>
-                </View>}
-		</View>
-	)};
+		);
+	};
+	/* -------------------------------------------------------------------------- */
+	const isDisabled = !name.trim() || !key.trim() || !description.trim();
+
+	const isUnchanged = editingId
+		? (() => {
+				const original = rights.find((r) => r._id === editingId);
+				return (
+					original &&
+					original.name === name.trim() &&
+					original.key === key.trim() &&
+					(original.description || "") === description.trim()
+				);
+			})()
+		: false;
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchRights();
@@ -212,6 +240,7 @@ const CreateRightsScreen = () => {
 			<RoundedButton
 				title={editingId ? "Update Rights" : "Create Rights"}
 				onPress={handleCreateOrUpdate}
+				disabled={isDisabled || isUnchanged}
 			/>
 
 			<Text

@@ -15,7 +15,9 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
 	Alert,
+	KeyboardAvoidingView,
 	Modal,
+	Platform,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -98,6 +100,11 @@ const ResolveComplaintScreen = () => {
 	};
 
 	/* -------------------------------------------------------------------------- */
+	const isDisabled =
+		!form?.afterImage ||
+		!form?.resolvedDate ||
+		!form?.afterResolvedMessage?.trim();
+	/* -------------------------------------------------------------------------- */
 
 	useEffect(() => {
 		(async () => {
@@ -122,117 +129,135 @@ const ResolveComplaintScreen = () => {
 		<SafeAreaView
 			style={{
 				flex: 1,
-				padding: 16,
 				backgroundColor: secondaryColor,
 				marginTop: 80,
 			}}
 		>
-			<ScrollView
-				contentContainerStyle={{ paddingBottom: 16 }}
-				showsVerticalScrollIndicator={false}
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80} // adjust based on header
 			>
-				<Text
-					className="text-2xl font-bold mb-4"
-					style={{ color: textColor }}
+				<ScrollView
+					contentContainerStyle={{
+						flexGrow: 1,
+						padding: 16,
+						paddingBottom: 32,
+					}}
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
 				>
-					Resolve Complaint
-				</Text>
+					<Text
+						className="text-2xl font-bold mb-4"
+						style={{ color: textColor }}
+					>
+						Resolve Complaint
+					</Text>
 
-				{/* Read Only Info */}
-				<Text style={{ color: textColor }}>
-					Type: {form?.type?.name || form?.type}
-				</Text>
-				<Text style={{ color: textColor }}>Status: {form?.status}</Text>
-				<Text style={{ color: textColor }}>
-					Assigned By: {form?.assignedBy?.name || form?.assignedBy}
-				</Text>
-				<Text style={{ color: textColor }}>
-					Assigned To: {form?.assignedTo?.name || form?.assignedTo}
-				</Text>
-				<Text style={{ color: textColor }}>
-					Raised On: {new Date(form?.raisedDate).toLocaleString()}
-				</Text>
+					{/* Read Only Info */}
+					<Text style={{ color: textColor }}>
+						Type: {form?.type?.name || form?.type}
+					</Text>
+					<Text style={{ color: textColor }}>
+						Status: {form?.status}
+					</Text>
+					<Text style={{ color: textColor }}>
+						Assigned By:{" "}
+						{form?.assignedBy?.name || form?.assignedBy}
+					</Text>
+					<Text style={{ color: textColor }}>
+						Assigned To:{" "}
+						{form?.assignedTo?.name || form?.assignedTo}
+					</Text>
+					<Text style={{ color: textColor }}>
+						Raised On: {new Date(form?.raisedDate).toLocaleString()}
+					</Text>
 
-				{/* Before Image */}
-				<Text style={{ color: textColor, marginTop: 12 }}>
-					Before Image
-				</Text>
-				<ImageCard image={form?.beforeImage} showCaptureIcon={false} />
+					{/* Before Image */}
+					<Text style={{ color: textColor, marginTop: 12 }}>
+						Before Image
+					</Text>
+					<ImageCard
+						image={form?.beforeImage}
+						showCaptureIcon={false}
+					/>
 
-				{/* After Image */}
-				<Text style={{ color: textColor, marginTop: 12 }}>
-					After Image
-				</Text>
-				<ImageCard
-					image={form?.afterImage}
-					setShowCamera={setShowCamera}
-					setImage={handleSetAfterImage}
-					showCaptureIcon={true}
-				/>
+					{/* After Image */}
+					<Text style={{ color: textColor, marginTop: 12 }}>
+						After Image
+					</Text>
+					<ImageCard
+						image={form?.afterImage}
+						setShowCamera={setShowCamera}
+						setImage={handleSetAfterImage}
+						showCaptureIcon={true}
+					/>
 
-				{/* Resolved Date Picker */}
-				<TouchableOpacity
-					onPress={showDatePicker}
-					style={{ marginTop: 16 }}
-				>
-					<View
+					{/* Resolved Date Picker */}
+					<TouchableOpacity
+						onPress={showDatePicker}
+						style={{ marginTop: 16 }}
+					>
+						<View
+							style={{
+								padding: 12,
+								borderRadius: 8,
+								backgroundColor: cardsColor,
+							}}
+						>
+							<Text style={{ color: textColor }}>
+								Resolved On:{" "}
+								{form?.resolvedDate
+									? new Date(
+											form.resolvedDate
+										).toLocaleDateString()
+									: "Not provided"}
+							</Text>
+						</View>
+					</TouchableOpacity>
+
+					{/* Resolved Message */}
+					<Text style={{ color: textColor, marginTop: 16 }}>
+						Resolved Message
+					</Text>
+					<TextInput
+						multiline
+						numberOfLines={4}
+						placeholder="Describe resolution..."
+						value={form?.afterResolvedMessage || ""}
+						onChangeText={(text) =>
+							updateField("afterResolvedMessage", text)
+						}
+						placeholderTextColor={textColor}
 						style={{
+							marginTop: 8,
 							padding: 12,
 							borderRadius: 8,
 							backgroundColor: cardsColor,
+							color: textColor,
 						}}
-					>
-						<Text style={{ color: textColor }}>
-							Resolved On:{" "}
-							{form?.resolvedDate
-								? new Date(
-										form.resolvedDate
-									).toLocaleDateString()
-								: "Not provided"}
-						</Text>
-					</View>
-				</TouchableOpacity>
+					></TextInput>
 
-				{/* Resolved Message */}
-				<Text style={{ color: textColor, marginTop: 16 }}>
-					Resolved Message
-				</Text>
-				<TextInput
-					multiline
-					numberOfLines={4}
-					placeholder="Describe resolution..."
-					value={form?.afterResolvedMessage || ""}
-					onChangeText={(text) =>
-						updateField("afterResolvedMessage", text)
-					}
-					placeholderTextColor={textColor}
-					style={{
-						marginTop: 8,
-						padding: 12,
-						borderRadius: 8,
-						backgroundColor: cardsColor,
-						color: textColor,
-					}}
-				></TextInput>
-
-				{/* Submit */}
-				<RoundedButton
-					title="Mark as Resolved"
-					onPress={handleSubmit}
-				/>
-
-				{/* Camera Modal */}
-				<Modal
-					visible={showCamera}
-					animationType="fade"
-					presentationStyle="fullScreen"
-				>
-					<CameraScreen
-						setShowCamera={setShowCamera}
-						setImage={handleSetAfterImage}
+					{/* Submit */}
+					<RoundedButton
+						title="Mark as Resolved"
+						onPress={handleSubmit}
+						disabled={isDisabled}
 					/>
-				</Modal>
-			</ScrollView>
+
+					{/* Camera Modal */}
+					<Modal
+						visible={showCamera}
+						animationType="fade"
+						presentationStyle="fullScreen"
+					>
+						<CameraScreen
+							setShowCamera={setShowCamera}
+							setImage={handleSetAfterImage}
+						/>
+					</Modal>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 };

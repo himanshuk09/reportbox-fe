@@ -1,5 +1,6 @@
 import CustomAlert from "@/components/ui/CustomAlert";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { groupKeys } from "@/constants/rights";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
@@ -25,6 +26,7 @@ const CreateGroupScreen = () => {
 	const [description, setDescription] = useState("");
 	const [groups, setGroups] = useState<any[]>([]);
 	const [editingId, setEditingId] = useState<string | null>(null);
+	const [originalGroup, setOriginalGroup] = useState<any | null>(null);
 
 	/* -------------------------------------------------------------------------- */
 	const handleCreateOrUpdate = async () => {
@@ -44,6 +46,7 @@ const CreateGroupScreen = () => {
 					setEditingId(null);
 					setName("");
 					setDescription("");
+					setOriginalGroup(null);
 					await fetchGroups();
 				}
 			} else {
@@ -84,6 +87,7 @@ const CreateGroupScreen = () => {
 		setEditingId(item._id);
 		setName(item.name);
 		setDescription(item.description);
+		setOriginalGroup(item);
 	};
 
 	const handleDelete = (id: string) => {
@@ -111,34 +115,50 @@ const CreateGroupScreen = () => {
 			cancelText: "Cancel",
 		});
 	};
-	const renderGroupItem = ({ item }: any) => (
-		<View
-			className="p-3 rounded-lg mb-2"
-			style={{
-				backgroundColor: cardsColor,
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
-			}}
-		>
-			<View style={{ flex: 1, marginRight: 8 }}>
-				<Text style={{ color: textColor }}>{item?.name}</Text>
-				<Text style={{ color: "#ccc" }}>{item?.description}</Text>
-			</View>
+	const renderGroupItem = ({ item }: any) => {
+		const isProtected = groupKeys.includes(item?.name);
 
-			<View style={{ flexDirection: "row" }}>
-				<TouchableOpacity
-					onPress={() => handleEdit(item)}
-					style={{ marginRight: 8 }}
-				>
-					<MaterialIcons name="edit" size={22} color={textColor} />
-				</TouchableOpacity>
-				<TouchableOpacity onPress={() => handleDelete(item._id)}>
-					<MaterialIcons name="delete" size={22} color="red" />
-				</TouchableOpacity>
+		return (
+			<View
+				className="p-3 rounded-lg mb-2"
+				style={{
+					backgroundColor: cardsColor,
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+				}}
+			>
+				<View style={{ flex: 1, marginRight: 8 }}>
+					<Text style={{ color: textColor }}>{item?.name}</Text>
+					<Text style={{ color: "#ccc" }}>{item?.description}</Text>
+				</View>
+
+				{!isProtected && (
+					<View style={{ flexDirection: "row" }}>
+						<TouchableOpacity
+							onPress={() => handleEdit(item)}
+							style={{ marginRight: 8 }}
+						>
+							<MaterialIcons
+								name="edit"
+								size={22}
+								color={textColor}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => handleDelete(item._id)}
+						>
+							<MaterialIcons
+								name="delete"
+								size={22}
+								color="red"
+							/>
+						</TouchableOpacity>
+					</View>
+				)}
 			</View>
-		</View>
-	);
+		);
+	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		fetchGroups();
@@ -191,6 +211,17 @@ const CreateGroupScreen = () => {
 			<RoundedButton
 				title={editingId ? "Update Group" : "Create Group"}
 				onPress={handleCreateOrUpdate}
+				disabled={
+					// Create mode: require both fields
+					!name.trim() ||
+					!description.trim() ||
+					// Edit mode: disable if unchanged
+					(editingId &&
+						originalGroup &&
+						name.trim() === originalGroup.name &&
+						description.trim() ===
+							(originalGroup.description || ""))
+				}
 			/>
 
 			<Text

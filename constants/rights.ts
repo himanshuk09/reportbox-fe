@@ -23,3 +23,5 @@ export const rightsKeys = [
 	"manage-groups",
 	"manage-rights",
 ];
+
+export const groupKeys = ["users", "Super Admin", "Admin", "Worker"];

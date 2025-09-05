@@ -15,7 +15,10 @@ const RoundedButton = ({
 	return (
 		<TouchableOpacity
 			className="py-3 my-3 rounded-full"
-			style={[{ backgroundColor: primaryColor }, style]}
+			style={[
+				{ backgroundColor: disabled ? "#aaa" : primaryColor },
+				style,
+			]}
 			onPress={onPress}
 			disabled={disabled}
 		>

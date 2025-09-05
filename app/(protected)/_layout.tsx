@@ -52,7 +52,7 @@ const menuItems: {
 		label: "Notification",
 		icon: "notifications-outline",
 		path: "/(protected)/admin/notification",
-		right: "settings",
+		right: "all_users",
 	},
 	{
 		label: "All Users",
