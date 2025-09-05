@@ -114,18 +114,20 @@ const Complaint = () => {
 				...complaintData,
 				userID: user?.user?._id,
 			});
-			setCID(response?.complaint?.cid);
-			setShowSuccess(true);
-			if (response?.success) {
-				setComplaintData({
-					beforeImage: "",
-					type: "",
-					subtype: "",
-					message: "",
-					location: "",
-					tags: "",
-				});
-			}
+			setTimeout(() => {
+				setCID(response?.complaint?.cid);
+				setShowSuccess(true);
+				if (response?.success) {
+					setComplaintData({
+						beforeImage: "",
+						type: "",
+						subtype: "",
+						message: "",
+						location: "",
+						tags: "",
+					});
+				}
+			}, 800);
 		} catch (error) {
 			console.log("error on create complaint ");
 		} finally {
@@ -134,19 +136,14 @@ const Complaint = () => {
 	};
 	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
+		setComplaintData((prev: any) => ({
+			...prev,
+			type: type ?? prev.type,
+			subtype: subtype ?? prev.subtype,
+		}));
 		setGlobalLoading(false);
-		setComplaintData((prev: any) => ({
-			...prev,
-			type: type || prev.type,
-		}));
-	}, [isFocused, type]);
-	useEffect(() => {
-		setComplaintData((prev: any) => ({
-			...prev,
+	}, [isFocused, type, subtype]);
 
-			subtype: subtype || prev.subtype,
-		}));
-	}, [isFocused, subtype]);
 	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
@@ -220,11 +217,12 @@ const Complaint = () => {
 						btntext="Track Your Complaint"
 						visible={showSuccess}
 						onClose={() => setShowSuccess(false)}
-						onTrack={() =>
+						onTrack={() => {
 							router.push(
 								"/(protected)/(tabs)/complaints/progress"
-							)
-						}
+							);
+							setShowSuccess(false);
+						}}
 					/>
 				</ScrollView>
 			</KeyboardAvoidingView>

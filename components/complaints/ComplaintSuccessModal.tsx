@@ -20,7 +20,7 @@ export default function ComplaintSuccessModal({
 				<View
 					className="w-full rounded-2xl  p-5 items-center space-y-4"
 					style={{
-						backgroundColor: "#eee",
+						backgroundColor: secondaryColor,
 					}}
 				>
 					{/* Close Button */}
@@ -28,7 +28,7 @@ export default function ComplaintSuccessModal({
 						onPress={onClose}
 						className="absolute top-3 right-3 p-1 rounded-full"
 					>
-						<Ionicons name="close" size={22} color="#333" />
+						<Ionicons name="close" size={22} color={textColor} />
 					</Pressable>
 
 					{/* Check Icon */}
@@ -45,20 +45,25 @@ export default function ComplaintSuccessModal({
 					<Text
 						className="text-center mb-2 font-bold text-2xl "
 						style={{
-							color: "#000",
+							color: textColor,
 						}}
 					>
 						{titleText}
 					</Text>
 
 					{/* Description */}
-					<Text className="text-center text-xs text-gray-700">
+					<Text className="text-center text-xs text-gray-500">
 						You'll be notified as it progresses{"\n"}through
 						resolution.
 					</Text>
 
 					{/* Complaint ID */}
-					<Text className="text-center text-lg my-2 font-medium text-gray-900">
+					<Text
+						className="text-center text-lg my-2 font-medium text-gray-900"
+						style={{
+							color: textColor,
+						}}
+					>
 						Complaint ID: <Text className="font-bold">{cID}</Text>
 					</Text>
 
@@ -70,7 +75,12 @@ export default function ComplaintSuccessModal({
 							backgroundColor: primaryColor,
 						}}
 					>
-						<Text className="text-white font-semibold text-lg">
+						<Text
+							className="text-white font-semibold text-lg"
+							style={{
+								color: cardsColor,
+							}}
+						>
 							{btntext}
 						</Text>
 					</Pressable>

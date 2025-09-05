@@ -4,7 +4,7 @@ import { NOTIFICATION_TYPES } from "@/constants/complaints";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getTokensWithUser } from "@/services/push-notification.service";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { useIsFocused } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
@@ -122,7 +122,7 @@ const NotificationSenderScreen = () => {
 						Object.keys(dataJson).length > 0
 							? dataJson
 							: {
-									url: "https://report-box.expo.app",
+									url: "https://report-box.expo.app/",
 									extraInfo: "You have a new alert",
 								},
 					autoDismiss: true,
@@ -390,6 +390,9 @@ const NotificationSenderScreen = () => {
 									shadowOpacity: 0.2,
 									shadowRadius: 3,
 									elevation: 3,
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "space-between",
 								}}
 							>
 								<Text
@@ -401,6 +404,16 @@ const NotificationSenderScreen = () => {
 								>
 									Select Users
 								</Text>
+
+								<TouchableOpacity
+									onPress={() => setShowUserModal(false)}
+								>
+									<Ionicons
+										name="close-circle"
+										size={24}
+										color={textColor}
+									/>
+								</TouchableOpacity>
 							</View>
 
 							<FlatList

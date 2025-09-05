@@ -1,4 +1,5 @@
 import Blob from "@/components/on-bording/blob";
+import { getStatusStyle } from "@/constants/statuscode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -83,15 +84,11 @@ const WorkerAssignedComplaintsScreen = () => {
 							router.push({
 								pathname:
 									"/(protected)/admin/assigned/[complaintId]",
-								params: {
-									complaintId: item._id,
-								},
+								params: { complaintId: item._id },
 							});
 						}}
-						className=" p-4 rounded-xl mb-3 flex-row items-center"
-						style={{
-							backgroundColor: cardsColor,
-						}}
+						className="p-4 rounded-xl mb-3 flex-row items-center"
+						style={{ backgroundColor: cardsColor }}
 					>
 						<Image
 							source={{ uri: item.beforeImage }}
@@ -104,29 +101,43 @@ const WorkerAssignedComplaintsScreen = () => {
 						/>
 						<View style={{ flex: 1 }}>
 							<Text
-								className=" font-bold text-lg"
-								style={{
-									color: textColor,
-								}}
+								className="font-bold text-lg"
+								style={{ color: textColor }}
 							>
 								{item.type}
 							</Text>
 							<Text
-								className=" text-sm"
-								style={{
-									color: textColor,
-								}}
+								className="text-sm"
+								style={{ color: textColor }}
 							>
 								Assigned: {item.assignedBy.name}
 							</Text>
 							<Text
-								className=" text-xs"
-								style={{
-									color: textColor,
-								}}
+								className="text-xs"
+								style={{ color: textColor }}
 							>
 								Raised on:{" "}
 								{new Date(item.raisedDate).toLocaleString()}
+							</Text>
+						</View>
+
+						{/* Status badge */}
+						<View
+							style={[
+								{
+									paddingVertical: 4,
+									paddingHorizontal: 8,
+									borderRadius: 8,
+									alignSelf: "flex-start",
+								},
+								getStatusStyle(item.status),
+							]}
+						>
+							<Text
+								className="text-xs font-semibold"
+								style={{ color: "#fff" }}
+							>
+								{item.status}
 							</Text>
 						</View>
 					</TouchableOpacity>

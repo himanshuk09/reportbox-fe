@@ -79,6 +79,9 @@ export default function ComplaintForm({
 			setSelectedSubtypes([]);
 		}
 	}, [subtypes]);
+	useEffect(() => {
+		setExpandedType(type || null);
+	}, [type]);
 	/* -------------------------------------------------------------------------- */
 	return (
 		<View style={{ flex: 1, padding: 10 }}>
@@ -95,7 +98,7 @@ export default function ComplaintForm({
 						color: selectedSubtypes?.length ? textColor : "#999",
 					}}
 				>
-					{`${expandedType} \t : \t`}
+					{`${expandedType ? expandedType : "Type"} \t : \t`}
 					{Array.isArray(selectedSubtypes) &&
 					selectedSubtypes.length > 0
 						? selectedSubtypes.join(", ")

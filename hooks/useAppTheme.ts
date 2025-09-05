@@ -7,11 +7,13 @@ export const useAppTheme = () => {
 	const secondaryColor = useThemeColor({}, "secondary");
 	const cardsColor = useThemeColor({}, "cardsColor");
 	const bgLoader = useThemeColor({}, "bgLoader");
+	const transparentBackground = useThemeColor({}, "transparentBackground");
 	return {
 		primaryColor,
 		secondaryColor,
 		textColor,
 		cardsColor,
 		bgLoader,
+		transparentBackground,
 	};
 };

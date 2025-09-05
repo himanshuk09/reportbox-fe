@@ -378,7 +378,53 @@ const sendMultipleNotification = async (
 		return null;
 	}
 };
+/* --------------------------- STORE NOTIFICATION --------------------------- */
 
+export const storeNotificationOnListener = (notification: any) => {
+	const request = notification?.request;
+	const remoteMessage = request?.trigger?.remoteMessage;
+	const content = request?.content;
+
+	const NOTIFICATION_KEY = MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
+
+	// Parse possible stringified fields
+	let parsedBody: any = {};
+	let parsedDataString: any = {};
+
+	try {
+		if (remoteMessage?.data?.body) {
+			parsedBody = JSON.parse(remoteMessage.data.body);
+		}
+	} catch {}
+
+	try {
+		if (remoteMessage?.data?.dataString) {
+			parsedDataString = JSON.parse(remoteMessage.data.dataString);
+		}
+	} catch {}
+
+	// Construct notification object
+	const newNotification = {
+		id: remoteMessage?.messageId || Date.now().toString(),
+		title: remoteMessage?.data?.title || content?.title || "No Title",
+		subtitle: remoteMessage?.data?.subtitle || content?.subtitle || "",
+		body: remoteMessage?.data?.message || content?.body || "No Body",
+		categoryId:
+			remoteMessage?.data?.categoryId ||
+			content?.categoryIdentifier ||
+			null,
+		imageUrl: remoteMessage?.notification?.imageUrl || null,
+		user: parsedDataString?.userId || null,
+		data: { ...parsedBody, ...parsedDataString },
+		receivedAt: new Date().toISOString(),
+	};
+
+	// Save into MMKV
+	const existingNotifications = getMMKV(NOTIFICATION_KEY) || [];
+	setMMKV(NOTIFICATION_KEY, [...existingNotifications, newNotification]);
+
+	return newNotification;
+};
 /* ------------------------------- checkStatus ------------------------------ */
 const checkStatus = async (ids = ["0197c4ce-28c5-7922-aabe-3b13b0a86a04"]) => {
 	const response = await fetch(
@@ -443,67 +489,7 @@ const NotificationWrapper = () => {
 						// 	"🔔 Received:",
 						// 	JSON.stringify(notification, null, 2)
 						// );
-
-						const request = notification?.request;
-						const remoteMessage = request?.trigger?.remoteMessage;
-						const content = request?.content;
-
-						const NOTIFICATION_KEY =
-							MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
-
-						// Parse possible stringified fields
-						let parsedBody: any = {};
-						let parsedDataString: any = {};
-						try {
-							if (remoteMessage?.data?.body) {
-								parsedBody = JSON.parse(
-									remoteMessage.data.body
-								);
-							}
-						} catch {}
-						try {
-							if (remoteMessage?.data?.dataString) {
-								parsedDataString = JSON.parse(
-									remoteMessage.data.dataString
-								);
-							}
-						} catch {}
-
-						// Construct notification object to store
-						const newNotification = {
-							id:
-								remoteMessage?.messageId ||
-								Date.now().toString(),
-							title:
-								remoteMessage?.data?.title ||
-								content?.title ||
-								"No Title",
-							subtitle:
-								remoteMessage?.data?.subtitle ||
-								content?.subtitle ||
-								"",
-							body:
-								remoteMessage?.data?.message ||
-								content?.body ||
-								"No Body",
-							categoryId:
-								remoteMessage?.data?.categoryId ||
-								content?.categoryIdentifier ||
-								null,
-							imageUrl:
-								remoteMessage?.notification?.imageUrl || null,
-							user: parsedDataString?.userId || null,
-							data: { ...parsedBody, ...parsedDataString },
-							receivedAt: new Date().toISOString(),
-						};
-
-						// Save into MMKV
-						const existingNotifications =
-							getMMKV(NOTIFICATION_KEY) || [];
-						setMMKV(NOTIFICATION_KEY, [
-							...existingNotifications,
-							newNotification,
-						]);
+						storeNotificationOnListener(notification);
 					}
 				);
 

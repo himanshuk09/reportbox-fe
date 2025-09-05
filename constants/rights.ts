@@ -1,4 +1,5 @@
 export const rightsKeys = [
+	"help_view",
 	"profile_view",
 	"history_view",
 	"dashboard",

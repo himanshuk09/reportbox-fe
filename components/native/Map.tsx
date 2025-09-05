@@ -107,7 +107,7 @@ const htmlcontent = /*html*/ `
 
                     markers.push(marker);
                 };
-
+                /* -------------------------------------------------------------------------- */
                  function setMarkersOnLocations(locations) {
 
                     // Clear previous markers
@@ -132,6 +132,7 @@ const htmlcontent = /*html*/ `
         </body>
         </html>
     `;
+
 /* -------------------------------------------------------------------------- */
 const markers = [
 	{ lat: 19.076, lon: 72.8777, title: "Mumbai Police", type: "police" },
@@ -140,11 +141,6 @@ const markers = [
 ];
 /* -------------------------------------------------------------------------- */
 export const getLocationDetails = async () => {
-	// let { status } = await Location.requestForegroundPermissionsAsync();
-	// if (status !== "granted") {
-	// 	console.warn("Permission to access location was denied");
-	// 	return;
-	// }
 	const { status, canAskAgain } =
 		await Location.requestForegroundPermissionsAsync();
 
@@ -188,6 +184,7 @@ export const getLocationDetails = async () => {
 export default function LeafletMapWebView({ location, setLocation }: any) {
 	const [locationReady, setLocationReady] = useState(false);
 	const webviewRef = useRef<any>(null);
+	/* -------------------------------------------------------------------------- */
 	const addMultipleMarkers = () => {
 		const jsCodes = `
                         setMarkersOnLocations(${JSON.stringify(markers)});
@@ -199,7 +196,39 @@ export default function LeafletMapWebView({ location, setLocation }: any) {
 			webviewRef.current?.injectJavaScript(jsCodes);
 		}
 	};
+	const setMyCurrentLocationOnChart = (loc: any, geo: any) => {
+		const jsCode = `setLocationFromApp(${loc?.coords?.latitude},${
+			loc?.coords?.longitude
+		},"${geo[0]?.formattedAddress || "Hello"}");true;`;
 
+		if (Platform.OS === "web") {
+			webviewRef.current?.contentWindow.setLocationFromApp?.(
+				loc?.coords?.latitude,
+				loc?.coords?.longitude,
+				geo?.display_name || "Unknown location"
+			);
+		} else {
+			webviewRef.current?.injectJavaScript(jsCode);
+		}
+	};
+	const getGeolocation = async (loc: any) => {
+		let geo;
+		if (Platform.OS === "web") {
+			try {
+				const response = await fetch(
+					`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc?.coords?.latitude}&lon=${loc?.coords?.longitude}`
+				);
+				geo = await response.json();
+			} catch (error) {
+				console.warn("Reverse geocode failed on web:", error);
+				return "Unknown location";
+			}
+		} else {
+			geo = await Location.reverseGeocodeAsync(loc.coords);
+		}
+		return geo;
+	};
+	/* -------------------------------------------------------------------------- */
 	useEffect(() => {
 		(async () => {
 			let { status } = await Location.requestForegroundPermissionsAsync();
@@ -210,45 +239,21 @@ export default function LeafletMapWebView({ location, setLocation }: any) {
 			let loc: any = await Location.getCurrentPositionAsync({
 				accuracy: 5,
 			});
-			let geo: any;
+			let geo = await getGeolocation(loc);
 
-			if (Platform.OS === "web") {
-				try {
-					const response = await fetch(
-						`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc?.coords?.latitude}&lon=${loc?.coords?.longitude}`
-					);
-					geo = await response.json();
-				} catch (error) {
-					console.warn("Reverse geocode failed on web:", error);
-					return "Unknown location";
-				}
-			} else {
-				geo = await Location.reverseGeocodeAsync(loc.coords);
-			}
-
+			setMyCurrentLocationOnChart(loc, geo);
 			setLocation(geo[0]?.formattedAddress);
 			/* ---------------------------- Update on Webview --------------------------- */
-			const jsCode = `setLocationFromApp(${loc?.coords?.latitude},${
-				loc?.coords?.longitude
-			},"${geo[0]?.formattedAddress || "Hello"}");true;`;
-
-			if (Platform.OS === "web") {
-				webviewRef.current?.contentWindow.setLocationFromApp?.(
-					loc?.coords?.latitude,
-					loc?.coords?.longitude,
-					geo?.display_name || "Unknown location"
-				);
-			} else {
-				webviewRef.current?.injectJavaScript(jsCode);
-			}
 		})();
 	}, [locationReady, location]);
 
+	/* -------------------------------------------------------------------------- */
 	const onMessage = async (event: any) => {
 		const message = JSON.parse(event.nativeEvent.data);
 		const { action, values, reason, isZoomed } = message;
 		// console.log(action, values);
 	};
+	/* -------------------------------------------------------------------------- */
 	return (
 		<View style={styles.container}>
 			{Platform.OS === "web" ? (
@@ -282,6 +287,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: "100%",
 		width: "100%",
+		borderRadius: 10,
+		overflow: "hidden",
 	},
 	webview: {
 		flex: 1,

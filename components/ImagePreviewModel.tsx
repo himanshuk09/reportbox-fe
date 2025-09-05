@@ -1,16 +1,18 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
 	Dimensions,
 	Image,
 	Modal,
+	Pressable,
 	StyleSheet,
 	TouchableOpacity,
-	View,
 } from "react-native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const ImagePreviewModel = ({ showImage, setShowImage, image }: any) => {
+	const { transparentBackground } = useAppTheme();
 	return (
 		<Modal
 			visible={showImage}
@@ -18,7 +20,13 @@ const ImagePreviewModel = ({ showImage, setShowImage, image }: any) => {
 			onRequestClose={() => setShowImage(false)}
 			animationType="fade"
 		>
-			<View style={styles.imageViewerContainer}>
+			<Pressable
+				style={[
+					styles.imageViewerContainer,
+					{ backgroundColor: transparentBackground },
+				]}
+				onPress={() => setShowImage(false)}
+			>
 				<Image
 					source={{ uri: image }}
 					style={styles.fullScreenImage}
@@ -30,7 +38,7 @@ const ImagePreviewModel = ({ showImage, setShowImage, image }: any) => {
 				>
 					<Ionicons name="close-circle" size={40} color="white" />
 				</TouchableOpacity>
-			</View>
+			</Pressable>
 		</Modal>
 	);
 };
@@ -39,7 +47,7 @@ export default ImagePreviewModel;
 const styles = StyleSheet.create({
 	imageViewerContainer: {
 		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.9)",
+
 		justifyContent: "center",
 		alignItems: "center",
 	},

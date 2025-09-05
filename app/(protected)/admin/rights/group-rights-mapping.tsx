@@ -255,7 +255,10 @@ const AssignRightsToGroupScreen = () => {
 							color={primaryColor}
 							disabled={false}
 						/>
-						<Text className="ml-2 font-semibold text-lg">
+						<Text
+							className="ml-2 font-semibold text-lg"
+							style={{ color: textColor }}
+						>
 							Select All Rights
 						</Text>
 					</View>
@@ -340,8 +343,14 @@ const AssignRightsToGroupScreen = () => {
 				transparent={true}
 			>
 				<View className="flex-1 justify-center items-center bg-black/60">
-					<View className="bg-white p-5 rounded-2xl w-4/5">
-						<Text className="text-lg font-bold mb-3">
+					<View
+						className=" p-5 rounded-2xl w-4/5"
+						style={{ backgroundColor: cardsColor }}
+					>
+						<Text
+							className="text-lg font-bold mb-3"
+							style={{ color: textColor }}
+						>
 							Confirm Changes
 						</Text>
 
@@ -350,8 +359,8 @@ const AssignRightsToGroupScreen = () => {
 						</Text>
 						{addedRights.length > 0 ? (
 							addedRights.map((r) => (
-								<Text key={r._id}>
-									+ {r.name} ({r.key})
+								<Text key={r._id} style={{ color: textColor }}>
+									+ {r.name}
 								</Text>
 							))
 						) : (
@@ -363,8 +372,8 @@ const AssignRightsToGroupScreen = () => {
 						</Text>
 						{removedRights.length > 0 ? (
 							removedRights.map((r) => (
-								<Text key={r._id}>
-									- {r.name} ({r.key})
+								<Text key={r._id} style={{ color: textColor }}>
+									- {r.name}
 								</Text>
 							))
 						) : (
@@ -377,10 +386,23 @@ const AssignRightsToGroupScreen = () => {
 							<TouchableOpacity
 								onPress={() => setShowConfirm(false)}
 							>
-								<Text className="text-gray-500">Cancel</Text>
+								<Text style={{ color: textColor }}>Cancel</Text>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={handleConfirmUpdate}>
-								<Text className="text-blue-600 font-bold">
+							<TouchableOpacity
+								onPress={handleConfirmUpdate}
+								style={{
+									backgroundColor: primaryColor,
+									paddingHorizontal: 16,
+									paddingVertical: 6,
+									borderRadius: 8,
+								}}
+							>
+								<Text
+									style={{
+										color: cardsColor,
+										fontWeight: "bold",
+									}}
+								>
 									Confirm
 								</Text>
 							</TouchableOpacity>

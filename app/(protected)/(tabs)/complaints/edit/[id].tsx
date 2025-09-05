@@ -125,7 +125,9 @@ const ComplaintEdit = () => {
 				type: "success",
 				text1: "Complaint updated successfully",
 			});
-			setShowSuccess(true);
+			setTimeout(() => {
+				setShowSuccess(true);
+			}, 800);
 		} catch (err) {
 			console.error("Error updating complaint:", err);
 			Toast.show({ type: "error", text1: "Failed to update complaint" });

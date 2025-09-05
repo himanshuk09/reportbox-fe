@@ -8,6 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+	ActivityIndicator,
 	FlatList,
 	Image,
 	InteractionManager,
@@ -95,6 +96,72 @@ async function getWeather({ latitude, longitude }: any) {
 	return data;
 }
 
+const DashboardItem = ({
+	item,
+	cardsColor,
+	textColor,
+	primaryColor,
+	router,
+	setGlobalLoading,
+}: any) => {
+	const [iconLoaded, setIconLoaded] = useState(false);
+
+	// Simulate icon loading
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIconLoaded(true); // Show icon after short delay
+		}, 300); // 300ms delay, adjust as needed
+		return () => clearTimeout(timer);
+	}, []);
+
+	return (
+		<TouchableOpacity
+			style={styles.item}
+			onPress={() => {
+				if (item.route) {
+					setGlobalLoading(true);
+					InteractionManager.runAfterInteractions(() => {
+						router.push(item.route);
+					});
+				}
+			}}
+		>
+			<View
+				style={[
+					styles.iconCircle,
+					{
+						backgroundColor: cardsColor,
+						borderColor: primaryColor,
+						borderWidth: 1,
+						justifyContent: "center",
+						alignItems: "center",
+					},
+				]}
+			>
+				{!iconLoaded && (
+					<ActivityIndicator
+						size="small"
+						color={primaryColor}
+						style={{ position: "absolute" }}
+					/>
+				)}
+				{iconLoaded &&
+					React.cloneElement(item.icon, { color: primaryColor })}
+			</View>
+			<Text
+				style={[
+					styles.label,
+					{
+						color: textColor,
+						fontWeight: "500",
+					},
+				]}
+			>
+				{item.label}
+			</Text>
+		</TouchableOpacity>
+	);
+};
 const ComplaintCategoriesScreen = () => {
 	const router = useRouter();
 	const isFocused = useIsFocused();
@@ -137,44 +204,54 @@ const ComplaintCategoriesScreen = () => {
 				showsVerticalScrollIndicator={false}
 				keyExtractor={(_, index) => index.toString()}
 				extraData={[cardsColor, textColor, primaryColor]}
-				renderItem={({ item }: any) => (
-					<TouchableOpacity
-						style={styles.item}
-						onPress={() => {
-							if (item.route) {
-								setGlobalLoading(true);
-								InteractionManager.runAfterInteractions(() => {
-									router.push(item.route);
-								});
-							}
-						}}
-					>
-						<View
-							style={[
-								styles.iconCircle,
-								{
-									backgroundColor: cardsColor,
-									borderColor: primaryColor,
-									borderWidth: 1,
-								},
-							]}
-						>
-							{React.cloneElement(item.icon, {
-								color: primaryColor,
-							})}
-						</View>
-						<Text
-							style={[
-								styles.label,
-								{
-									color: textColor,
-									fontWeight: "500",
-								},
-							]}
-						>
-							{item.label}
-						</Text>
-					</TouchableOpacity>
+				// renderItem={({ item }: any) => (
+				// 	<TouchableOpacity
+				// 		style={styles.item}
+				// 		onPress={() => {
+				// 			if (item.route) {
+				// 				setGlobalLoading(true);
+				// 				InteractionManager.runAfterInteractions(() => {
+				// 					router.push(item.route);
+				// 				});
+				// 			}
+				// 		}}
+				// 	>
+				// 		<View
+				// 			style={[
+				// 				styles.iconCircle,
+				// 				{
+				// 					backgroundColor: cardsColor,
+				// 					borderColor: primaryColor,
+				// 					borderWidth: 1,
+				// 				},
+				// 			]}
+				// 		>
+				// 			{React.cloneElement(item.icon, {
+				// 				color: primaryColor,
+				// 			})}
+				// 		</View>
+				// 		<Text
+				// 			style={[
+				// 				styles.label,
+				// 				{
+				// 					color: textColor,
+				// 					fontWeight: "500",
+				// 				},
+				// 			]}
+				// 		>
+				// 			{item.label}
+				// 		</Text>
+				// 	</TouchableOpacity>
+				// )}
+				renderItem={({ item }) => (
+					<DashboardItem
+						item={item}
+						cardsColor={cardsColor}
+						textColor={textColor}
+						primaryColor={primaryColor}
+						router={router}
+						setGlobalLoading={setGlobalLoading}
+					/>
 				)}
 				ListHeaderComponent={
 					<View style={{ marginBottom: 20 }}>

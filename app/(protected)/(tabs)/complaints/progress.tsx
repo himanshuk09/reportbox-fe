@@ -2,13 +2,14 @@ import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
 import WebViewComponent from "@/components/WebViewComponent";
 import { useAuth } from "@/contexts/AuthContext";
+import { useImagePreview } from "@/contexts/ImagePreviewContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getComplaintsByUserID } from "@/services/complaint.service";
 import { LegendList } from "@legendapp/list";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Image, RefreshControl, Text, View } from "react-native";
+import { Image, Pressable, RefreshControl, Text, View } from "react-native";
 
 // Function to generate ApexChart HTML with dynamic progress
 const getChartHtml1 = (progress: any) => `
@@ -152,6 +153,7 @@ const MyComplaintsScreen = () => {
 	const { user } = useAuth();
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
+	const { showImage } = useImagePreview();
 	const { primaryColor, secondaryColor, cardsColor, textColor } =
 		useAppTheme();
 	/* -------------------------------------------------------------------------- */
@@ -309,11 +311,23 @@ const MyComplaintsScreen = () => {
 								</View>
 
 								{item?.beforeImage && (
-									<Image
-										source={{ uri: item.beforeImage }}
-										className="w-20 h-20 rounded-lg"
-										resizeMode="cover"
-									/>
+									<Pressable
+										className="rounded-md mr-3"
+										onPress={() =>
+											showImage(item?.beforeImage)
+										}
+									>
+										<Image
+											source={{ uri: item.beforeImage }}
+											className="rounded-md"
+											resizeMode="cover"
+											style={{
+												width: 70,
+												height: 70,
+												borderRadius: 8,
+											}}
+										/>
+									</Pressable>
 								)}
 							</View>
 						</View>

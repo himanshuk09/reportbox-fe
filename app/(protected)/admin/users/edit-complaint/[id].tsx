@@ -143,8 +143,6 @@ const EditComplaintScreen = () => {
 		try {
 			setLoading(true);
 			const data = await getComplaintsByID(id as string);
-
-			// ✅ normalize into form structure
 			setForm({
 				...data,
 				beforeImage: data.beforeImage || "",
@@ -211,7 +209,7 @@ const EditComplaintScreen = () => {
 				<ImageCard
 					image={form.beforeImage}
 					setShowCamera={setShowCamera}
-					setImage={handleSetBeforeImage}
+					setImage={(uri: string) => updateField("beforeImage", uri)}
 					showCaptureIcon={false}
 				/>
 
@@ -222,7 +220,7 @@ const EditComplaintScreen = () => {
 				<ImageCard
 					image={form.afterImage}
 					setShowCamera={setShowCamera}
-					setImage={handleSetAfterImage}
+					setImage={(uri: string) => updateField("afterImage", uri)}
 					showCaptureIcon={true}
 				/>
 
@@ -240,34 +238,15 @@ const EditComplaintScreen = () => {
 					}}
 				>
 					<Picker
-						selectedValue={form.type}
+						selectedValue={form.type || ""}
 						onValueChange={(val) => updateField("type", val)}
-						style={{ color: textColor }}
-						dropdownIconColor={textColor}
-						dropdownIconRippleColor={cardsColor}
-						mode="dialog"
 					>
-						<Picker.Item
-							label="Select"
-							value=""
-							style={{
-								color: textColor,
-								fontSize: 15,
-								fontWeight: "900",
-								backgroundColor: cardsColor,
-							}}
-						/>
-						{complaintTypes.map((item: any, index: any) => (
+						<Picker.Item label="Select" value="" />
+						{complaintTypes.map((item) => (
 							<Picker.Item
-								key={`${item?.label}+${index}`}
-								label={item?.label}
-								value={item?.label}
-								style={{
-									color: textColor,
-									fontSize: 15,
-									fontWeight: "900",
-									backgroundColor: cardsColor,
-								}}
+								key={item.label}
+								label={item.label}
+								value={item.label}
 							/>
 						))}
 					</Picker>
@@ -299,8 +278,10 @@ const EditComplaintScreen = () => {
 						styles.textArea,
 						{ color: textColor, backgroundColor: cardsColor },
 					]}
-					value={form.resolvedMessage}
-					onChangeText={(val) => updateField("resolvedMessage", val)}
+					value={form.afterResolvedMessage || ""}
+					onChangeText={(val) =>
+						updateField("afterResolvedMessage", val)
+					}
 				/>
 
 				{/* Complaint Status */}
@@ -317,41 +298,18 @@ const EditComplaintScreen = () => {
 					}}
 				>
 					<Picker
-						selectedValue={form.status}
+						selectedValue={form.status || ""}
 						onValueChange={(val) => updateField("status", val)}
-						style={{
-							color: textColor,
-						}}
-						dropdownIconColor={textColor}
 					>
-						<Picker.Item
-							label="Select"
-							value=""
-							style={{
-								color: textColor,
-								fontSize: 15,
-								fontWeight: "900",
-								backgroundColor: cardsColor,
-							}}
-						/>
-						{Status.map((status, index) => (
-							<Picker.Item
-								key={`${status}+${index}`}
-								label={status}
-								value={status}
-								style={{
-									color: textColor,
-									fontSize: 15,
-									fontWeight: "900",
-									backgroundColor: cardsColor,
-								}}
-							/>
+						<Picker.Item label="Select" value="" />
+						{Status.map((s) => (
+							<Picker.Item key={s} label={s} value={s} />
 						))}
 					</Picker>
 				</View>
 
 				{/* Staff Pickers */}
-				{["assignedTo", "assignedBy", "resolvedBy"].map((field) => (
+				{["assignedBy", "assignedTo", "resolvedBy"].map((field) => (
 					<View key={field} className="mb-3">
 						<Text className="mb-1" style={{ color: textColor }}>
 							{field.replace(/([A-Z])/g, " $1")}
@@ -366,34 +324,19 @@ const EditComplaintScreen = () => {
 							}}
 						>
 							<Picker
-								selectedValue={form[field]}
+								selectedValue={
+									form[field]?._id || form[field] || ""
+								}
 								onValueChange={(val) => updateField(field, val)}
-								style={{
-									color: textColor,
-								}}
+								style={{ color: textColor }}
 								dropdownIconColor={textColor}
 							>
-								<Picker.Item
-									label="Select"
-									value=""
-									style={{
-										color: textColor,
-										fontSize: 15,
-										fontWeight: "900",
-										backgroundColor: cardsColor,
-									}}
-								/>
+								<Picker.Item label="Select" value="" />
 								{workerlist.map((worker: any) => (
 									<Picker.Item
 										key={worker._id}
-										label={worker?.name}
-										value={worker?._id}
-										style={{
-											color: textColor,
-											fontSize: 15,
-											fontWeight: "900",
-											backgroundColor: cardsColor,
-										}}
+										label={worker.name}
+										value={worker._id}
 									/>
 								))}
 							</Picker>
@@ -405,7 +348,6 @@ const EditComplaintScreen = () => {
 				{renderDateField("Raised On", "raised")}
 				{renderDateField("Responded On", "response")}
 				{renderDateField("Resolved On", "resolved")}
-
 				{/* Buttons */}
 				<View className="flex-row justify-between mt-4 mb-10">
 					<TouchableOpacity

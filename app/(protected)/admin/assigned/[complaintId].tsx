@@ -2,6 +2,7 @@ import ImageCard from "@/components/complaints/ImageCard";
 import CameraScreen from "@/components/native/CameraScreen";
 import Loader from "@/components/ui/Loader";
 import RoundedButton from "@/components/ui/RoundedButton";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
@@ -26,6 +27,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 const ResolveComplaintScreen = () => {
+	const { user } = useAuth();
 	const { complaintId } = useLocalSearchParams(); // passed from previous screen
 	const isFocused = useIsFocused();
 	const { setGlobalLoading } = useLoading();
@@ -35,7 +37,6 @@ const ResolveComplaintScreen = () => {
 	const [form, setForm] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [showCamera, setShowCamera] = useState(false);
-	const [resolvedMessage, setResolvedMessage] = useState("");
 
 	/* -------------------------------------------------------------------------- */
 
@@ -60,16 +61,30 @@ const ResolveComplaintScreen = () => {
 	};
 
 	const handleSubmit = async () => {
-		if (!form.afterImage || !form.resolvedDate) {
+		if (
+			!form.afterImage ||
+			!form.resolvedDate ||
+			!form.afterResolvedMessage
+		) {
 			Alert.alert(
 				"Error",
-				"Please upload after image and select resolved date."
+				"Please upload after image, select resolved date, and enter resolved message."
 			);
 			return;
 		}
+
 		try {
 			setGlobalLoading(true);
-			await updateComplaint(complaintId as string, form);
+
+			const updatedForm = {
+				...form,
+				status: "Resolved",
+				resolvedBy: user?.user?._id, // current user
+				afterResolvedMessage: form.afterResolvedMessage,
+			};
+
+			await updateComplaint(complaintId as string, updatedForm);
+
 			Toast.show({
 				type: "success",
 				text1: "Complaint updated successfully",
@@ -173,7 +188,7 @@ const ResolveComplaintScreen = () => {
 								? new Date(
 										form.resolvedDate
 									).toLocaleDateString()
-								: "Select Date"}
+								: "Not provided"}
 						</Text>
 					</View>
 				</TouchableOpacity>
@@ -186,8 +201,10 @@ const ResolveComplaintScreen = () => {
 					multiline
 					numberOfLines={4}
 					placeholder="Describe resolution..."
-					value={resolvedMessage}
-					onChangeText={setResolvedMessage}
+					value={form?.afterResolvedMessage || ""}
+					onChangeText={(text) =>
+						updateField("afterResolvedMessage", text)
+					}
 					placeholderTextColor={textColor}
 					style={{
 						marginTop: 8,
@@ -196,7 +213,7 @@ const ResolveComplaintScreen = () => {
 						backgroundColor: cardsColor,
 						color: textColor,
 					}}
-				/>
+				></TextInput>
 
 				{/* Submit */}
 				<RoundedButton

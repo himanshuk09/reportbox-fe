@@ -10,6 +10,7 @@ export const Colors = {
 		text: "#1e1e1e",
 		cardsColor: "#fff",
 		bgLoader: "rgba(52,50,50,0.5)",
+		transparentBackground: "rgba(255, 255, 255, 0.9)",
 	},
 	dark: {
 		primary: "#00EEFF",
@@ -17,6 +18,7 @@ export const Colors = {
 		text: "#fff",
 		cardsColor: "#1e1e1e",
 		bgLoader: "rgba(241,241,241,0.4)",
+		transparentBackground: "rgba(0, 0, 0, 0.9)",
 	},
 };
 
