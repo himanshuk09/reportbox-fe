@@ -9,8 +9,7 @@ const WebViewComponent = ({
 	onMessage = () => {},
 	setLoaded = () => {},
 }: any) => {
-	const { primaryColor, secondaryColor, cardsColor, textColor } =
-		useAppTheme();
+	const { primaryColor } = useAppTheme();
 	return (
 		<View style={styles.container}>
 			{Platform.OS !== "web" ? (
@@ -30,14 +29,6 @@ const WebViewComponent = ({
 						const { statusCode } = syntheticEvent.nativeEvent;
 						console.log("HTTP error status code", statusCode);
 					}}
-					// containerStyle={{
-					// 	overflow: "hidden",
-					// 	width: "100%",
-					// 	height: "90%",
-					// 	marginVertical: 0,
-					// 	padding: 2,
-					// 	borderRadius: 10,
-					// }}
 					overScrollMode="content"
 					gestureHandling="auto"
 					scrollEnabled={false}

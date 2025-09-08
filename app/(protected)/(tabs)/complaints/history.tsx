@@ -1,7 +1,6 @@
 import ComplaintDetailModal from "@/components/complaints/ComplaintDetailModal";
 import Blob from "@/components/on-bording/blob";
 import Loader from "@/components/ui/Loader";
-import { complaintsPosts } from "@/constants/posts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -112,7 +111,7 @@ const ComplaintHistoryScreen = () => {
 			style={{ marginTop: 110, backgroundColor: secondaryColor }}
 		>
 			<LegendList
-				data={complaintDetails ?? complaintsPosts}
+				data={complaintDetails}
 				estimatedItemSize={25}
 				recycleItems
 				showsVerticalScrollIndicator={false}

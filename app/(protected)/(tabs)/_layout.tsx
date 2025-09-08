@@ -32,7 +32,6 @@ const TabLayout = () => {
 				tabBarIconStyle: {
 					marginVertical: 13,
 					opacity: 1,
-					touchAction: "none",
 				},
 				animation: "none",
 				tabBarStyle: {

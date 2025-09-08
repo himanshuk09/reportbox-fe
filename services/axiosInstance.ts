@@ -3,10 +3,11 @@ import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import Toast from "react-native-toast-message";
 var id: any;
+
 const BASEURl = "http://192.168.19.110:8080/api";
-const LIVEBASEURL = "https://reportbox-be-fnxt.vercel.app/api";
+
 const api = axios.create({
-	baseURL: LIVEBASEURL,
+	baseURL: BASEURl,
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
@@ -57,25 +58,8 @@ api.interceptors.response.use(
 				swipeable: false,
 			});
 		} else if (error.response) {
-			// Toast.show({
-			// 	type: "error",
-			// 	text1: "Error",
-			// 	text2:
-			// 		error.response.data?.message ||
-			// 		"Something went wrong on the server.",
-			// });
 		} else if (error.request) {
-			// Toast.show({
-			// 	type: "error",
-			// 	text1: "No response from server",
-			// 	text2: "Please try again later.",
-			// });
 		} else {
-			// Toast.show({
-			// 	type: "error",
-			// 	text1: "Unexpected error",
-			// 	text2: error.message || "An unknown error occurred.",
-			// });
 		}
 
 		return Promise.reject(error);

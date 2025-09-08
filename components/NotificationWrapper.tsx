@@ -34,66 +34,6 @@ TaskManager.defineTask<Notifications.NotificationResponse>(
 	BACKGROUND_NOTIFICATION_TASK,
 	async ({ data, error, executionInfo }: any) => {
 		try {
-			// console.log(
-			// 	" Received 🔔 in the background!",
-			// 	JSON.stringify(
-			// 		{
-			// 			data,
-			// 			// error,
-			// 			// executionInfo,
-			// 		},
-			// 		null,
-			// 		2
-			// 	)
-			// );
-			// if (error) {
-			// 	console.error("Background notification error:", error);
-			// 	return Promise.reject(error);
-			// }
-
-			// // Raw notification content
-			// const notification = data?.notification;
-			// const payloadData = data?.data;
-			// const NOTIFICATION_KEY =
-			// 	MMKV_KEYS?.NOTIFICATION_KEY ?? "notifications";
-			// if (!notification || !payloadData) return Promise.resolve();
-
-			// // Some fields are stringified JSON, parse them safely
-			// let parsedBody: any = {};
-			// let parsedDataString: any = {};
-			// try {
-			// 	if (payloadData.body) parsedBody = JSON.parse(payloadData.body);
-			// } catch {}
-			// try {
-			// 	if (payloadData.dataString)
-			// 		parsedDataString = JSON.parse(payloadData.dataString);
-			// } catch {}
-
-			// // Construct notification object to store
-			// const newNotification = {
-			// 	id: payloadData?.messageId || Date.now().toString(),
-			// 	title: payloadData?.title || notification?.title || "No Title",
-			// 	subtitle:
-			// 		payloadData?.subtitle ||
-			// 		notification?.subtitle ||
-			// 		"No Subtitle",
-			// 	body: payloadData?.message || notification?.body || "No Body",
-			// 	categoryId: payloadData?.categoryId || null,
-			// 	imageUrl: notification?.imageUrl,
-			// 	user: parsedDataString?.userId || null, // your user object
-			// 	data: { ...parsedBody, ...parsedDataString }, // merge additional data
-			// 	receivedAt: new Date().toISOString(),
-			// };
-
-			// // Get existing notifications
-			// const existingNotifications = getMMKV(NOTIFICATION_KEY) || [];
-
-			// // Store in MMKV
-			// setMMKV(NOTIFICATION_KEY, [
-			// 	...existingNotifications,
-			// 	newNotification,
-			// ]);
-
 			return Promise.resolve();
 		} catch (e) {
 			return Promise.reject(e);

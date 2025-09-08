@@ -54,30 +54,6 @@ const menuItems: {
 		path: "/(protected)/settings",
 		right: "settings",
 	},
-	{
-		label: "Notification",
-		icon: "notifications-outline",
-		path: "/(protected)/admin/notification",
-		right: "all_users",
-	},
-	{
-		label: "All Users",
-		icon: "people-outline",
-		path: "/(protected)/admin/users",
-		right: "all_users",
-	},
-	{
-		label: "Assigned",
-		icon: "checkmark-done-outline",
-		path: "/(protected)/admin/assigned",
-		right: "assigned_complaint_view",
-	},
-	{
-		label: "Rights",
-		icon: "shield-checkmark-outline",
-		path: "/(protected)/admin/rights",
-		right: "super_admin_rights",
-	},
 ];
 const CustomDrawer = (props: any) => {
 	const { navigation } = props;
