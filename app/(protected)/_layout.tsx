@@ -43,6 +43,12 @@ const menuItems: {
 		right: "history_view",
 	},
 	{
+		label: "Help",
+		icon: "help-buoy-outline",
+		path: "/(protected)/settings/help",
+		right: "help_view",
+	},
+	{
 		label: "Settings",
 		icon: "settings-outline",
 		path: "/(protected)/settings",

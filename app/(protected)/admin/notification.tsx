@@ -1,15 +1,21 @@
 import { sendMultipleNotification } from "@/components/NotificationWrapper";
+import CustomAlert from "@/components/ui/CustomAlert";
 import RoundedButton from "@/components/ui/RoundedButton";
 import { NOTIFICATION_TYPES } from "@/constants/complaints";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getTokensWithUser } from "@/services/push-notification.service";
+import {
+	deleteTokenByUserId,
+	getTokensWithUser,
+} from "@/services/push-notification.service";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { useIsFocused } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard";
 import * as Notifications from "expo-notifications";
 import React, { useEffect, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Image,
 	KeyboardAvoidingView,
@@ -21,14 +27,19 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	ToastAndroid,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-
 const NotificationSenderScreen = () => {
-	const { primaryColor, secondaryColor, textColor, cardsColor } =
-		useAppTheme();
+	const {
+		primaryColor,
+		secondaryColor,
+		textColor,
+		cardsColor,
+		transparentBackground,
+	} = useAppTheme();
 	const { setGlobalLoading } = useLoading();
 	const isFocused = useIsFocused();
 	/* -------------------------------------------------------------------------- */
@@ -47,8 +58,10 @@ const NotificationSenderScreen = () => {
 	>([]);
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 	const [list, setList] = useState<any>([]);
-	const [showUserModal, setShowUserModal] = useState(false);
+	const [showUserModal, setShowUserModal] = useState<any>(false);
 	const [refreshing, setRefreshing] = useState(false);
+
+	const [detailUser, setDetailUser] = useState<any>(null);
 	/* -------------------------------------------------------------------------- */
 	const toggleUser = (UID?: string) => {
 		if (!UID) return; // avoid null/undefined
@@ -76,8 +89,6 @@ const NotificationSenderScreen = () => {
 
 	const fetchTokens = async () => {
 		const response = await getTokensWithUser();
-		console.log(JSON.stringify(response.tokens, null, 1));
-
 		setList(response.tokens);
 	};
 
@@ -169,6 +180,7 @@ const NotificationSenderScreen = () => {
 	useEffect(() => {
 		setGlobalLoading(false);
 	}, [isFocused]);
+
 	/* -------------------------------------------------------------------------- */
 	return (
 		<SafeAreaView
@@ -366,7 +378,6 @@ const NotificationSenderScreen = () => {
 						onPress={sendNotification}
 					/>
 
-					{/* User Selection Modal (FlatList inside modal, untouched) */}
 					<Modal
 						visible={showUserModal}
 						animationType="fade"
@@ -381,6 +392,7 @@ const NotificationSenderScreen = () => {
 								paddingTop: 40,
 							}}
 						>
+							{/* Header */}
 							<View
 								style={{
 									backgroundColor: cardsColor,
@@ -388,11 +400,6 @@ const NotificationSenderScreen = () => {
 									paddingVertical: 14,
 									paddingHorizontal: 16,
 									marginBottom: 12,
-									shadowColor: "#000",
-									shadowOffset: { width: 0, height: 2 },
-									shadowOpacity: 0.2,
-									shadowRadius: 3,
-									elevation: 3,
 									flexDirection: "row",
 									alignItems: "center",
 									justifyContent: "space-between",
@@ -419,6 +426,7 @@ const NotificationSenderScreen = () => {
 								</TouchableOpacity>
 							</View>
 
+							{/* User List */}
 							<FlatList
 								data={list}
 								keyExtractor={(item, index) =>
@@ -446,6 +454,9 @@ const NotificationSenderScreen = () => {
 											onPress={() =>
 												toggleUser(item?.userId?.UID)
 											}
+											onLongPress={() =>
+												setDetailUser(item)
+											} // <-- long press opens detail modal
 											style={{
 												flexDirection: "row",
 												alignItems: "center",
@@ -507,6 +518,255 @@ const NotificationSenderScreen = () => {
 									Done
 								</Text>
 							</TouchableOpacity>
+						</View>
+					</Modal>
+
+					{/* DETAIL MODAL */}
+					<Modal
+						visible={!!detailUser}
+						animationType="slide"
+						transparent
+						onRequestClose={() => setDetailUser(null)}
+					>
+						<View
+							style={{
+								flex: 1,
+								backgroundColor: transparentBackground,
+								justifyContent: "center",
+								padding: 20,
+							}}
+						>
+							<View
+								style={{
+									backgroundColor: secondaryColor,
+									borderRadius: 12,
+									padding: 20,
+
+									// 🔽 Shadow for iOS
+									shadowColor: "#000",
+									shadowOpacity: 0.1,
+									shadowOffset: { width: 0, height: 2 },
+									shadowRadius: 6,
+
+									// 🔽 Elevation for Android
+									elevation: 5,
+								}}
+							>
+								{/* Header */}
+								<View
+									style={{
+										flexDirection: "row",
+										justifyContent: "space-between",
+										alignItems: "center",
+										marginBottom: 16,
+									}}
+								>
+									<Text
+										style={{
+											fontSize: 18,
+											fontWeight: "700",
+											color: textColor,
+										}}
+									>
+										User Details
+									</Text>
+									<TouchableOpacity
+										onPress={() => setDetailUser(null)}
+									>
+										<Ionicons
+											name="close"
+											size={24}
+											color={textColor}
+										/>
+									</TouchableOpacity>
+								</View>
+
+								{detailUser && (
+									<>
+										<View
+											style={{
+												flexDirection: "row",
+												alignItems: "center",
+											}}
+										>
+											<Image
+												source={{
+													uri: detailUser?.userId
+														?.avatar,
+												}}
+												style={{
+													width: 60,
+													height: 60,
+													borderRadius: 30,
+													marginRight: 16,
+												}}
+											/>
+											<View>
+												<Text
+													style={{
+														fontSize: 18,
+														fontWeight: "600",
+														color: textColor,
+													}}
+												>
+													{detailUser?.userId?.name}
+												</Text>
+												<Text
+													style={{
+														fontSize: 12,
+														color: textColor,
+														opacity: 0.7,
+													}}
+												>
+													{detailUser?.userId?.UID}
+												</Text>
+											</View>
+										</View>
+
+										<View
+											style={{
+												flexDirection: "row",
+												justifyContent: "space-between",
+												alignItems: "center",
+												marginTop: 16,
+											}}
+										>
+											<Text
+												style={{
+													fontSize: 14,
+													color: textColor,
+													fontWeight: "500",
+												}}
+											>
+												Notification Token
+											</Text>
+
+											<TouchableOpacity
+												onPress={async () => {
+													if (detailUser?.token) {
+														await Clipboard.setStringAsync(
+															detailUser.token
+														);
+														if (
+															Platform.OS ===
+															"android"
+														) {
+															// Toast.show({
+															// 	type: "info",
+															// 	text1: "Token copied to clipboard",
+															// });
+															ToastAndroid.show(
+																"Token copied to clipboard",
+																ToastAndroid.SHORT
+															);
+														} else {
+															Alert.alert(
+																"Copied",
+																"Token copied to clipboard"
+															);
+														}
+													}
+												}}
+												style={{ padding: 6 }}
+											>
+												<Ionicons
+													name="copy"
+													size={18}
+													color={textColor}
+												/>
+											</TouchableOpacity>
+										</View>
+
+										<Text
+											selectable
+											style={{
+												marginTop: 6,
+												fontSize: 12,
+												color: textColor,
+												backgroundColor: cardsColor,
+												padding: 10,
+												borderRadius: 6,
+											}}
+										>
+											{detailUser?.token || "—"}
+										</Text>
+
+										<TouchableOpacity
+											onPress={() => {
+												CustomAlert({
+													title: "Delete Group",
+													description:
+														"Are you sure you want to delete this group?",
+													confirmText: "Delete",
+													onConfirm: async () => {
+														try {
+															const response: any =
+																await deleteTokenByUserId(
+																	detailUser
+																		?.userId
+																		?._id
+																);
+
+															if (
+																response?.deletedToken
+															) {
+																Toast.show({
+																	type: "success",
+																	text1: "Token deleted successfully",
+																});
+
+																setDetailUser(
+																	null
+																);
+																fetchTokens();
+															} else {
+																Toast.show({
+																	type: "error",
+																	text1: "Unable to delete token",
+																});
+															}
+														} catch (error) {
+															Toast.show({
+																type: "error",
+																text1: "Something went wrong",
+															});
+															console.error(
+																"Delete token failed:",
+																error
+															);
+														}
+													},
+													cancelText: "Cancel",
+												});
+											}}
+											style={{
+												marginTop: 20,
+												backgroundColor: "#ef4444",
+												paddingVertical: 12,
+												borderRadius: 8,
+												alignItems: "center",
+												flexDirection: "row",
+												justifyContent: "center",
+												gap: 8,
+											}}
+										>
+											<Ionicons
+												name="trash"
+												size={18}
+												color="#fff"
+											/>
+											<Text
+												style={{
+													color: "#fff",
+													fontWeight: "700",
+												}}
+											>
+												Delete User
+											</Text>
+										</TouchableOpacity>
+									</>
+								)}
+							</View>
 						</View>
 					</Modal>
 				</ScrollView>

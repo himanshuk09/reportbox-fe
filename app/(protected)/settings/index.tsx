@@ -7,6 +7,7 @@ import { useThemeContext } from "@/contexts/ThemeContext";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
 	deleteTokenByUserId,
+	getTokensByUserID,
 	sendOrUpdateToken,
 } from "@/services/push-notification.service";
 import { getMMKV, MMKV_KEYS, setMMKV } from "@/storage/mmkv";
@@ -55,14 +56,34 @@ const SettingsPanel = () => {
 		}
 	};
 	/* -------------------------------------------------------------------------- */
-
-	// Load persisted notification status on mount
 	useEffect(() => {
-		const status = getMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY);
-		if (typeof status === "boolean") {
-			setNotificationsEnabled(status);
-		}
-	}, []);
+		const loadNotificationStatus = async () => {
+			try {
+				// 1. First check local MMKV
+				const status = getMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY);
+				if (typeof status === "boolean") {
+					setNotificationsEnabled(status);
+					return;
+				}
+
+				// 2. If not found in MMKV → fetch from API
+				const response: any = await getTokensByUserID(user.user._id);
+
+				if (response?.tokens && response.tokens.length > 0) {
+					setNotificationsEnabled(true);
+					setMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY, true);
+				} else {
+					setNotificationsEnabled(false);
+					setMMKV(MMKV_KEYS.NOTIFICATION_STATUS_KEY, false);
+				}
+			} catch (error) {
+				console.error("Failed to load notification status:", error);
+				setNotificationsEnabled(false);
+			}
+		};
+
+		loadNotificationStatus();
+	}, [user.user._id]);
 
 	useEffect(() => {
 		setGlobalLoading(false);

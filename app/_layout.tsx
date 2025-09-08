@@ -1,4 +1,5 @@
 import NotificationWrapper from "@/components/NotificationWrapper";
+import UpdatesListener from "@/components/UpdatesListener";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ImagePreviewProvider } from "@/contexts/ImagePreviewContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
@@ -28,6 +29,7 @@ export default function RootLayout() {
 		<AuthProvider>
 			<ThemeProvider>
 				<NotificationWrapper />
+				<UpdatesListener />
 				<LoadingProvider>
 					<ImagePreviewProvider>
 						<AuthGuard />

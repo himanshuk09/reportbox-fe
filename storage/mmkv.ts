@@ -26,4 +26,4 @@ export const hasMMKV = (key: string) => {
 export const MMKV_KEYS = {
 	NOTIFICATION_KEY: "notifications",
 	NOTIFICATION_STATUS_KEY: "notificationStatus",
-};
+} as const;

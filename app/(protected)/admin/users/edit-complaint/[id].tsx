@@ -255,13 +255,31 @@ const EditComplaintScreen = () => {
 						<Picker
 							selectedValue={form.type || ""}
 							onValueChange={(val) => updateField("type", val)}
+							dropdownIconColor={textColor}
+							dropdownIconRippleColor={cardsColor}
+							mode="dialog"
 						>
-							<Picker.Item label="Select" value="" />
+							<Picker.Item
+								label="Select"
+								value=""
+								style={{
+									color: textColor,
+									fontSize: 15,
+									fontWeight: "900",
+									backgroundColor: cardsColor,
+								}}
+							/>
 							{complaintTypes.map((item) => (
 								<Picker.Item
 									key={item.label}
 									label={item.label}
 									value={item.label}
+									style={{
+										color: textColor,
+										fontSize: 15,
+										fontWeight: "900",
+										backgroundColor: cardsColor,
+									}}
 								/>
 							))}
 						</Picker>
@@ -315,10 +333,32 @@ const EditComplaintScreen = () => {
 						<Picker
 							selectedValue={form.status || ""}
 							onValueChange={(val) => updateField("status", val)}
+							dropdownIconColor={textColor}
+							dropdownIconRippleColor={cardsColor}
+							mode="dialog"
 						>
-							<Picker.Item label="Select" value="" />
+							<Picker.Item
+								label="Select"
+								value=""
+								style={{
+									color: textColor,
+									fontSize: 15,
+									fontWeight: "900",
+									backgroundColor: cardsColor,
+								}}
+							/>
 							{Status.map((s) => (
-								<Picker.Item key={s} label={s} value={s} />
+								<Picker.Item
+									key={s}
+									label={s}
+									value={s}
+									style={{
+										color: textColor,
+										fontSize: 15,
+										fontWeight: "900",
+										backgroundColor: cardsColor,
+									}}
+								/>
 							))}
 						</Picker>
 					</View>
@@ -347,13 +387,30 @@ const EditComplaintScreen = () => {
 									}
 									style={{ color: textColor }}
 									dropdownIconColor={textColor}
+									dropdownIconRippleColor={cardsColor}
+									mode="dialog"
 								>
-									<Picker.Item label="Select" value="" />
+									<Picker.Item
+										label="Select"
+										value=""
+										style={{
+											color: textColor,
+											fontSize: 15,
+											fontWeight: "900",
+											backgroundColor: cardsColor,
+										}}
+									/>
 									{workerlist.map((worker: any) => (
 										<Picker.Item
 											key={worker._id}
 											label={worker.name}
 											value={worker._id}
+											style={{
+												color: textColor,
+												fontSize: 15,
+												fontWeight: "900",
+												backgroundColor: cardsColor,
+											}}
 										/>
 									))}
 								</Picker>
