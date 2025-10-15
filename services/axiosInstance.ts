@@ -84,7 +84,7 @@ api.interceptors.response.use(
 
 export default api;
 
-export const uploadImageToCloudinary = async (imageUri: string) => {
+export const uploadImageToCloudinary1 = async (imageUri: string) => {
 	try {
 		if (!imageUri) {
 			console.log("Image URI is missing.");
@@ -109,6 +109,56 @@ export const uploadImageToCloudinary = async (imageUri: string) => {
 			},
 		});
 
+		return res.data;
+	} catch (err: any) {
+		console.log("Upload failed:", err.message);
+		return false;
+	}
+};
+
+export const uploadImageToCloudinary = async (imageUri: string) => {
+	try {
+		if (!imageUri) {
+			console.log("Image URI is missing.");
+			return;
+		}
+
+		// console.log("Uploading Image:", imageUri);
+
+		let fileUri = imageUri;
+
+		//  Handle content:// URIs (Android 13+)
+		if (fileUri.startsWith("content://")) {
+			const base64 = await FileSystem.readAsStringAsync(fileUri, {
+				encoding: FileSystem.EncodingType.Base64,
+			});
+			const tempUri = FileSystem.cacheDirectory + "temp-upload.jpg";
+			await FileSystem.writeAsStringAsync(tempUri, base64, {
+				encoding: FileSystem.EncodingType.Base64,
+			});
+			fileUri = tempUri;
+			// console.log("Converted content:// to local file:", fileUri);
+		}
+
+		//  Define filename and MIME type
+		const fileName = fileUri.split("/").pop() || "photo.jpg";
+		const fileType = fileName.endsWith(".png") ? "image/png" : "image/jpeg";
+
+		//  Create form data
+		const formData = new FormData();
+		formData.append("image", {
+			uri: fileUri,
+			type: fileType,
+			name: fileName,
+		} as any);
+
+		//  Upload to backend (Express)
+		const res = await api.post(`/upload`, formData, {
+			headers: { "Content-Type": "multipart/form-data" },
+			timeout: 60000,
+		});
+
+		console.log("Upload successful:", res.data);
 		return res.data;
 	} catch (err: any) {
 		console.log("Upload failed:", err.message);
