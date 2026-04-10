@@ -1,29 +1,29 @@
 {
-  "project_info": {
-    "project_number": "647330840043",
-    "project_id": "report-box-8a07f",
-    "storage_bucket": "report-box-8a07f.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:647330840043:android:1ddc6425bd5406c173adae",
-        "android_client_info": {
-          "package_name": "com.himanshukhade.reportbox"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCVBkkx9kBaTjryGDilsx9tInKu5qLtt1Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
+	"project_info": {
+		"project_number": "469548143771",
+		"project_id": "report-box-v1",
+		"storage_bucket": "report-box-v1.firebasestorage.app"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:469548143771:android:dca6e56e8e51539e8aa23e",
+				"android_client_info": {
+					"package_name": "com.himanshukhade.reportboxv1"
+				}
+			},
+			"oauth_client": [],
+			"api_key": [
+				{
+					"current_key": "AIzaSyBYJYa8XNtTGiAy3BmzN0cZ4GWH-HM45tg"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": []
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
 }
