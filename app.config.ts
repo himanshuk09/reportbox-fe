@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			backgroundColor: "#ffffff",
 		},
 		edgeToEdgeEnabled: true,
-		package: "com.himanshukhade.reportboxv1",
+		package: "com.himanshukhade.complaintbox",
 		googleServicesFile: "./google-services.json",
 		permissions: [
 			"WRITE_EXTERNAL_STORAGE",
@@ -146,12 +146,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	runtimeVersion: {
 		policy: "appVersion",
 	},
+
 	extra: {
 		eas: {
-			projectId: "0fd7d924-33d9-4f02-92c9-f072c02aea38",
+			projectId: "54119f46-002d-4de0-8e59-58cb55a89b17",
 		},
 	},
 	updates: {
-		url: "https://u.expo.dev/0fd7d924-33d9-4f02-92c9-f072c02aea38",
+		url: "https://u.expo.dev/54119f46-002d-4de0-8e59-58cb55a89b17",
 	},
 });

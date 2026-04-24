@@ -39,4 +39,6 @@ yarn-error.*
 app-example
 /android
 /ios
-
+google-services.json
+complaint-box-efd3c-firebase-adminsdk-fbsvc-29dc6a9243.json
+complaint-box-e302f-firebase-adminsdk-fbsvc-beac04fe12.json
